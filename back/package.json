@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "@types/express": "^5.0.1",
+    "@types/node": "^22.13.11",
     "@types/node-fetch": "^2.6.12",
     "@types/pg": "^8.11.11",
     "@types/socket.io": "^3.0.1"

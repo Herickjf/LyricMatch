@@ -1,5 +1,8 @@
 import { Pool } from 'pg';
+import { query } from './db-query';
+import { table } from 'console';
 const { Client } = require('pg');
+
 
 
 // Configurações para conectar diretamente ao banco postgres
@@ -41,8 +44,8 @@ const tables = {
         );
     `,
 
-    round: `
-        CREATE TABLE IF NOT EXISTS ${db_name}.round(
+    guess: `
+        CREATE TABLE IF NOT EXISTS ${db_name}.guess(
             id SERIAL PRIMARY KEY,
             artist_name VARCHAR(200) NOT NULL,
             song_name VARCHAR(200) NOT NULL,
@@ -66,30 +69,34 @@ const tables = {
     `,
 }
 
+/**
+ * Deletes the database "songguesser"
+*/
 async function deleteDatabase(){
-    const client = new Client(config);
-    await client.connect();
-    await client.query(`DROP DATABASE IF EXISTS ${db_name};`);
-    await client.end();
+    await query(`DROP DATABASE IF EXISTS ${db_name};`);
 }
 
+/**
+ * Deletes all tables in the database "songguesser"
+*/
 async function deleteTables(){
-    const client = new Client(config);
-    await client.connect();
-    await client.query(`DROP TABLE IF EXISTS ${db_name}.round;`);
-    await client.query(`DROP TABLE IF EXISTS ${db_name}.player;`);
-    await client.query(`DROP TABLE IF EXISTS ${db_name}.room;`);
-    await client.query(`DROP TABLE IF EXISTS ${db_name}.word;`);
-    await client.end();
+    for (const table of Object.keys(tables)){
+        await query(`DROP TABLE
+            IF EXISTS ${db_name}.${table};`);
+    }
 }
 
+/**
+ * Deletes a specific table in the database "songguesser"
+ * @param table_name the name of the table to be deleted
+*/
 async function deleteTable(table_name: string){
-    const client = new Client(config);
-    await client.connect();
-    await client.query(`DROP TABLE IF EXISTS ${db_name}.${table_name};`);
-    await client.end();
+    await query(`DROP TABLE IF EXISTS ${db_name}.${table_name};`);
 }
 
+/**
+ * Creates the database "songguesser"
+*/
 async function createDatabase(){
     const client = new Client(config);
     await client.connect();
@@ -97,20 +104,22 @@ async function createDatabase(){
     await client.end();
 }
 
+/**
+ * Creates all tables in the database "songguesser"
+*/
 async function createTables(){
-    config['database'] = db_name;
-    const client = new Client(config);
-    await client.connect();
-    for (const table of Object.values(tables)){
-        await client.query(table);
+    for(const table of Object.keys(tables)){
+        await query(tables[table]);
     }
-    await client.end();
 }
 
-
+/**
+ * Creates a specific table in the database "songguesser"
+ * @param table_name the name of the table to be created
+*/
 async function createTable(table_name: string){
-    const client = new Client(config);
-    await client.connect();
-    await client.query(tables[table_name]);
-    await client.end();
+    await query(tables[table_name]);
 }
+
+// Export the functions that create the data structures in the database
+export { createDatabase, createTables, deleteDatabase, deleteTables, createTable, deleteTable };
