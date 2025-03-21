@@ -4,12 +4,12 @@
     "target": "ESNext",
     "moduleResolution": "nodenext",
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": "pc1/src",
     "esModuleInterop": true,
     "strict": true,
     "skipLibCheck": true
   },
   "include": [
-    "src"
+    "pc1/src"
   ]
 }
