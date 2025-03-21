@@ -50,7 +50,6 @@ const tables = {
             artist_name VARCHAR(200) NOT NULL,
             song_name VARCHAR(200) NOT NULL,
             is_correct BOOLEAN,
-            round_number INT,
             selected_music_id INT,
             selected_music_api VARCHAR(250),
             player_id INT,
@@ -65,6 +64,15 @@ const tables = {
             id SERIAL PRIMARY KEY,
             word VARCHAR(200) NOT NULL,
             language VARCHAR(50) NOT NULL,
+        );
+    `,
+
+    word_sorted: `
+        CREATE TABLE IF NOT EXISTS ${db_name}.word_sorted(
+            id SERIAL PRIMARY KEY,
+            word VARCHAR(200) NOT NULL,
+            room_id INT,
+            FOREIGN KEY (room_id) REFERENCES ${db_name}.room(id)
         );
     `,
 }

@@ -75,32 +75,59 @@ async function wordExists(word: Word) : Promise<boolean>{
 /**
  * 
  * @param language the language of the word
- * @param already_sorted the id's or words that are already sorted
+ * @param room Id (if it is a number) or Code (if it is a string) of the room
  * @returns the word that was sorted
  */
-async function getNewWord(language: string, already_sorted: number[] | string[] | undefined = undefined) : Promise<String> {
-    if (already_sorted == undefined){
-        const result = await query(
-            'SELECT word FROM word WHERE language = $1 ORDER BY RANDOM() LIMIT 1',
-            [language]
-        );
-        return result[0];
+async function getNewWord(language: string, room: number | string): Promise<JSON>{
+    if(typeof room === 'number'){
+        let word = await query(
+            'SELECT * FROM word WHERE language = $1 AND word NOT IN (SELECT word FROM word_sorted WHERE language = $1 AND room_id = $2) ORDER BY RANDOM() LIMIT 1',
+            [language, room]
+        )[0];
+        return word;
+    }else{
+        let word = await query(
+            'SELECT * FROM word WHERE language = $1 AND word NOT IN (SELECT word FROM word_sorted WHERE language = $1 AND room_id = (SELECT id FROM room WHERE room_code = $2)) ORDER BY RANDOM() LIMIT 1',
+            [language, room]
+        )[0];
+        return word;
     }
-    else if (typeof already_sorted[0] == 'number'){
-        let str_already_sorted = "(" + already_sorted.join(', ') + ")";
-        const result = await query(
-            `SELECT word FROM word WHERE language = $1 AND id NOT IN ${str_already_sorted} ORDER BY RANDOM() LIMIT 1`,
-            [language]
+}
+
+/**
+ * 
+ * @param word the word to be registered
+ * @param room Id (if it is a number) or Code (if it is a string) of the room
+*/
+async function registrateWord(word: string, room: number | string): Promise<void>{
+    if(typeof room === 'number'){
+        await query(
+            'INSERT INTO word_sorted (word, room_id) VALUES ($1, $2, $3)',
+            [word, room]
         );
-        return result[0];
+    }else{
+        await query(
+            'INSERT INTO word_sorted (word, language, room_id) VALUES ($1, $2, (SELECT id FROM room WHERE room_code = $3))',
+            [word, room]
+        );
     }
-    else {
-        let str_already_sorted = "('" + already_sorted.join("', '") + "')";
-        const result = await query(
-            `SELECT word FROM word WHERE language = $1 AND word NOT IN ${str_already_sorted} ORDER BY RANDOM() LIMIT 1`,
-            [language]
+}
+
+/**
+ * Clean the word_sorted of a room
+ * @param room the room to be cleaned
+*/
+async function cleanWordSorted(room: number | string): Promise<void>{
+    if(typeof room === 'number'){
+        await query(
+            'DELETE FROM word_sorted WHERE room_id = $1',
+            [room]
         );
-        return result[0];
+    }else{
+        await query(
+            'DELETE FROM word_sorted WHERE room_id = (SELECT id FROM room WHERE room_code = $1)',
+            [room]
+        );
     }
 }
 
@@ -109,5 +136,7 @@ export{
     deleteWord,
     getWords,
     wordExists,
-    getNewWord
+    getNewWord,
+    registrateWord,
+    cleanWordSorted
 }

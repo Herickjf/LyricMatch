@@ -5,15 +5,15 @@ import { query } from './db-query';
     THIS FILE CONTAINS TO MANIPULATE THE PLAYER TABLE.
     It contains the following functions:
 
-    - createPlayer(player: Player) : Promise<Player>
-    - deletePlayer(player_name: string, room: number | string) : Promise<void>
-    - getPlayers(room : number | string) : Promise<Player[]>
-    - getPlayer(player_name: string, room: number | string) : Promise<Player>
-    - getPlayerScore(player_name: string, room: number | string) : Promise<number>
-    - updatePlayerScore(player_name: string, room: number | string, score: number) : Promise<void>
-    - resetPlayerScore(player_name: string, room: number | string) : Promise<void>
-    - addToPlayerScore(player_name: string, room: number | string, add_to_score: number) : Promise<void>
-    - setPlayerAdmin(player_name: string, room: number | string, admin: boolean) : Promise<void>
+    - createPlayer(player: Player)
+    - deletePlayer(player_name: string, room: number | string)
+    - getPlayers(room : number | string)
+    - getPlayer(player_name: string, room: number | string)
+    - getPlayerScore(player_name: string, room: number | string)
+    - updatePlayerScore(player_name: string, room: number | string, score: number)
+    - resetPlayerScore(player_name: string, room: number | string)
+    - addToPlayerScore(player_name: string, room: number | string, add_to_score: number)
+    - setPlayerAdmin(player_name: string, room: number | string, admin: boolean)
 */
 
 interface Player {
@@ -72,7 +72,7 @@ async function deletePlayer(player_name: string, room: number | string) : Promis
     * @param room Id (if number) or Code (if string) of the room where the player is
     * @returns all players in the room, ordered by score
 */
-async function getPlayers(room : number | string) : Promise<Player[]> {
+async function getPlayers(room : number | string) : Promise<JSON[]> {
     if(typeof room == 'number'){
         const result = await query(
             'SELECT * FROM player WHERE room_id = $1 ORDER BY player_score DESC',
@@ -94,7 +94,7 @@ async function getPlayers(room : number | string) : Promise<Player[]> {
     * @param room Id (if number) or Code (if string) of the room where the player is
     * @returns the player
 */
-async function getPlayer(player_name: string, room: number | string) : Promise<Player> {
+async function getPlayer(player_name: string, room: number | string) : Promise<JSON> {
     if (typeof room == 'number'){
         const result = await query(
             'SELECT * FROM player WHERE player_name = $1 AND room_id = $2',
