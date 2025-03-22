@@ -3,12 +3,12 @@
 
 // dotenv.config();
 
-const clientId = process.env.CLIENT_ID!;
-const clientSecret = process.env.CLIENT_SECRET!;
+// const clientId = process.env.CLIENT_ID!;
+// const clientSecret = process.env.CLIENT_SECRET!;
 
-interface AccessTokenResponse {
-  access_token: string;
-}
+// interface AccessTokenResponse {
+//   access_token: string;
+// }
 
 // async function getAccessToken(): Promise<string> {
 //   const params = new URLSearchParams();
