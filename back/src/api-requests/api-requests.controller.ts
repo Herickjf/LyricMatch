@@ -20,4 +20,12 @@ export class ApiRequestsController {
   ): Promise<any> {
     return this.apiRequestsService.getLyrics(track, artist);
   }
+
+  @Get('lyrics2')
+  async getLyrics2(
+    @Query('track') track: string,
+    @Query('artist') artist: string
+  ): Promise<any> {
+    return this.apiRequestsService.getLyrics2(track, artist);
+  }
 }

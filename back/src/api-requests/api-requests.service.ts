@@ -10,6 +10,7 @@ export class ApiRequestsService {
     private clientId = process.env.CLIENT_ID;
     private clientSecret = process.env.CLIENT_SECRET;
     private geniusAccessToken = process.env.GENIUS_ACCESS_TOKEN;
+    private musixmatchApiKey = process.env.MUSIXMATCH_API_KEY;
 
     private async getAccessToken(): Promise<string> {
         const params = new URLSearchParams();
@@ -82,7 +83,7 @@ export class ApiRequestsService {
             if (data.response.hits.length > 0) {
                 const songPath = data.response.hits[0].result.path;
                 const lyricsPage = await axios.get(`https://genius.com${songPath}`);
-                return lyricsPage.data;
+                // return lyricsPage.data;
                 const $ = cheerio.load(lyricsPage.data);
                 let lyrics = '';
     
@@ -98,6 +99,25 @@ export class ApiRequestsService {
             } else {
                 throw new Error("Song not found");
             }
+        } catch (error) {
+            console.error('Erro ao buscar a letra da música:', error);
+            return undefined;
+        }
+    }
+
+    async getLyrics2(track: string, artist: string): Promise<string | undefined> {
+        try {
+            const result = await axios.get(
+                `https://api.musixmatch.com/ws/1.1/track.search?apikey=${this.musixmatchApiKey}&q_track=${track}&q_artist=${artist}`
+            );
+
+            const commontrack_id = result.data.message.body.track_list[0].track.commontrack_id;
+            
+            const lyricsResult = await axios.get(
+                `https://api.musixmatch.com/ws/1.1/track.lyrics.get?apikey=${this.musixmatchApiKey}&commontrack_id=${commontrack_id}`
+            );
+
+            return lyricsResult.data.message.body.lyrics.lyrics_body;
         } catch (error) {
             console.error('Erro ao buscar a letra da música:', error);
             return undefined;

@@ -58,6 +58,7 @@ model Player {
 enum MusicApi {
   genius
   vagalume
+  musixmatch
 }
 
 model Guess {
