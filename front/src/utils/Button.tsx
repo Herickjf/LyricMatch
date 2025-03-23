@@ -1,3 +1,5 @@
+import '../css/utils/button.css';
+
 interface ButtonProps {
     text: string;
     func: () => void;

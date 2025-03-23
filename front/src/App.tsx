@@ -7,15 +7,15 @@ import './css/initialpages/App.css'
 
 const App = () => {
   return (
-    <div>
+    <div className="App">
 
-    <Nav />
+      <Nav />
 
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/about" element={<About />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     
 
     </div>

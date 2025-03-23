@@ -1,0 +1,21 @@
+button{
+    /* margin: 0 auto; */
+    padding: 7px 15px;
+
+    font-size: large;
+
+    background-color: #A4AC86;
+    border-radius: 30px;
+    border: none;
+
+    cursor: pointer;
+
+    transition: .2s ease-in-out;
+}
+
+button:hover{
+    transform: scale(1.01);
+    box-shadow: #8f9c61be 0px 0px 10px;
+    background-color: #afbf77;
+    transition: .2s ease-in-out;
+}

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import '../../css/initialpages/home.css';
 
-import Enter from './enter';
-import Create from './create';
-import TextInput from './TextInput';
+import Enter from './Enter';
+import Create from './Create';
+import TextInput from '../../utils/TextInput';
 
 const Home = () => {
     const [mode, setMode] = useState<"enter" | "create">("enter");
@@ -17,14 +17,26 @@ const Home = () => {
     }
 
     return(
-        <div>
+        <div id='home'>
             <div id="form_box">
                 <h1 id="game_title">Song Guesser</h1>
 
 
                 <div id="options_entry_box">
-                    <div id="enter_option"  className="option_entry" onClick={toggleToEnter} >Enter</div>
-                    <div id="create_option" className="option_entry" onClick={toggleToCreate}>Create</div>
+                    <button 
+                        style={mode === 'enter' ? {backgroundColor: '#A4AC86'}: undefined} 
+                        id="enter_option"  
+                        className="option_entry" 
+                        onClick={toggleToEnter}  
+                        >Enter
+                    </button>
+                    <button 
+                        style={mode === 'create' ? {backgroundColor: '#A4AC86'}: undefined}
+                        id="create_option" 
+                        className="option_entry" 
+                        onClick={toggleToCreate} 
+                        >Create
+                    </button>
                 </div>
 
                 <div id="user_avatar_box">
@@ -32,7 +44,8 @@ const Home = () => {
                     <div id="user_avatar"></div>
                 </div>
                 
-                {TextInput("Username:", "user_name")}
+                <TextInput label="Nickname:" placeholder="Enter your nickname"/>
+
 
                 {mode === "enter" && <Enter />}
                 {mode === "create" && <Create />}

@@ -50,6 +50,7 @@ model Player {
   score    Int?
   photo    String?
   is_admin Boolean
+  socket_id String
   room_id  Int
   room     Room    @relation(fields: [room_id], references: [id])
   guesses  Guess[]
