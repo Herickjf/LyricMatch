@@ -1,0 +1,74 @@
+.form_box{
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+}
+
+.fadeInLeft{
+    animation: fadeInLeft .5s ease-in-out;
+}
+.fadeInRight{
+    animation: fadeInRight .5s ease-in-out;
+}
+.fadeOutLeft{
+    animation: fadeOutLeft .5s ease-in-out;
+}
+.fadeOutRight{
+    animation: fadeOutRight .5s ease-in-out;
+}
+
+.number_inputs{
+    display: flex;
+    gap: 15px;
+    /* flex-wrap: wrap; */
+    justify-content: center;
+    align-items: center;
+}
+
+
+@keyframes fadeInLeft {
+from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInRight {
+from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0px);
+    }
+}
+
+@keyframes fadeOutLeft {
+    from {
+        opacity: 1;
+        transform: translateX(0px);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+}
+
+@keyframes fadeOutRight {
+    from {
+        opacity: 1;
+        transform: translateX(0px);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+}
