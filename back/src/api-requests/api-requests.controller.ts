@@ -8,7 +8,7 @@ export class ApiRequestsController {
   @Get('search')
   async searchTracks(
     @Query('track') track: string,
-    @Query('artist') artist: string
+    @Query('artist') artist: string,
   ): Promise<any> {
     return this.apiRequestsService.searchTracks(track, artist);
   }
@@ -16,7 +16,7 @@ export class ApiRequestsController {
   @Get('lyrics')
   async getLyrics(
     @Query('track') track: string,
-    @Query('artist') artist: string
+    @Query('artist') artist: string,
   ): Promise<any> {
     return this.apiRequestsService.getLyrics(track, artist);
   }
@@ -24,7 +24,7 @@ export class ApiRequestsController {
   @Get('lyrics2')
   async getLyrics2(
     @Query('track') track: string,
-    @Query('artist') artist: string
+    @Query('artist') artist: string,
   ): Promise<any> {
     return this.apiRequestsService.getLyrics2(track, artist);
   }

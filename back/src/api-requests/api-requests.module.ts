@@ -4,6 +4,6 @@ import { ApiRequestsService } from './api-requests.service';
 
 @Module({
   controllers: [ApiRequestsController],
-  providers: [ApiRequestsService]
+  providers: [ApiRequestsService],
 })
 export class ApiRequestsModule {}

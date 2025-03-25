@@ -6,7 +6,6 @@ import { SwaggerTheme, SwaggerThemeNameEnum } from 'swagger-themes';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-
   const config = new DocumentBuilder()
     .setTitle('Song Guesser')
     .setDescription('Song Guesser API')
