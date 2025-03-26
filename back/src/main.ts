@@ -9,13 +9,14 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Song Guesser')
     .setDescription('Song Guesser API')
-    .setVersion('2.0')
+    .setVersion('3.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   const theme = new SwaggerTheme();
   const options = {
     explorer: true,
     customCss: theme.getBuffer(SwaggerThemeNameEnum.ONE_DARK),
+    customSiteTitle: 'Song Guesser API',
   };
   SwaggerModule.setup('api', app, document, options);
 
