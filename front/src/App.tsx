@@ -7,7 +7,7 @@ import './css/initialpages/App.css'
 
 const App = () => {
   return (
-    <div className="App">
+    <div className="App" id="App_Screen">
 
       <Nav />
 
