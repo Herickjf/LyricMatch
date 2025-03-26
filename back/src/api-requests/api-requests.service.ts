@@ -110,6 +110,7 @@ export class ApiRequestsService {
     }
   }
 
+  // Substituir chamada da api por chamada direta ao site, usando scraping
   async getLyrics2(track: string, artist: string): Promise<string | undefined> {
     try {
       const result = await axios.get(

@@ -40,7 +40,9 @@ const Home = () => {
                 </div>
 
                 <div id="user_avatar_box">
-                    <div id="edit_avatar_icon"></div>
+                    <div id="edit_avatar">
+                        <div id="edit_avatar_icon"></div>
+                    </div>
                     <div id="user_avatar"></div>
                 </div>
                 
