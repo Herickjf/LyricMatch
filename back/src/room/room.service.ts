@@ -13,10 +13,23 @@ export class RoomService {
     maxRounds: number,
   ): Promise<{ code: string; host: any }> {
     try {
-      const { nanoid } = await import('nanoid');
+      let roomCode: string = '';
+      let isUnique = false;
+
+      // Gera um código único
+      while (!isUnique) {
+        roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+        const existingRoom = await this.prisma.room.findUnique({
+          where: { code: roomCode },
+        });
+        if (!existingRoom) {
+          isUnique = true;
+        }
+      }
+
       const room = await this.prisma.room.create({
         data: {
-          code: nanoid(6).toUpperCase(),
+          code: roomCode,
           password: roomPassword,
           maxPlayers,
           maxRounds,
