@@ -28,4 +28,12 @@ export class ApiRequestsController {
   ): Promise<any> {
     return this.apiRequestsService.getLyrics2(track, artist);
   }
+
+  @Get('letras-api')
+  async getLyrics3(
+    @Query('track') track: string,
+    @Query('artist') artist: string,
+  ): Promise<any> {
+    return this.apiRequestsService.getLyricsFromLetras(track, artist);
+  }
 }

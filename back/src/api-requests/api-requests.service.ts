@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import * as dotenv from 'dotenv';
 import * as cheerio from 'cheerio';
+import puppeteer from 'puppeteer';
 
 dotenv.config();
 
@@ -126,6 +127,50 @@ export class ApiRequestsService {
     } catch (error) {
       console.error('Erro ao buscar a letra da música:', error);
       return undefined;
+    }
+  }
+
+  async getLyricsFromLetras(track: string, artist: string): Promise<string | null> {
+    try {
+      const query = `${artist} ${track}`;
+      const url = `https://www.letras.mus.br/?q=${encodeURIComponent(query)}`;
+
+        // Inicia o navegador com Puppeteer
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+
+        // Navega até a URL de busca
+        await page.goto(url, { waitUntil: 'networkidle2' });
+
+        // Aguarda o carregamento dos resultados (ajuste o seletor conforme necessário)
+        await page.waitForSelector('.gs-title a');
+
+        // Extrai o primeiro link dos resultados
+        const link = await page.$eval('.gs-title a', (el) => el.getAttribute('href'));
+        if (!link) throw new Error('Nenhum link encontrado.');
+        console.log('Link:', link);
+
+        // Navega até o link da música
+        await page.goto(link, { waitUntil: 'networkidle2' });
+
+        // Aguarda o carregamento do conteúdo da letra
+        await page.waitForSelector('.lyric-original');
+
+        // Extrai o HTML da letra
+        const lyrics = await page.$$eval('.lyric-original p', (elements) =>
+            elements.map((el) => el.innerHTML.trim()).join('<br>')
+        );
+
+        // Fecha o navegador
+        await browser.close();
+
+        if (!lyrics) throw new Error('Letra não encontrada.');
+        lyrics.replace(/<br>/g, '\n');
+
+        return lyrics;
+    } catch (error) {
+      console.error('Erro ao buscar a letra da música no Letras.mus.br:', error);
+      return null;
     }
   }
 }
