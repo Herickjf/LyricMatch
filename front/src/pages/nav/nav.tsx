@@ -5,20 +5,14 @@
 import {Link} from 'react-router-dom'
 
 import '../../css/initialpages/nav.css'
+import Menu from './Menu'
 
 
 const Nav = () => {
     return(
         <div id = "nav_bar">
-            <div className="nav_items" id="menu_icon"></div>
+            <div className="nav_items" id="menu_icon" onClick={() => {console.log("Menu aberto")}}></div>
             <div className="nav_items" id="logo_icon"></div>
-
-            {/* <nav>
-                <ul>
-                    <li><Link to="/">Home</Link></li>
-                    <li><Link to="/about">About</Link></li>
-                </ul>
-            </nav> */}
         </div>
     )
 }
