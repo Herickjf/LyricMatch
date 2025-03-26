@@ -9,31 +9,18 @@ export class ApiRequestsController {
   async searchTracks(
     @Query('track') track: string,
     @Query('artist') artist: string,
+    @Query('api_option') api_option: string,
   ): Promise<any> {
-    return this.apiRequestsService.searchTracks(track, artist);
+    return this.apiRequestsService.searchTracks(track, artist, api_option);
   }
 
   @Get('lyrics')
   async getLyrics(
     @Query('track') track: string,
     @Query('artist') artist: string,
+    @Query('api_option') api_option: string,
   ): Promise<any> {
-    return this.apiRequestsService.getLyrics(track, artist);
+    return this.apiRequestsService.getLyrics(track, artist, api_option);
   }
 
-  @Get('lyrics2')
-  async getLyrics2(
-    @Query('track') track: string,
-    @Query('artist') artist: string,
-  ): Promise<any> {
-    return this.apiRequestsService.getLyrics2(track, artist);
-  }
-
-  @Get('letras-api')
-  async getLyrics3(
-    @Query('track') track: string,
-    @Query('artist') artist: string,
-  ): Promise<any> {
-    return this.apiRequestsService.getLyricsFromLetras(track, artist);
-  }
 }
