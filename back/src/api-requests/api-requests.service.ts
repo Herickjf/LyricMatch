@@ -45,31 +45,32 @@ export class ApiRequestsService {
   ): Promise<any> {
     const accessToken = await this.getAccessToken();
     const query = `track:${track} artist:${artist}`;
-    const numberOfResults = 5;
 
-    const result = await axios.get(
-      `https://api.spotify.com/v1/search?q=${encodeURIComponent(
-        query,
-      )}&type=track`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
+    try {
+      const result = await axios.get(
+        `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=5`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         },
-      },
-    );
+      );
 
-    const data: any = result.data;
+      const data: any = result.data;
 
-    const tracks = data.tracks.items
-      .slice(0, numberOfResults)
-      .map((item: any) => ({
+      // Extract relevant track information
+      const tracks = data.tracks.items.map((item: any) => ({
         track_name: item.name,
-        artist_name: item.artists[0].name,
-        album_image: item.album.images[0].url,
-        audio_preview: item.preview_url,
+        artist_name: item.artists.map((artist: any) => artist.name).join(', '),
+        album_image: item.album.images[0]?.url || null,
+        preview_url: item.preview_url,
       }));
 
-    return tracks;
+      return tracks;
+    } catch (error) {
+      console.error('Error searching tracks on Spotify:', error.message);
+      throw new Error('Failed to search tracks on Spotify');
+    }
   }
 
   private async searchTracks_musixmatch(
