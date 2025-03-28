@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import * as dotenv from 'dotenv';
 import * as cheerio from 'cheerio';
+import { MusicApi } from '@prisma/client';
 
 dotenv.config();
 
@@ -134,13 +135,13 @@ export class ApiRequestsService {
     }
   }
 
-  async getLyrics(track: string, artist: string, api_option: string | number) {
+  async getLyrics(track: string, artist: string, api_option: MusicApi) {
     switch (api_option) {
-      case '1':
+      case MusicApi.LETRAS:
         return this.getLyrics_letrasmus(track, artist);
-      case '2':
+      case MusicApi.MUSIXMATCH:
         return this.getLyrics_musixmatch(track, artist);
-      case '3':
+      case MusicApi.VAGALUME:
         return this.getLyrics_vagalume(track, artist);
       default:
         return { error_code: 400, message: 'Invalid API option' };

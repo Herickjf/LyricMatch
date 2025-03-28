@@ -7,9 +7,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// recriando o banco de dados para ser mais otimizado, usando as migrations para modela-lo acompanhando
-// o desenvolvimento do projeto, atualmente o banco de dados foi pensado apenas para os jogadores
-// criarem e entrarem em salas de jogos
+enum Language {
+  EN
+  PT
+  ES
+}
+
+enum MusicApi {
+  LETRAS
+  VAGALUME
+  MUSIXMATCH
+}
 
 model Room {
   id          String      @id @default(uuid())
@@ -17,7 +25,12 @@ model Room {
   password    String?
   maxRounds   Int         @default(10)
   maxPlayers  Int         @default(4)
-  players       Player[]  
+  active      Boolean     @default(false) // Indica se o jogo está ativo
+  gameState   GameState?  @relation("RoomToGameState") // Apenas o nome da relação aqui
+  gameStateId String?     // Relaciona o estado do jogo
+  language    Language    @default(EN)
+  musicApi    MusicApi    @default(MUSIXMATCH)
+  players     Player[]    // Jogadores na sala
 }
 
 model Player {
@@ -28,6 +41,21 @@ model Player {
   avatar    String?
   roomId    String?
   room      Room?       @relation(fields: [roomId], references: [id])
+}
+
+model GameState {
+  id            String   @id @default(uuid())
+  currentRound  Int      @default(1)
+  currentWord   String?
+  timer         Int      @default(30)
+  roomId        String   @unique
+  room          Room     @relation("RoomToGameState", fields: [roomId], references: [id]) // Apenas `fields` e `references` aqui
+}
+
+model Word {
+  id        String    @id @default(uuid())
+  word      String
+  language  Language
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

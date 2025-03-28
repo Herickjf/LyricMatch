@@ -7,6 +7,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { RoomService } from './room.service';
+import { MusicApi, Language } from '@prisma/client';
 
 interface PlayerDto {
   name: string;
@@ -17,6 +18,8 @@ interface RoomDto {
   password: string;
   maxPlayers: number;
   maxRounds: number;
+  language: Language;
+  musicApi: MusicApi;
 }
 
 @WebSocketGateway({ cors: true })
@@ -39,6 +42,8 @@ export class RoomGateway {
         data.room.password,
         data.room.maxPlayers,
         data.room.maxRounds,
+        data.room.language,
+        data.room.musicApi,
       );
       client.join(code); // Adiciona o cliente à sala
       client.emit('roomCreated', { code, host }); // Emite um evento 'roomCreated' para o cliente com o código da sala e o host
@@ -66,6 +71,68 @@ export class RoomGateway {
     } catch (error) {
       console.error('Erro ao entrar na sala:', error);
       client.emit('error', { message: 'Erro ao entrar na sala' });
+    }
+  }
+
+  @SubscribeMessage('startGame')
+  async handleStartGame(
+    @MessageBody() data: { roomCode: string },
+    @ConnectedSocket() client: Socket,
+  ) {
+    try {
+      const gameState = await this.roomService.startGame(data.roomCode);
+      this.server.to(data.roomCode).emit('gameStarted', gameState);
+    } catch (error) {
+      console.error('Erro ao iniciar o jogo:', error);
+      client.emit('error', { message: 'Erro ao iniciar o jogo' });
+    }
+  }
+
+  @SubscribeMessage('nextRound')
+  async handleNextRound(
+    @MessageBody() data: { roomCode: string },
+    @ConnectedSocket() client: Socket,
+  ) {
+    try {
+      const gameState = await this.roomService.nextRound(data.roomCode);
+      if (gameState.gameOver) {
+        this.server.to(data.roomCode).emit('gameOver', gameState);
+      } else {
+        this.server.to(data.roomCode).emit('roundUpdated', gameState);
+      }
+    } catch (error) {
+      console.error('Erro ao avançar para a próxima rodada:', error);
+      client.emit('error', {
+        message: 'Erro ao avançar para a próxima rodada',
+      });
+    }
+  }
+
+  @SubscribeMessage('submitAnswer')
+  async handleSubmitAnswer(
+    @MessageBody()
+    data: { roomCode: string; playerId: string; track: string; artist: string },
+    @ConnectedSocket() client: Socket,
+  ) {
+    try {
+      const result = await this.roomService.processAnswer(
+        data.roomCode,
+        data.playerId,
+        data.track,
+        data.artist,
+      );
+
+      if (result.isCorrect) {
+        this.server.to(data.roomCode).emit('scoreUpdated', {
+          playerId: result.player.id,
+          score: result.player.score,
+        });
+      } else {
+        client.emit('answerIncorrect', { message: 'Resposta incorreta!' });
+      }
+    } catch (error) {
+      console.error('Erro ao enviar resposta:', error);
+      client.emit('error', { message: 'Erro ao enviar resposta' });
     }
   }
 }

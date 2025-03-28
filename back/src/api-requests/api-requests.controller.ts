@@ -1,6 +1,7 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Query } from '@nestjs/common';
 import { ApiRequestsService } from './api-requests.service';
 import { ApiQuery } from '@nestjs/swagger';
+import { MusicApi } from '@prisma/client';
 
 @Controller('api-requests')
 export class ApiRequestsController {
@@ -19,15 +20,19 @@ export class ApiRequestsController {
   @ApiQuery({
     name: 'api_option',
     description:
-      'Escolha a API para buscar as letras: 1 para Letras.mus, 2 para Musixmatch, 3 para Vagalume',
+      'Escolha a API para buscar as letras: LETRAS, MUSIXMATCH ou VAGALUME',
     required: true,
-    enum: ['1', '2', '3'], // Define as opções disponíveis
+    enum: MusicApi,
   })
   async getLyrics(
     @Query('track') track: string,
     @Query('artist') artist: string,
-    @Query('api_option') api_option: string,
+    @Query('api_option') api_option: MusicApi,
   ): Promise<any> {
+    if (!Object.values(MusicApi).includes(api_option)) {
+      throw new BadRequestException('Invalid API option');
+    }
+
     return this.apiRequestsService.getLyrics(track, artist, api_option);
   }
 }

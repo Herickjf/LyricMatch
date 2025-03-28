@@ -1,9 +1,14 @@
 import { Injectable } from '@nestjs/common';
+import { ApiRequestsService } from 'src/api-requests/api-requests.service';
 import { PrismaService } from 'src/prisma-client/prisma-client.service';
+import { MusicApi, Language } from '@prisma/client';
 
 @Injectable()
 export class RoomService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private apiRequestsService: ApiRequestsService,
+  ) {}
 
   async createRoom(
     hostName: string,
@@ -11,6 +16,8 @@ export class RoomService {
     roomPassword: string,
     maxPlayers: number,
     maxRounds: number,
+    language: Language,
+    musicApi: MusicApi,
   ): Promise<{ code: string; host: any }> {
     try {
       let roomCode: string = '';
@@ -33,6 +40,8 @@ export class RoomService {
           password: roomPassword,
           maxPlayers,
           maxRounds,
+          language,
+          musicApi,
         },
       });
 
@@ -78,5 +87,137 @@ export class RoomService {
       console.error('Error joining room:', error);
       throw new Error('Could not join room');
     }
+  }
+
+  async startGame(roomCode: string) {
+    const room = await this.prisma.room.findUnique({
+      where: { code: roomCode },
+      include: { players: true },
+    });
+
+    if (!room) throw new Error('Room not found');
+
+    const words = await this.prisma.word.findMany({
+      where: { language: room.language },
+    });
+    if (words.length === 0) {
+      throw new Error('No words available for the selected language');
+    }
+    const currentWord = words[Math.floor(Math.random() * words.length)].word;
+
+    const gameState = await this.prisma.gameState.create({
+      data: {
+        currentRound: 1,
+        currentWord,
+        timer: 30,
+        roomId: room.id,
+      },
+    });
+
+    await this.prisma.room.update({
+      where: { id: room.id },
+      data: { active: true },
+    });
+
+    return {
+      currentRound: gameState.currentRound,
+      maxRounds: room.maxRounds,
+      players: room.players.map((player) => ({
+        id: player.id,
+        name: player.name,
+        score: 0,
+      })),
+      currentWord: gameState.currentWord,
+      timer: gameState.timer,
+    };
+  }
+
+  async nextRound(roomCode: string) {
+    const room = await this.prisma.room.findUnique({
+      where: { code: roomCode },
+      include: { gameState: true, players: true },
+    });
+
+    if (!room || !room.gameState) throw new Error('Game not found');
+
+    if (room.gameState.currentRound >= room.maxRounds) {
+      await this.prisma.room.update({
+        where: { id: room.id },
+        data: { active: false },
+      });
+      return { gameOver: true, topPlayers: this.getTopPlayers(room.players) };
+    }
+
+    const words = await this.prisma.word.findMany({
+      where: { language: room.language },
+    });
+    if (words.length === 0) {
+      throw new Error('No words available for the selected language');
+    }
+    const currentWord = words[Math.floor(Math.random() * words.length)].word;
+
+    const updatedGameState = await this.prisma.gameState.update({
+      where: { id: room.gameState.id },
+      data: {
+        currentRound: room.gameState.currentRound + 1,
+        currentWord,
+        timer: 30,
+      },
+    });
+
+    return {
+      currentRound: updatedGameState.currentRound,
+      currentWord: updatedGameState.currentWord,
+      timer: updatedGameState.timer,
+    };
+  }
+
+  private getTopPlayers(players: any[]) {
+    const sortedPlayers = players.sort((a, b) => b.score - a.score);
+    return sortedPlayers.slice(0, 3);
+  }
+
+  async processAnswer(
+    roomCode: string,
+    playerId: string,
+    track: string,
+    artist: string,
+  ): Promise<{ isCorrect: boolean; player?: any }> {
+    const room = await this.prisma.room.findUnique({
+      where: { code: roomCode },
+      include: { gameState: true },
+    });
+
+    if (!room || !room.gameState)
+      throw new Error('Room or game state not found');
+
+    const currentWord = room.gameState.currentWord;
+    if (!currentWord) {
+      throw new Error('Current word is not set in the game state');
+    }
+
+    const lyrics = await this.apiRequestsService.getLyrics(
+      track,
+      artist,
+      room.musicApi,
+    );
+
+    if (!lyrics || typeof lyrics !== 'string') {
+      throw new Error('Failed to fetch lyrics');
+    }
+
+    // Valida se a palavra da rodada está presente na letra da música
+    const isCorrect = lyrics.toLowerCase().includes(currentWord.toLowerCase());
+
+    if (isCorrect) {
+      // Atualiza a pontuação do jogador
+      const player = await this.prisma.player.update({
+        where: { id: playerId },
+        data: { score: { increment: 10 } },
+      });
+      return { isCorrect, player };
+    }
+
+    return { isCorrect };
   }
 }
