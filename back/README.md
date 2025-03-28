@@ -56,5 +56,5 @@ npm install
 
 Acesse a documentação da API gerada automaticamente pelo Swagger em:
 ```
-http://localhost:3000/api
+http://localhost:4000/api
 ```

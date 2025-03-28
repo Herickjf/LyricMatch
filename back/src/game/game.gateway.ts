@@ -88,6 +88,44 @@ export class GameGateway {
     }
   }
 
+  @SubscribeMessage('submitAnswer')
+  async handleSubmitAnswer(
+    @MessageBody()
+    data: { roomCode: string; playerId: string; track: string; artist: string },
+    @ConnectedSocket() client: Socket,
+  ) {
+    try {
+      const result = await this.gameService.processAnswer(
+        data.roomCode,
+        data.playerId,
+        data.track,
+        data.artist,
+      );
+
+      client.emit('answerFeedback', {
+        isCorrect: result.isCorrect,
+        message: result.isCorrect ? 'Resposta correta!' : 'Resposta incorreta!',
+      });
+    } catch (error) {
+      console.error('Erro ao enviar resposta:', error);
+      client.emit('error', { message: 'Erro ao enviar resposta' });
+    }
+  }
+
+  @SubscribeMessage('endRound')
+  async handleEndRound(
+    @MessageBody() data: { roomCode: string },
+    @ConnectedSocket() client: Socket,
+  ) {
+    try {
+      const roundResults = await this.gameService.endRound(data.roomCode);
+      this.server.to(data.roomCode).emit('roundEnded', roundResults);
+    } catch (error) {
+      console.error('Erro ao finalizar a rodada:', error);
+      client.emit('error', { message: 'Erro ao finalizar a rodada' });
+    }
+  }
+
   @SubscribeMessage('nextRound')
   async handleNextRound(
     @MessageBody() data: { roomCode: string },
@@ -105,34 +143,6 @@ export class GameGateway {
       client.emit('error', {
         message: 'Erro ao avançar para a próxima rodada',
       });
-    }
-  }
-
-  @SubscribeMessage('submitAnswer')
-  async handleSubmitAnswer(
-    @MessageBody()
-    data: { roomCode: string; playerId: string; track: string; artist: string },
-    @ConnectedSocket() client: Socket,
-  ) {
-    try {
-      const result = await this.gameService.processAnswer(
-        data.roomCode,
-        data.playerId,
-        data.track,
-        data.artist,
-      );
-
-      if (result.isCorrect) {
-        this.server.to(data.roomCode).emit('scoreUpdated', {
-          playerId: result.player.id,
-          score: result.player.score,
-        });
-      } else {
-        client.emit('answerIncorrect', { message: 'Resposta incorreta!' });
-      }
-    } catch (error) {
-      console.error('Erro ao enviar resposta:', error);
-      client.emit('error', { message: 'Erro ao enviar resposta' });
     }
   }
 }

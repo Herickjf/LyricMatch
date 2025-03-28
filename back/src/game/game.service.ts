@@ -132,6 +132,43 @@ export class GameService {
     };
   }
 
+  async endRound(roomCode: string) {
+    const room = await this.prisma.room.findUnique({
+      where: { code: roomCode },
+      include: {
+        gameState: { include: { playerAnswers: true } },
+        players: true,
+      },
+    });
+
+    if (!room || !room.gameState) throw new Error('Game not found');
+
+    const answers = room.gameState!.playerAnswers.filter(
+      (answer) => answer.round === room.gameState!.currentRound,
+    );
+
+    const results = answers.map((answer) => ({
+      playerId: answer.playerId,
+      track: answer.track,
+      artist: answer.artist,
+      albumImage: answer.albumImage,
+      previewUrl: answer.preview,
+      isCorrect: answer.isCorrect,
+    }));
+
+    // Atualiza a pontuação dos jogadores
+    for (const answer of answers) {
+      if (answer.isCorrect) {
+        await this.prisma.player.update({
+          where: { id: answer.playerId },
+          data: { score: { increment: 10 } },
+        });
+      }
+    }
+
+    return { round: room.gameState.currentRound, results };
+  }
+
   async nextRound(roomCode: string) {
     const room = await this.prisma.room.findUnique({
       where: { code: roomCode },
@@ -209,15 +246,35 @@ export class GameService {
     // Valida se a palavra da rodada está presente na letra da música
     const isCorrect = lyrics.toLowerCase().includes(currentWord.toLowerCase());
 
+    const playerAnswer = await this.apiRequestsService.searchTracks_Deezer(
+      track,
+      artist,
+      1,
+    );
+
+    // Salva a resposta do jogador no banco de dados
+    await this.prisma.playerAnswer.create({
+      data: {
+        playerId,
+        gameStateId: room.gameState.id,
+        round: room.gameState.currentRound,
+        track: playerAnswer[0].track_name,
+        artist: playerAnswer[0].artist,
+        albumImage: playerAnswer[0].album_image,
+        preview: playerAnswer[0].preview,
+        isCorrect,
+      },
+    });
+
+    let player;
     if (isCorrect) {
       // Atualiza a pontuação do jogador
-      const player = await this.prisma.player.update({
+      player = await this.prisma.player.update({
         where: { id: playerId },
         data: { score: { increment: 10 } },
       });
-      return { isCorrect, player };
     }
 
-    return { isCorrect };
+    return { isCorrect, player };
   }
 }

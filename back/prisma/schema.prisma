@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
@@ -21,42 +21,58 @@ enum MusicApi {
 }
 
 model Room {
-  id          String      @id @default(uuid())
-  code        String      @unique
+  id          String     @id @default(uuid())
+  code        String     @unique
   password    String?
-  maxRounds   Int         @default(10)
-  maxPlayers  Int         @default(4)
-  active      Boolean     @default(false) // Indica se o jogo está ativo
-  gameState   GameState?  @relation("RoomToGameState") // Apenas o nome da relação aqui
-  gameStateId String?     // Relaciona o estado do jogo
-  language    Language    @default(EN)
-  musicApi    MusicApi    @default(MUSIXMATCH)
-  players     Player[]    // Jogadores na sala
+  maxRounds   Int        @default(10)
+  maxPlayers  Int        @default(4)
+  active      Boolean    @default(false)
+  gameState   GameState? @relation("RoomToGameState")
+  gameStateId String?
+  language    Language   @default(EN)
+  musicApi    MusicApi   @default(MUSIXMATCH)
+  players     Player[]
 }
 
 model Player {
-  id        String      @id @default(uuid())
-  name      String
-  score     Int         @default(0)
-  isHost    Boolean     @default(false)
-  avatar    String?
-  roomId    String?
-  room      Room?       @relation(fields: [roomId], references: [id])
+  id           String         @id @default(uuid())
+  name         String
+  score        Int            @default(0)
+  isHost       Boolean        @default(false)
+  avatar       String?
+  roomId       String?
+  room         Room?          @relation(fields: [roomId], references: [id])
+  PlayerAnswer PlayerAnswer[]
+}
+
+model PlayerAnswer {
+  id          String    @id @default(uuid())
+  playerId    String
+  player      Player    @relation(fields: [playerId], references: [id])
+  round       Int
+  track       String
+  artist      String
+  albumImage  String?
+  preview     String?
+  isCorrect   Boolean
+  gameStateId String
+  gameState   GameState @relation(fields: [gameStateId], references: [id])
 }
 
 model GameState {
-  id            String   @id @default(uuid())
-  currentRound  Int      @default(1)
+  id            String         @id @default(uuid())
+  currentRound  Int            @default(1)
   currentWord   String?
-  timer         Int      @default(30)
-  roomId        String   @unique
-  room          Room     @relation("RoomToGameState", fields: [roomId], references: [id]) // Apenas `fields` e `references` aqui
+  timer         Int            @default(30)
+  roomId        String         @unique
+  room          Room           @relation("RoomToGameState", fields: [roomId], references: [id])
+  playerAnswers PlayerAnswer[]
 }
 
 model Word {
-  id        String    @id @default(uuid())
-  word      String
-  language  Language
+  id       String   @id @default(uuid())
+  word     String
+  language Language
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
