@@ -20,7 +20,6 @@ interface RoomDto {
   maxPlayers: number;
   maxRounds: number;
   language: Language;
-  musicApi: MusicApi;
 }
 
 @WebSocketGateway({ cors: true })
@@ -44,7 +43,6 @@ export class GameGateway {
         data.room.maxPlayers,
         data.room.maxRounds,
         data.room.language,
-        data.room.musicApi,
       );
       client.join(code); // Adiciona o cliente à sala
       client.emit('roomCreated', { code, host }); // Emite um evento 'roomCreated' para o cliente com o código da sala e o host

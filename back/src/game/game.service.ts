@@ -18,7 +18,6 @@ export class GameService {
     maxPlayers: number,
     maxRounds: number,
     language: Language,
-    musicApi: MusicApi,
   ): Promise<{ code: string; host: any }> {
     try {
       let roomCode: string = '';
