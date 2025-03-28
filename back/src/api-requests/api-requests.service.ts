@@ -7,155 +7,31 @@ dotenv.config();
 
 @Injectable()
 export class ApiRequestsService {
-  private clientId = process.env.CLIENT_ID;
-  private clientSecret = process.env.CLIENT_SECRET;
-  private musixmatchApiKey = process.env.MUSIXMATCH_API_KEY;
-  private vagalumeApiKey = process.env.VAGALUME_API_KEY;
-
-  private async getAccessToken(): Promise<string> {
-    const params = new URLSearchParams();
-    params.append('grant_type', 'client_credentials');
-
-    const result = await axios.post(
-      'https://accounts.spotify.com/api/token',
-      params,
-      {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Authorization: `Basic ${Buffer.from(
-            `${this.clientId}:${this.clientSecret}`,
-          ).toString('base64')}`,
-        },
-      },
-    );
-
-    const data: unknown = result.data;
-
-    // Verificação de tipo
-    if (typeof data === 'object' && data !== null && 'access_token' in data) {
-      return (data as AccessTokenResponse).access_token;
-    } else {
-      throw new Error('Invalid access token response');
-    }
-  }
-
-  private async searchTracks_Spotify(
+  async searchTracks_Deezer(
     track: string,
     artist: string,
+    limit: number,
   ): Promise<any> {
-    const accessToken = await this.getAccessToken();
-    const query = `track:${track} artist:${artist}`;
+    const query = `${artist} ${track}`;
 
     try {
       const result = await axios.get(
-        `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=5`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
+        `https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=${limit}`,
       );
 
       const data: any = result.data;
 
-      // Extract relevant track information
-      const tracks = data.tracks.items.map((item: any) => ({
-        track_name: item.name,
-        artist_name: item.artists.map((artist: any) => artist.name).join(', '),
-        album_image: item.album.images[0]?.url || null,
-        preview_url: item.preview_url,
+      const tracks = data.data.map((item: any) => ({
+        track_name: item.title,
+        artist: item.artist.name,
+        album_image: item.album.cover_xl,
+        preview: item.preview,
       }));
 
       return tracks;
     } catch (error) {
-      console.error('Error searching tracks on Spotify:', error.message);
-      throw new Error('Failed to search tracks on Spotify');
-    }
-  }
-
-  private async searchTracks_musixmatch(
-    track: string,
-    artist: string,
-  ): Promise<any> {
-    let limit = 5;
-
-    const result = await axios.get(
-      `https://api.musixmatch.com/ws/1.1/track.search?q_track=${track}&q_artist=${artist}&apikey=${this.musixmatchApiKey}&f_has_lyrics=1&page_size=${limit}`,
-    );
-
-    const data: any = result.data;
-
-    const tracks = data.message.body.track_list.map((item: any) => ({
-      track_name: item.track.track_name,
-      artist_name: item.track.artist_name,
-      album_image: item.track.album_coverart_100x100,
-    }));
-
-    return tracks;
-  }
-
-  async searchTracks_Vagalume(track: string, artist: string): Promise<any> {
-    let limit = 5;
-    const query = `${artist} ${track}`;
-
-    const result = await axios.get(
-      `https://api.vagalume.com.br/search.excerpt?q=${query}&apikey=${this.vagalumeApiKey}&limit=${limit}`,
-    );
-
-    const data: any = result.data;
-    // const tracks = data.mus.map((item: any) => ({
-    //   track_name: item.name,
-    //   artist_name: item.band,
-    //   album_image: item.pic_small,
-    // }));
-
-    return data;
-  }
-
-  async getAudioPreview(track: string, artist: string): Promise<string | null> {
-    const accessToken = await this.getAccessToken();
-    const query = `track:${track} artist:${artist}`;
-
-    const result = await axios.get(
-      `https://api.spotify.com/v1/search?q=${encodeURIComponent(
-        query,
-      )}&type=track`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      },
-    );
-
-    const data: any = result.data;
-
-    if (data.tracks.items.length === 0) {
-      return null;
-    }
-
-    return data.tracks.items[0].preview_url;
-  }
-
-  async searchTracks(
-    track: string,
-    artist: string,
-    api_option: string | number,
-  ): Promise<any> {
-    switch (api_option) {
-      case '1':
-        return this.searchTracks_Spotify(track, artist);
-      case '2': {
-        const obj = await this.searchTracks_musixmatch(track, artist);
-        obj['audio_preview'] = await this.getAudioPreview(track, artist);
-        return obj;
-      }
-      case '3': {
-        return await this.searchTracks_Vagalume(track, artist);
-        // obj['audio_preview'] = await this.getAudioPreview(track, artist);
-        // return obj;
-      }
-      default:
-        return { error_code: 400, message: 'Invalid API option' };
+      console.error('Error searching tracks on Deezer:', error.message);
+      throw new Error('Failed to search tracks on Deezer');
     }
   }
 
@@ -189,7 +65,6 @@ export class ApiRequestsService {
     }
   }
 
-  // Substituir chamada da api por chamada direta ao site, usando scraping
   private async getLyrics_musixmatch(
     songName: string,
     artistName: string,
@@ -271,8 +146,4 @@ export class ApiRequestsService {
         return { error_code: 400, message: 'Invalid API option' };
     }
   }
-}
-
-interface AccessTokenResponse {
-  access_token: string;
 }
