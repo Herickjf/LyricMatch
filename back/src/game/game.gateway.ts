@@ -6,8 +6,8 @@ import {
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { RoomService } from './room.service';
 import { MusicApi, Language } from '@prisma/client';
+import { GameService } from './game.service';
 
 interface PlayerDto {
   name: string;
@@ -23,11 +23,11 @@ interface RoomDto {
 }
 
 @WebSocketGateway({ cors: true })
-export class RoomGateway {
+export class GameGateway {
   @WebSocketServer()
   server: Server; // Instância do servidor WebSocket
 
-  constructor(private readonly roomService: RoomService) {}
+  constructor(private readonly gameService: GameService) {}
 
   // Lida com a mensagem 'createRoom' enviada pelo cliente
   @SubscribeMessage('createRoom')
@@ -36,7 +36,7 @@ export class RoomGateway {
     @ConnectedSocket() client: Socket, // Socket do cliente conectado
   ) {
     try {
-      const { code, host } = await this.roomService.createRoom(
+      const { code, host } = await this.gameService.createRoom(
         data.host.name,
         data.host.avatar,
         data.room.password,
@@ -60,7 +60,7 @@ export class RoomGateway {
     @ConnectedSocket() client: Socket, // Socket do cliente conectado
   ) {
     try {
-      const { room, user } = await this.roomService.joinRoom(
+      const { room, user } = await this.gameService.joinRoom(
         data.code,
         data.player.name,
         data.player.avatar,
@@ -80,7 +80,7 @@ export class RoomGateway {
     @ConnectedSocket() client: Socket,
   ) {
     try {
-      const gameState = await this.roomService.startGame(data.roomCode);
+      const gameState = await this.gameService.startGame(data.roomCode);
       this.server.to(data.roomCode).emit('gameStarted', gameState);
     } catch (error) {
       console.error('Erro ao iniciar o jogo:', error);
@@ -94,7 +94,7 @@ export class RoomGateway {
     @ConnectedSocket() client: Socket,
   ) {
     try {
-      const gameState = await this.roomService.nextRound(data.roomCode);
+      const gameState = await this.gameService.nextRound(data.roomCode);
       if (gameState.gameOver) {
         this.server.to(data.roomCode).emit('gameOver', gameState);
       } else {
@@ -115,7 +115,7 @@ export class RoomGateway {
     @ConnectedSocket() client: Socket,
   ) {
     try {
-      const result = await this.roomService.processAnswer(
+      const result = await this.gameService.processAnswer(
         data.roomCode,
         data.playerId,
         data.track,
