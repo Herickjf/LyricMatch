@@ -8,12 +8,6 @@ Este é o repositório do backend do projeto **Song Guesser**, desenvolvido com 
 Antes de iniciar, crie um arquivo `.env` na raiz do projeto com as seguintes variáveis de ambiente:
 
 ```properties
-# Spotify API keys
-CLIENT_ID=seu_client_id
-CLIENT_SECRET=seu_client_secret
-
-# Genius API keys
-GENIUS_ACCESS_TOKEN=seu_genius_access_token
 
 # Musixmatch API keys
 MUSIXMATCH_API_KEY=seu_musixmatch_api_key
