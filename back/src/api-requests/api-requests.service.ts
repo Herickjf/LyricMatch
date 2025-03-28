@@ -40,11 +40,9 @@ export class ApiRequestsService {
     songName: string,
     artistName: string,
   ): Promise<string> {
-    // Formatação do nome da música e do artista para se ajustar à URL do site
-    const formattedSong = songName.replace(/ /g, '-').toLowerCase();
-    const formattedArtist = artistName.replace(/ /g, '-').toLowerCase();
-
-    const url = `https://www.letras.mus.br/${formattedArtist}/${formattedSong}/`;
+    const url = `https://www.letras.mus.br/${artistName}/${songName}/`
+      .replace(/ /g, '-')
+      .toLowerCase();
 
     try {
       const response = await axios.get(url);
@@ -54,7 +52,20 @@ export class ApiRequestsService {
         const lyricsDiv = $('.lyric-original');
 
         if (lyricsDiv.length > 0) {
-          return lyricsDiv.text().trim().replace(/\n+/g, '\n');
+          // Itera sobre os parágrafos dentro de .lyric-original e processa os <br> como quebras de linha
+          const lyrics = lyricsDiv
+            .find('p')
+            .map((_, p) => {
+              const paragraph = $(p)
+                .html() // Obtém o HTML do parágrafo
+                ?.replace(/<br\s*\/?>/g, '\n') // Substitui <br> por \n
+                .trim(); // Remove espaços extras
+              return paragraph;
+            })
+            .get()
+            .join('\n\n'); // Adiciona uma linha em branco entre os parágrafos
+
+          return lyrics || 'Letra não encontrada na página.';
         } else {
           return 'Letra não encontrada na página.';
         }
