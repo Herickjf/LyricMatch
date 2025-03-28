@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import * as dotenv from 'dotenv';
 import * as cheerio from 'cheerio';
-import { MusicApi } from '@prisma/client';
+import { MusicApi } from './music-api.enum';
 
 dotenv.config();
 

@@ -6,8 +6,9 @@ import {
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { MusicApi, Language } from '@prisma/client';
+import { Language } from '@prisma/client';
 import { GameService } from './game.service';
+import { MusicApi } from '../api-requests/music-api.enum';
 
 interface PlayerDto {
   name: string;
@@ -91,7 +92,13 @@ export class GameGateway {
   @SubscribeMessage('submitAnswer')
   async handleSubmitAnswer(
     @MessageBody()
-    data: { roomCode: string; playerId: string; track: string; artist: string },
+    data: {
+      roomCode: string;
+      playerId: string;
+      track: string;
+      artist: string;
+      musicApi: MusicApi;
+    },
     @ConnectedSocket() client: Socket,
   ) {
     try {
@@ -100,6 +107,7 @@ export class GameGateway {
         data.playerId,
         data.track,
         data.artist,
+        data.musicApi,
       );
 
       client.emit('answerFeedback', {
