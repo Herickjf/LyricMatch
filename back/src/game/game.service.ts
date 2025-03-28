@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ApiRequestsService } from 'src/api-requests/api-requests.service';
 import { PrismaService } from 'src/prisma-client/prisma-client.service';
-import { MusicApi, Language } from '@prisma/client';
+import { Language } from '@prisma/client';
+import { MusicApi } from '../api-requests/music-api.enum';
 
 @Injectable()
 export class GameService {
@@ -41,7 +42,6 @@ export class GameService {
           maxPlayers,
           maxRounds,
           language,
-          musicApi,
         },
       });
 
@@ -219,6 +219,7 @@ export class GameService {
     playerId: string,
     track: string,
     artist: string,
+    musicApi: MusicApi,
   ): Promise<{ isCorrect: boolean; player?: any }> {
     const room = await this.prisma.room.findUnique({
       where: { code: roomCode },
@@ -236,7 +237,7 @@ export class GameService {
     const lyrics = await this.apiRequestsService.getLyrics(
       track,
       artist,
-      room.musicApi,
+      musicApi,
     );
 
     if (!lyrics || typeof lyrics !== 'string') {

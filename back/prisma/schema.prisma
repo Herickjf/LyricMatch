@@ -14,12 +14,6 @@ enum Language {
   ES
 }
 
-enum MusicApi {
-  LETRAS
-  VAGALUME
-  MUSIXMATCH
-}
-
 model Room {
   id          String     @id @default(uuid())
   code        String     @unique
@@ -30,7 +24,6 @@ model Room {
   gameState   GameState? @relation("RoomToGameState")
   gameStateId String?
   language    Language   @default(EN)
-  musicApi    MusicApi   @default(MUSIXMATCH)
   players     Player[]
 }
 

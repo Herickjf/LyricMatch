@@ -1,7 +1,7 @@
 import { BadRequestException, Controller, Get, Query } from '@nestjs/common';
 import { ApiRequestsService } from './api-requests.service';
 import { ApiQuery } from '@nestjs/swagger';
-import { MusicApi } from '@prisma/client';
+import { MusicApi } from 'src/api-requests/music-api.enum';
 
 @Controller('api-requests')
 export class ApiRequestsController {
