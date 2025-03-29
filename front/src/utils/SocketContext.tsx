@@ -1,21 +1,14 @@
 import { io } from "socket.io-client";
 import { useEffect, useMemo, createContext, useContext } from "react";
+import { Socket } from "socket.io-client";
 
-const SocketContext = createContext(null);
+type SocketContextType = Socket | null;
 
-export function SocketProvider({ children:any }) {
+const SocketContext = createContext<SocketContextType>(null);
+
+export function SocketProvider({ children }: { children: React.ReactNode }) {
     // Criando a conexão com o servidor (MANTENDO UMA ÚNICA INSTÂNCIA)
-    const socket = useMemo(() => io("http://localhost:3001"), []);
-
-    useEffect(() => {
-        socket.on("connect", () => {
-            console.log("Conectado ao servidor com ID:", socket.id);
-        });
-
-        return () => {
-            socket.disconnect();
-        };
-    }, [socket]);
+    const socket = useMemo(() => io("http://localhost:4000"), []);
 
     return (
         <SocketContext.Provider value={socket}>

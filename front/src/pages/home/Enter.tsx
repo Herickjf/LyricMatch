@@ -1,15 +1,57 @@
 import TextInput from '../../utils/TextInput'
 import Button from '../../utils/Button'
 import "../../css/utils/form.css"
-import ErrorAlert from '../../utils/ErrorAlert'
-import Notification from '../../utils/Notification'
+import Alert from '../../utils/Alert'
+import { useSocket } from '../../utils/SocketContext'
 
 import { useState } from 'react';
 
+interface EnterProps {
+    username: string,
+    avatar: number | string
+}
 
-const Enter = () => {
+
+const Enter: React.FC<EnterProps> = ({username, avatar}) => {
     const [roomCode, setRoomCode] = useState<string>("");
     const [roomPassword, setRoomPassword] = useState<string>("");
+    const [alert, setAlert] = useState<{title: string, message: string} | null>(null);
+    const socket = useSocket();
+
+    function handleEnterRoom() {
+        if(username.length < 1) {
+            setAlert({ title: "Input Error", message: "Please, set a username first." });
+            return;
+        }
+
+        if (roomCode.length < 1) {
+            setAlert({ title: "Input Error", message: "Please, set a room code first." });
+            return;
+        }
+
+        if (roomPassword.length < 1) {
+            setAlert({ title: "Input Error", message: "Please, set a room password first." });
+            return;
+        }
+
+        socket?.emit("joinRoom", {
+            code: roomCode,
+            player: {
+                name: username,
+                avatar: avatar
+            },
+            password: roomPassword
+        })
+
+        socket?.on("userJoined", (data) => {
+            // Implementar a logica de trocar de tela aqui
+            console.log("User joined:", data.name);
+        });
+
+        socket?.on("joinError", (error) => {
+            setAlert({ title: "Join Room Error", message: error.message });
+        });
+    }
 
     return(
         <div className="form_box">
@@ -18,10 +60,10 @@ const Enter = () => {
 
             <Button 
                 text="Enter room" 
-                func={() => console.log("Code: " + roomCode, "Password: " + roomPassword)}
+                func={handleEnterRoom}
             />
-            <ErrorAlert title="Error" message="This is a test error message" error_code={404}/>
-            <Notification title="Success" message="This is a test success message"/>
+
+            {alert && <Alert title={alert.title} message={alert.message} />}
         </div>
     )
 }

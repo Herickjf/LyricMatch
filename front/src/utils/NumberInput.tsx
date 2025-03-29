@@ -3,7 +3,7 @@ import "../css/utils/input.css"
 interface NumberInput_Params{
     label: string,
     placeholder?: string,
-    setNumber?: (num: number|string) => void, 
+    setNumber?: (num: number) => void, 
 }
 
 const NumberInput: React.FC<NumberInput_Params> = ({label, placeholder, setNumber}) =>{
@@ -15,7 +15,7 @@ const NumberInput: React.FC<NumberInput_Params> = ({label, placeholder, setNumbe
                 type="number" 
                 className="number_input"
                 placeholder = {placeholder}
-                onChange= {(e) => setNumber && setNumber(e.target.value)}
+                onChange= {(e) => setNumber && setNumber(Number(e.target.value))}
             />
         </div>
 

@@ -10,7 +10,7 @@ interface AlertProps {
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-const ErrorAlert : React.FC<AlertProps> = ({title, message, error_code, seconds = 3}) => {
+const Alert : React.FC<AlertProps> = ({title, message, error_code, seconds = 3}) => {
     const [visible, setVisible] = React.useState(true);
     const [timebar, setTimeBar] = React.useState(100);
 
@@ -37,9 +37,13 @@ const ErrorAlert : React.FC<AlertProps> = ({title, message, error_code, seconds 
         return null;
     }
 
+    function handleClose() {
+        setVisible(false);
+    }
+
     return ReactDOM.createPortal(
         <div className = "alert" role = "alert">
-            <div className="alert_close_button"></div>
+            <div className="alert_close_button" onClick={handleClose}></div>
             {error_code ? (
                 <div className="alert_title">Error <span className="alert_error_code">{error_code}</span>: {title}</div>
             ) : (
@@ -54,4 +58,4 @@ const ErrorAlert : React.FC<AlertProps> = ({title, message, error_code, seconds 
     )
 }
 
-export default ErrorAlert
+export default Alert
