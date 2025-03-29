@@ -14,11 +14,18 @@ const Nav: React.FC = () => {
     const [menuOpen, setMenuOpen] = useState(false);
 
     return (
-        <div id = "nav_bar">
-            <div className="nav_items" id="menu_icon" onClick={() => setMenuOpen(true)}></div>
-            <div className="nav_items" id="logo_icon"></div>
-            {menuOpen && <Menu openMenu={setMenuOpen}/> }
-        </div>
+        <nav >
+            <div id = "nav_bar">
+                <div className="nav_items" 
+                     id="menu_icon" 
+                     style={!menuOpen ? { visibility: "visible" }: { visibility: "hidden" }}
+                     onClick={() => setMenuOpen(!menuOpen)}>
+                </div>
+                <div className="nav_items" id="logo_icon"></div>
+            </div>
+
+            {menuOpen && <Menu openMenu={menuOpen} setOpenMenu={setMenuOpen}/> }
+        </nav>
     )
 }
 
