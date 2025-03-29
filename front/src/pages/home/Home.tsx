@@ -5,7 +5,11 @@ import Enter from './Enter';
 import Create from './Create';
 import TextInput from '../../utils/TextInput';
 
-const Home = () => {
+interface HomeProps {
+    inheritance: (value: boolean) => void;
+}
+
+const Home: React.FC<HomeProps> = ({inheritance}) => {
     const [mode, setMode] = useState<"enter" | "create">("enter");
     const [username, setUsername] = useState<string>("");
     const [avatar, setAvatar] = useState<string>("avatar1.png");
@@ -51,8 +55,8 @@ const Home = () => {
                 <TextInput label="Nickname:" placeholder="Enter your nickname" setText={setUsername}/>
 
 
-                {mode === "enter" && <Enter username={username}  avatar={avatar}/>}
-                {mode === "create" && <Create username={username}  avatar={avatar}/>}
+                {mode === "enter" && <Enter inheritance={inheritance} username={username}  avatar={avatar}/>}
+                {mode === "create" && <Create inheritance={inheritance} username={username}  avatar={avatar}/>}
 
             </div>
         </div>

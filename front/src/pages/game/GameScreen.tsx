@@ -1,20 +1,24 @@
-// import React, { useState, useEffect } from 'react'
-// import { useWindowSize } from './ScreenSize'
-// import { DesktopScreen} from './desktop/DesktopScreen'
-// import { MobileScreen } from './mobile/MobileScreen'
+import React, { useState, useEffect } from 'react'
+import useWindowSize from './ScreenSize'
+import DesktopScreen from './desktop/DesktopScreen'
+import MobileScreen from './mobile/MobileScreen'
 
-// const GameScreen: React.FC = () => {
-//     const { width } = useWindowSize();
+interface GameScreenProps {
+    inheritance: (value: boolean) => void,
+}
 
-//     return (
-//         <div>
-//             {width < 768 ? (
-//                 <MobileScreen/>
-//             ) : (
-//                 <DesktopScreen/>
-//             )}
-//         </div>
-//     );
-// }
+const GameScreen: React.FC<GameScreenProps> = ({inheritance}) => {
+    const { width } = useWindowSize();
 
-// export default GameScreen;
+    return (
+        <div>
+            {width < 1024 ? (
+                <MobileScreen/>
+            ) : (
+                <DesktopScreen/>
+            )}
+        </div>
+    );
+}
+
+export default GameScreen;

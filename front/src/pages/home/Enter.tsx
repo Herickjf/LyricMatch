@@ -7,12 +7,13 @@ import { useSocket } from '../../utils/SocketContext'
 import { useState } from 'react';
 
 interface EnterProps {
+    inheritance: (value: boolean) => void,
     username: string,
     avatar: number | string
 }
 
 
-const Enter: React.FC<EnterProps> = ({username, avatar}) => {
+const Enter: React.FC<EnterProps> = ({inheritance, username, avatar}) => {
     const [roomCode, setRoomCode] = useState<string>("");
     const [roomPassword, setRoomPassword] = useState<string>("");
     const [alert, setAlert] = useState<{title: string, message: string} | null>(null);
@@ -46,6 +47,7 @@ const Enter: React.FC<EnterProps> = ({username, avatar}) => {
         socket?.on("userJoined", (data) => {
             // Implementar a logica de trocar de tela aqui
             console.log("User joined:", data.name);
+            inheritance(true);
         });
 
         socket?.on("joinError", (error) => {

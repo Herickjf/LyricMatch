@@ -15,6 +15,8 @@ const Alert : React.FC<AlertProps> = ({title, message, error_code, seconds = 3})
     const [timebar, setTimeBar] = React.useState(100);
 
     React.useEffect(() => {
+        setVisible(true);
+        setTimeBar(100);
         const interval = 10; 
         const step = 100 / (seconds * 1000 / interval);
 
@@ -31,18 +33,15 @@ const Alert : React.FC<AlertProps> = ({title, message, error_code, seconds = 3})
             clearInterval(timer);
             clearTimeout(hideTimer);
         };
-    }, [seconds]);
+    }, [title, message, seconds]);
 
-    if (!visible) {
-        return null;
-    }
 
     function handleClose() {
         setVisible(false);
     }
 
     return ReactDOM.createPortal(
-        <div className = "alert" role = "alert">
+        <div className = "alert" role = "alert" style={{visibility: visible ? "visible" : "hidden"}}>
             <div className="alert_close_button" onClick={handleClose}></div>
             {error_code ? (
                 <div className="alert_title">Error <span className="alert_error_code">{error_code}</span>: {title}</div>

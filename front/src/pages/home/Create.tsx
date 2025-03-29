@@ -10,11 +10,12 @@ import "../../css/utils/input.css"
 import { useState } from "react"
 
 interface CreateProps {
+    inheritance: (value: boolean) => void,
     username: string,
     avatar: number | string
 }
 
-const Create: React.FC<CreateProps> = ({username, avatar}) => {
+const Create: React.FC<CreateProps> = ({inheritance, username, avatar}) => {
     const [password, setPassword] = useState<string>("");
     const [max_players, setMaxPlayers] = useState<number>(3);
     const [max_rounds, setMaxRounds] = useState<number>(3);
@@ -47,7 +48,7 @@ const Create: React.FC<CreateProps> = ({username, avatar}) => {
 
         socket?.on("roomCreated", (data) => {
             console.log("Room created with code:", data.code);
-            // Redirect to the room page or perform any other action
+            inheritance(true);
         });
 
         socket?.on("createError", (error) => {
@@ -60,8 +61,8 @@ const Create: React.FC<CreateProps> = ({username, avatar}) => {
             <TextInput label="Password:" placeholder="Create the room password" setText={setPassword}/>
 
             <div className="number_inputs">
-                <NumberInput label="Max Players:" placeholder="3" setNumber={setMaxPlayers}/>
-                <NumberInput label="Max Rounds:"  placeholder="3" setNumber={setMaxRounds}/>
+                <NumberInput label="Max Players:" placeholder="3 - 100" setNumber={setMaxPlayers}/>
+                <NumberInput label="Max Rounds:"  placeholder="3 - 50" setNumber={setMaxRounds}/>
             </div>
 
             <div className="input_box" id="language_selection_box">
