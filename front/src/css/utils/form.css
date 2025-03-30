@@ -3,7 +3,7 @@
     flex-direction: column;
     /* justify-content: center; */
     align-items: center;
-    gap: 15px;
+    gap: 13px;
     width: 100%;
 }
 
@@ -26,6 +26,59 @@
     /* flex-wrap: wrap; */
     justify-content: center;
     align-items: center;
+}
+
+/* LANGUAGE SELECTION */
+#language_selection_box{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+}
+#language_selection_box > #languages_icons_box{
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+}
+#language_selection_box > #languages_icons_box > .language_icon{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    transition: all .3s ease-in-out;
+
+
+    background-size: cover;
+    background-position: center;
+}
+#language_selection_box > #languages_icons_box > .language_icon:hover{
+    transform: scale(1.2);
+    cursor: pointer;
+    transition: all .3s ease-in-out;
+}
+#language_selection_box > #languages_icons_box > .flag-selected{
+    box-shadow: 0 0 5px #cfe587;
+    border: 2px solid #eaf7c2;
+}
+#language_selection_box > #languages_icons_box > #PT-flag{
+    background-image: url('/flags/PT_flag.svg');
+}
+#language_selection_box > #languages_icons_box > #EN-flag{
+    background-image: url('/flags/EN_flag.svg');
+}
+#language_selection_box > #languages_icons_box > #SP-flag{
+    background-image: url('/flags/SP_flag.svg');
+}
+
+
+
+
+@media screen and (min-width: 650px) and (max-height: 650px) {
+    .form_box{
+        max-height: 100px;
+        overflow-y: scroll;
+    }
 }
 
 

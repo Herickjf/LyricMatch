@@ -3,7 +3,7 @@
 
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 2px;
     box-sizing: border-box;
     
     font-size: 18px;
@@ -24,11 +24,23 @@
 
 .input_box input:focus{
     outline: solid 2px #A4AC86;
+    box-shadow: 0 0 15px #d9e4b2;
 }
 
 .input_box input::placeholder{
     color: #ffffff29;
 }
+
+input[type="number"] {
+    -moz-appearance: textfield; /* Firefox */
+  }
+  
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;  /* Chrome, Safari */
+    margin: 0;
+  }
+  
 
 @media screen and (max-width: 768px){
     .input_box label{        

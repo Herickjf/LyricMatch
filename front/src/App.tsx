@@ -4,21 +4,34 @@ import About from "./pages/about/About";
 import NotFound from "./pages/notFound/NotFound";
 import Nav from "./pages/nav/nav";
 import './css/initialpages/App.css'
+import { SocketProvider } from "./utils/SocketContext";
+import GameScreen from "./pages/game/GameScreen";
+
+import { useState } from "react";
 
 const App = () => {
+  const [ingame, setInGame] = useState(true);
+
   return (
-    <div className="App" id="App_Screen">
+    <SocketProvider>
+      <div className="App" id="App_Screen">
 
-      <Nav />
+        {!ingame && <Nav />}
 
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    
+        { !ingame && 
+          <Routes>
+            <Route path="/" element={<Home inheritance={setInGame}/>} />
+            <Route path="/about" element={<About />} />
+            <Route path="/howtoplay" element={<About />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        }
 
-    </div>
+        { ingame && <GameScreen inheritance={setInGame}/>}
+      
+
+      </div>
+    </SocketProvider>
   );
 };
 
