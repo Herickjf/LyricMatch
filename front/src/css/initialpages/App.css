@@ -7,6 +7,17 @@
   color: white;
 }
 
+*::selection{
+  background: #c8f973;
+  color: black;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 body{
   position: relative;
   width: 100%;
@@ -22,6 +33,7 @@ body{
   margin: 0 auto;
   display: flex;
   width: 100%;
+  height: 100%;
   
   overflow-y: hidden;
   overflow-x: hidden;

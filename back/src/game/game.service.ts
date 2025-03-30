@@ -249,7 +249,6 @@ export class GameService {
     const playerAnswer = await this.apiRequestsService.searchTracks_Deezer(
       track,
       artist,
-      1,
     );
 
     // Salva a resposta do jogador no banco de dados

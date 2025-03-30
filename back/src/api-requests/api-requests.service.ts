@@ -10,14 +10,13 @@ dotenv.config();
 export class ApiRequestsService {
   async searchTracks_Deezer(
     track: string,
-    artist: string,
-    limit: number,
+    artist: string
   ): Promise<any> {
     const query = `${artist} ${track}`;
 
     try {
       const result = await axios.get(
-        `https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=${limit}`,
+        `https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=5`,
       );
 
       const data: any = result.data;

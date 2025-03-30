@@ -1,6 +1,8 @@
+import '../../../css/game/desktop/rightBox.css'
+
 const RightBox: React.FC = () =>{
     return (
-        <div>
+        <div id="right_box" className='side_box'>
             
         </div>
     )

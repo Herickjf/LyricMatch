@@ -11,9 +11,8 @@ export class ApiRequestsController {
   async searchTracks(
     @Query('track') track: string,
     @Query('artist') artist: string,
-    @Query('limit') limit: string,
   ): Promise<any> {
-    return this.apiRequestsService.searchTracks_Deezer(track, artist, +limit);
+    return this.apiRequestsService.searchTracks_Deezer(track, artist);
   }
 
   @Get('lyrics')

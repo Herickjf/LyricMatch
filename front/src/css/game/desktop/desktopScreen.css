@@ -1,0 +1,19 @@
+#desktop_screen{
+    margin: auto auto;
+    width: 80%;
+    height: 85%;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background-color: rgba(67, 36, 11, .4);
+    border: 2px solid rgba(255, 255, 255, 0.148);
+    border-radius: 10px;
+}
+
+@media screen and (min-width: 1700px) {
+    #desktop_screen{
+        height: 60%;
+    }
+}

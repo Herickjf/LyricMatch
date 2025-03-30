@@ -18,6 +18,6 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
 }
 
 // Hook para acessar o socket em qualquer componente
-export function useSocket() {
+export function useSocket() : Socket | null{
     return useContext(SocketContext);
 }
