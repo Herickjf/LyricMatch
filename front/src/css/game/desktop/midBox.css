@@ -1,6 +1,8 @@
 #mid_box{
-    width: 50%;
+    width: 40%;
     height: 95%;
+
+    padding: 2% 3%;
     
     background-color: rgba(67, 36, 11, .9);
     border-radius: 10px;

@@ -27,34 +27,36 @@ const Home: React.FC<HomeProps> = ({inheritance}) => {
     return(
         <div id='home'>
             <div id="form_box">
-                <h1 id="game_title">Song Guesser</h1>
 
+                <div id="fixed_box">
+                    <h1 id="game_title">Song Guesser</h1>
 
-                <div id="options_entry_box">
-                    <button 
-                        style={mode === 'enter' ? {backgroundColor: '#A4AC86'}: undefined} 
-                        id="enter_option"  
-                        className="option_entry" 
-                        onClick={toggleToEnter}  
-                        >Enter
-                    </button>
-                    <button 
-                        style={mode === 'create' ? {backgroundColor: '#A4AC86'}: undefined}
-                        id="create_option" 
-                        className="option_entry" 
-                        onClick={toggleToCreate} 
-                        >Create
-                    </button>
-                </div>
-
-                <div id="user_avatar_box">
-                    <div id="edit_avatar" onClick={() => setOpenAvatarMenu(true)}>
-                        <div id="edit_avatar_icon"></div>
+                    <div id="options_entry_box">
+                        <button 
+                            style={mode === 'enter' ? {backgroundColor: '#A4AC86'}: undefined} 
+                            id="enter_option"  
+                            className="option_entry" 
+                            onClick={toggleToEnter}  
+                            >Enter
+                        </button>
+                        <button 
+                            style={mode === 'create' ? {backgroundColor: '#A4AC86'}: undefined}
+                            id="create_option" 
+                            className="option_entry" 
+                            onClick={toggleToCreate} 
+                            >Create
+                        </button>
                     </div>
-                    <div id="user_avatar" style={{backgroundImage: `url(${avatar})`}}></div>
-                </div>
-                
-                <TextInput label="Nickname:" placeholder="Enter your nickname" setText={setUsername}/>
+
+                    <div id="user_avatar_box">
+                        <div id="edit_avatar" onClick={() => setOpenAvatarMenu(true)}>
+                            <div id="edit_avatar_icon"></div>
+                        </div>
+                        <div id="user_avatar" style={{backgroundImage: `url(${avatar})`}}></div>
+                    </div>
+                    
+                    <TextInput label="Nickname:" placeholder="Enter your nickname" setText={setUsername}/>
+                </div> {/*fim de fixed_box*/}
 
 
                 {mode === "enter" && <Enter inheritance={inheritance} username={username}  avatar={avatar}/>}

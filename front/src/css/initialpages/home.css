@@ -13,11 +13,13 @@
 #form_box {
     margin-left: 0;
     margin-top: 0;
-    padding: 20px 30px;
+    padding: 40px 30px;
 
-    width: 30%;
+    width: 60%;
+    
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-evenly;
     gap: 15px;
 
     backdrop-filter: blur(2px);
@@ -26,7 +28,16 @@
     border-radius: 10px;
 }
 
-#form_box > h1{
+#fixed_box{
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+}
+
+h1{
     font-size: 32px;
     font-weight: 400;
     text-shadow: #A4AC86 0px 0px 20px;
@@ -134,8 +145,8 @@
 
     #form_box {
         margin: 0 auto;
-        width: 50%;
-        padding: 20px;
+        width: 70%;
+        padding: 40px 20px;
         gap: 15px;
     }
 
@@ -149,25 +160,31 @@
     }
 }
 
-    @media screen and (max-width: 480px) {
-        #home {
-            width: 95%;
-            height: auto;
-        }
-        
-        #form_box {
-            margin: 0 auto;
-            width: 80%;
-            padding: 15px;
-            gap: 10px;
-        }
-
-        #options_entry_box {
-            gap: 0px;
-        }
-
-        #options_entry_box > .option_entry {
-            width: 90%;
-            font-size: 14px;
-        }
+@media screen and (max-width: 650px) {
+    #home {
+        width: 95%;
+        height: auto;
     }
+    
+    #form_box {
+        flex-direction: column;
+        margin: 0 auto;
+        width: 80%;
+        padding: 15px 15px;
+        gap: 10px;
+    }
+
+    #fixed_box{
+        width: 100%;
+        gap: 10px;
+    }
+
+    #options_entry_box {
+        gap: 0px;
+    }
+
+    #options_entry_box > .option_entry {
+        width: 90%;
+        font-size: 14px;
+    }
+}

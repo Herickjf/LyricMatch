@@ -18,10 +18,18 @@ const MidBox: React.FC = () =>{
 
     return (
         <div id="mid_box">
-            {room_status == "game_start" && <GameStart/>}
-            {room_status == "in_round" && <SearchSong/>}
-            {room_status == "between_rounds" && <BetweenRounds/>}
-            {room_status == "rankings" && <Rankings/>}
+            {(() => {
+                switch (room_status) {
+                    case "game_start":
+                        return <GameStart/>
+                    case "in_round":
+                        return <SearchSong/>
+                    case "between_rounds":
+                        return <BetweenRounds/>
+                    case "rankings":
+                        return <Rankings/>
+                }
+            })()}
         </div>
     )
 }

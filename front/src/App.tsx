@@ -11,7 +11,7 @@ import { SocketProvider } from "./utils/SocketContext";
 import { useState } from "react";
 
 const App = () => {
-  const [ingame, setInGame] = useState(true);
+  const [ingame, setInGame] = useState(false);
 
   return (
     <SocketProvider>
