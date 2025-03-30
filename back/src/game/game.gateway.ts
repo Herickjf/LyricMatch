@@ -48,7 +48,9 @@ export class GameGateway {
       client.emit('roomCreated', { code, host }); // Emite um evento 'roomCreated' para o cliente com o código da sala e o host
     } catch (error) {
       console.error('Erro ao criar sala:', error);
-      client.emit('createError', { message: 'Erro ao criar sala' + error.message });
+      client.emit('createError', {
+        message: 'Erro ao criar sala' + error.message,
+      });
     }
   }
 
@@ -69,7 +71,9 @@ export class GameGateway {
       this.server.to(room.code).emit('userJoined', { name: user.name }); // Emite um evento 'userJoined' para todos os clientes na sala com o nome do jogador
     } catch (error) {
       console.error('Erro ao entrar na sala:', error);
-      client.emit('joinError', { message: 'Erro ao entrar na sala' + error.message });
+      client.emit('joinError', {
+        message: 'Erro ao entrar na sala' + error.message,
+      });
     }
   }
 
