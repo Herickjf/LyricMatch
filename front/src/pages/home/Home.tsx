@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import '../../css/initialpages/home.css';
 
 import Enter from './Enter';
 import Create from './Create';
+import Avatars from './Avatars';
 import TextInput from '../../utils/TextInput';
+import '../../css/initialpages/home.css';
 
 interface HomeProps {
     inheritance: (value: boolean) => void;
@@ -12,7 +13,8 @@ interface HomeProps {
 const Home: React.FC<HomeProps> = ({inheritance}) => {
     const [mode, setMode] = useState<"enter" | "create">("enter");
     const [username, setUsername] = useState<string>("");
-    const [avatar, setAvatar] = useState<string>("avatar1.png");
+    const [avatar, setAvatar] = useState<string>("http://localhost:4000/images/avatar1.png");
+    const [openAvatarMenu, setOpenAvatarMenu] = useState<boolean>(false);
 
     function toggleToEnter() {
         setMode('enter');
@@ -46,10 +48,10 @@ const Home: React.FC<HomeProps> = ({inheritance}) => {
                 </div>
 
                 <div id="user_avatar_box">
-                    <div id="edit_avatar">
+                    <div id="edit_avatar" onClick={() => setOpenAvatarMenu(true)}>
                         <div id="edit_avatar_icon"></div>
                     </div>
-                    <div id="user_avatar"></div>
+                    <div id="user_avatar" style={{backgroundImage: `url(${avatar})`}}></div>
                 </div>
                 
                 <TextInput label="Nickname:" placeholder="Enter your nickname" setText={setUsername}/>
@@ -57,8 +59,9 @@ const Home: React.FC<HomeProps> = ({inheritance}) => {
 
                 {mode === "enter" && <Enter inheritance={inheritance} username={username}  avatar={avatar}/>}
                 {mode === "create" && <Create inheritance={inheritance} username={username}  avatar={avatar}/>}
-
             </div>
+
+            {openAvatarMenu && <Avatars setAvatarsOpenMenu={setOpenAvatarMenu} avatarOpenMenu={openAvatarMenu}  setAvatar={setAvatar}/> }
         </div>
     )
 }

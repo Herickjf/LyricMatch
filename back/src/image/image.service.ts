@@ -21,7 +21,7 @@ export class ImageService {
         const filePath = path.join(this.imagesPath, file);
         return fs.statSync(filePath).isFile();
       })
-      .map((file) => `http://localhost:4000/image/${file}`); // Retorna a URL de acesso
+      .map((file) => `http://localhost:4000/images/${file}`); // Retorna a URL de acesso
   }
 
   getImage(filename: string): string | null {

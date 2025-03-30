@@ -12,10 +12,10 @@ const GameScreen: React.FC<GameScreenProps> = ({inheritance}) => {
 
     return (
         <div>
-            {width < 1024 ? (
-                <MobileScreen/>
+            {width < 1200 ? (
+                <MobileScreen  inheritance={inheritance}/>
             ) : (
-                <DesktopScreen/>
+                <DesktopScreen inheritance={inheritance}/>
             )}
         </div>
     );
