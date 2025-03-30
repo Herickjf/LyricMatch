@@ -28,9 +28,11 @@ nav{
     background-repeat: no-repeat;
     background-position: center;
 }
+#menu_icon:active,
 #menu_icon:hover{
     transform: scale(1.13);
-    transition: .3s ease-in-out;
+    rotate: 360deg;
+    transition: .5s ease-in-out;
 }
 
 #logo_icon{
@@ -42,9 +44,10 @@ nav{
     background-repeat: no-repeat; 
     background-position: center;
 }
+#logo_icon:active,
 #logo_icon:hover{
-    transform: scale(1.1);
-    transition: .3s ease-in-out;
+    rotate: 360deg;
+    transition: .5s ease-in-out;
 }
 
 

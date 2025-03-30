@@ -1,7 +1,17 @@
-const DesktopScreen: React.FC = () => {
+import LeftBox from "./LeftBox"
+import MidBox from "./MidBox"
+import RightBox from "./RightBox"
+
+interface DesktopScreenProps {
+    inheritance: (value: boolean) => void,
+}
+
+const DesktopScreen: React.FC<DesktopScreenProps> = ({inheritance}) => {
     return(
         <div>
-            <h1>Desktop Screen</h1>
+            <LeftBox/>
+            <MidBox/>
+            <RightBox/>
         </div>
     )
 }

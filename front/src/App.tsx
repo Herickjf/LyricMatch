@@ -1,22 +1,23 @@
 import { Routes, Route } from "react-router-dom";
+
 import Home from "./pages/home/Home";
 import About from "./pages/about/About";
 import NotFound from "./pages/notFound/NotFound";
 import Nav from "./pages/nav/nav";
+import GameScreen from "./pages/game/GameScreen";
 import './css/initialpages/App.css'
 import { SocketProvider } from "./utils/SocketContext";
-import GameScreen from "./pages/game/GameScreen";
 
 import { useState } from "react";
 
 const App = () => {
-  const [ingame, setInGame] = useState(true);
+  const [ingame, setInGame] = useState(false);
 
   return (
     <SocketProvider>
       <div className="App" id="App_Screen">
 
-        {!ingame && <Nav />}
+        { !ingame && <Nav /> }
 
         { !ingame && 
           <Routes>
