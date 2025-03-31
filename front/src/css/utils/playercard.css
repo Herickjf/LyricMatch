@@ -1,9 +1,11 @@
 .player-card{
-    width: 100%;
+    width: 98%;
     height: 80px;
     display: flex;
     gap: 10px;
     justify-content: space-around;
+    background-color: #656D4A;
+    border-radius: 40px;
 }
 
 .player-card > .player-card-avatar{
@@ -11,7 +13,7 @@
     height: 80px;
     background-color: #fff;
     background-size: cover;
-    border-radius: 10px;
+    border-radius: 50%;
 }
 
 .player-card > .player-card-infos{
@@ -30,6 +32,6 @@
 
 .player-card > .player-card-infos > .player-card-points{
     font-size: 14px;
-    color: white;
+    color: #22291C;
     font-weight: bold;
 }
