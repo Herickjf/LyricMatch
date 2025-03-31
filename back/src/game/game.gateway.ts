@@ -11,6 +11,7 @@ import { Server, Socket } from 'socket.io';
 import { Language } from '@prisma/client';
 import { GameService } from './game.service';
 import { MusicApi } from '../api-requests/music-api.enum';
+import { Logger } from '@nestjs/common';
 
 interface PlayerDto {
   name: string;
@@ -26,7 +27,10 @@ interface RoomDto {
 
 @WebSocketGateway({ cors: true })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  constructor(private readonly gameService: GameService) {}
+  constructor(
+    private readonly gameService: GameService,
+    private readonly logger: Logger,
+  ) {}
   @WebSocketServer()
   server: Server; // Instância do servidor WebSocket
 
@@ -118,10 +122,34 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         return;
       }
       this.server.to(room.code).emit('roomUpsert', room);
+      this.recursiveTimer(room.code, room.roundTimer);
     } catch (error) {
       console.error('Erro ao iniciar o jogo:', error);
       client.emit('error', { message: 'Erro ao iniciar o jogo' });
     }
+  }
+
+  recursiveTimer(roomCode: string, time: number) {
+    setTimeout(async () => {
+      if (time > 0) {
+        this.server.to(roomCode).emit('roundTimer', time);
+        this.recursiveTimer(roomCode, time - 1);
+      } else {
+        try {
+          const r = await this.gameService.endRound(roomCode);
+          if (!r) {
+            this.logger.error('Erro ao finalizar a rodada pelo timer');
+            return;
+          }
+          this.server.to(roomCode).emit('roomUpsert', r.room);
+        } catch (error) {
+          this.logger.error('Erro ao finalizar a rodada pelo timer:', error);
+          this.server.to(roomCode).emit('error', {
+            message: 'Erro ao finalizar a rodada pelo timer',
+          });
+        }
+      }
+    }, 1000);
   }
 
   @SubscribeMessage('submitAnswer')
@@ -150,25 +178,25 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
-  @SubscribeMessage('endRound')
-  async handleEndRound(
-    @MessageBody() data: { roomCode: string },
-    @ConnectedSocket() client: Socket,
-  ) {
-    try {
-      const r = await this.gameService.endRound(data.roomCode);
-      if (!r) {
-        client.emit('error', {
-          message: 'Erro ao finalizar a rodada',
-        });
-        return;
-      }
-      this.server.to(r.room.code).emit('roomUpsert', r.room);
-    } catch (error) {
-      console.error('Erro ao finalizar a rodada:', error);
-      client.emit('error', { message: 'Erro ao finalizar a rodada' });
-    }
-  }
+  // @SubscribeMessage('endRound')
+  // async handleEndRound(
+  //   @MessageBody() data: { roomCode: string },
+  //   @ConnectedSocket() client: Socket,
+  // ) {
+  //   try {
+  //     const r = await this.gameService.endRound(data.roomCode);
+  //     if (!r) {
+  //       client.emit('error', {
+  //         message: 'Erro ao finalizar a rodada',
+  //       });
+  //       return;
+  //     }
+  //     this.server.to(r.room.code).emit('roomUpsert', r.room);
+  //   } catch (error) {
+  //     console.error('Erro ao finalizar a rodada:', error);
+  //     client.emit('error', { message: 'Erro ao finalizar a rodada' });
+  //   }
+  // }
 
   @SubscribeMessage('nextRound')
   async handleNextRound(

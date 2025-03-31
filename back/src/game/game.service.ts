@@ -16,33 +16,21 @@ export class GameService {
   async createRoom(
     hostName: string,
     hostAvatar: string,
-    roomPassword: string,
+    password: string,
     maxPlayers: number,
     maxRounds: number,
     language: Language,
+    roundTimer: number = 30,
   ): Promise<{ room: Room; host: Player } | undefined> {
     try {
-      let roomCode: string = '';
-      let isUnique = false;
-
-      // Gera um código único
-      while (!isUnique) {
-        roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-        const existingRoom = await this.prisma.room.findUnique({
-          where: { code: roomCode },
-        });
-        if (!existingRoom) {
-          isUnique = true;
-        }
-      }
-
       const room = await this.prisma.room.create({
         data: {
-          code: roomCode,
-          password: roomPassword,
+          code: Date.now().toString(),
+          password,
           maxPlayers,
           maxRounds,
           language,
+          roundTimer,
         },
       });
 
@@ -102,19 +90,16 @@ export class GameService {
     }
   }
 
-  getRamdomWord(language: Language): Promise<string> {
-    return this.prisma.word
-      .findMany({
-        where: { language },
-        orderBy: { word: 'asc' },
-      })
-      .then((words) => {
-        if (words.length === 0) {
-          throw new Error('No words available for the selected language');
-        }
-        const randomIndex = Math.floor(Math.random() * words.length);
-        return words[randomIndex].word;
-      });
+  async getRamdomWord(language: Language): Promise<string> {
+    const words = await this.prisma.word.findMany({
+      where: { language },
+      orderBy: { word: 'asc' },
+    });
+    if (words.length === 0) {
+      throw new Error('No words available for the selected language');
+    }
+    const randomIndex = Math.floor(Math.random() * words.length);
+    return words[randomIndex].word;
   }
 
   async startGame(hostId: string): Promise<Room | undefined> {
@@ -143,7 +128,6 @@ export class GameService {
         active: true,
         currentRound: 1,
         currentWord,
-        roundTimer: 30,
       },
       include: { players: true },
     });
@@ -152,6 +136,8 @@ export class GameService {
       this.logger.error('startGame: Room not found');
       return;
     }
+
+    this.logger.log('Round started');
 
     return room;
   }
