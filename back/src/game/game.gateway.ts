@@ -4,6 +4,8 @@ import {
   SubscribeMessage,
   MessageBody,
   ConnectedSocket,
+  OnGatewayDisconnect,
+  OnGatewayConnection,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Language } from '@prisma/client';
@@ -23,11 +25,20 @@ interface RoomDto {
 }
 
 @WebSocketGateway({ cors: true })
-export class GameGateway {
+export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  constructor(private readonly gameService: GameService) {}
   @WebSocketServer()
   server: Server; // Instância do servidor WebSocket
 
-  constructor(private readonly gameService: GameService) {}
+  handleConnection(client: Socket) {
+    console.log(`Cliente conectado: ${client.id}`);
+  }
+
+  handleDisconnect(client: Socket) {
+    console.log(`Cliente desconectado: ${client.id}`);
+    // Aqui você pode implementar a lógica para remover o usuário de todas as salas
+    // caso esteja mapeando client.id para usernames/salas
+  }
 
   // Lida com a mensagem 'createRoom' enviada pelo cliente
   @SubscribeMessage('createRoom')
@@ -36,7 +47,7 @@ export class GameGateway {
     @ConnectedSocket() client: Socket, // Socket do cliente conectado
   ) {
     try {
-      const { code, host } = await this.gameService.createRoom(
+      const r = await this.gameService.createRoom(
         data.host.name,
         data.host.avatar,
         data.room.password,
@@ -44,12 +55,22 @@ export class GameGateway {
         data.room.maxRounds,
         data.room.language,
       );
-      client.join(code); // Adiciona o cliente à sala
-      client.emit('roomCreated', { code, host }); // Emite um evento 'roomCreated' para o cliente com o código da sala e o host
+      if (!r) {
+        client.emit('error', {
+          message: 'Erro ao criar sala',
+        });
+        return;
+      }
+      await client.join(r.room.code); // Adiciona o cliente à sala
+      this.server.to(r.room.code).emit('roomUpsert', { room: r.room }); // Emite um evento 'roomUpsert' para todos os clientes na sala com os dados da sala
+      return {
+        event: 'joinedRoom',
+        data: r.room,
+      };
     } catch (error) {
       console.error('Erro ao criar sala:', error);
-      client.emit('createError', {
-        message: 'Erro ao criar sala' + error.message,
+      client.emit('error', {
+        message: 'Erro ao criar sala' + error,
       });
     }
   }
@@ -61,30 +82,42 @@ export class GameGateway {
     @ConnectedSocket() client: Socket, // Socket do cliente conectado
   ) {
     try {
-      const { room, user } = await this.gameService.joinRoom(
+      const r = await this.gameService.joinRoom(
         data.code,
         data.player.name,
         data.player.avatar,
         data.password,
       );
-      client.join(room.code); // Adiciona o cliente à sala
-      this.server.to(room.code).emit('userJoined', { name: user.name }); // Emite um evento 'userJoined' para todos os clientes na sala com o nome do jogador
+      if (!r) {
+        client.emit('error', {
+          message: 'Erro ao entrar na sala',
+        });
+        return;
+      }
+      client.join(r.room.code); // Adiciona o cliente à sala
+      this.server.to(r.room.code).emit('roomUpsert', r.room); // Emite um evento 'userJoined' para todos os clientes na sala com o nome do jogador
     } catch (error) {
       console.error('Erro ao entrar na sala:', error);
       client.emit('joinError', {
-        message: 'Erro ao entrar na sala' + error.message,
+        message: 'Erro ao entrar na sala' + error,
       });
     }
   }
 
   @SubscribeMessage('startGame')
   async handleStartGame(
-    @MessageBody() data: { roomCode: string },
+    @MessageBody() data: { hostId: string },
     @ConnectedSocket() client: Socket,
   ) {
     try {
-      const gameState = await this.gameService.startGame(data.roomCode);
-      this.server.to(data.roomCode).emit('gameStarted', gameState);
+      const room = await this.gameService.startGame(data.hostId);
+      if (!room) {
+        client.emit('error', {
+          message: 'Erro ao iniciar o jogo',
+        });
+        return;
+      }
+      this.server.to(room.code).emit('roomUpsert', room);
     } catch (error) {
       console.error('Erro ao iniciar o jogo:', error);
       client.emit('error', { message: 'Erro ao iniciar o jogo' });
@@ -111,11 +144,6 @@ export class GameGateway {
         data.artist,
         data.musicApi,
       );
-
-      client.emit('answerFeedback', {
-        isCorrect: result.isCorrect,
-        message: result.isCorrect ? 'Resposta correta!' : 'Resposta incorreta!',
-      });
     } catch (error) {
       console.error('Erro ao enviar resposta:', error);
       client.emit('error', { message: 'Erro ao enviar resposta' });
@@ -128,8 +156,14 @@ export class GameGateway {
     @ConnectedSocket() client: Socket,
   ) {
     try {
-      const roundResults = await this.gameService.endRound(data.roomCode);
-      this.server.to(data.roomCode).emit('roundEnded', roundResults);
+      const r = await this.gameService.endRound(data.roomCode);
+      if (!r) {
+        client.emit('error', {
+          message: 'Erro ao finalizar a rodada',
+        });
+        return;
+      }
+      this.server.to(r.room.code).emit('roomUpsert', r.room);
     } catch (error) {
       console.error('Erro ao finalizar a rodada:', error);
       client.emit('error', { message: 'Erro ao finalizar a rodada' });
@@ -142,12 +176,14 @@ export class GameGateway {
     @ConnectedSocket() client: Socket,
   ) {
     try {
-      const gameState = await this.gameService.nextRound(data.roomCode);
-      if (gameState.gameOver) {
-        this.server.to(data.roomCode).emit('gameOver', gameState);
-      } else {
-        this.server.to(data.roomCode).emit('roundUpdated', gameState);
+      const room = await this.gameService.nextRound(data.roomCode);
+      if (!room) {
+        client.emit('error', {
+          message: 'Erro ao avançar para a próxima rodada',
+        });
+        return;
       }
+      this.server.to(room.code).emit('roomUpsert', room);
     } catch (error) {
       console.error('Erro ao avançar para a próxima rodada:', error);
       client.emit('error', {
