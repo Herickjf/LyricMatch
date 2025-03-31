@@ -3,6 +3,7 @@ import Button from '../../utils/Button'
 import "../../css/utils/form.css"
 import Alert from '../../utils/Alert'
 import { useSocket } from '../../utils/SocketContext'
+import { usePlayerEntryContext } from '../../utils/PlayerEntryContext'
 
 import { useState } from 'react';
 
@@ -18,6 +19,8 @@ const Enter: React.FC<EnterProps> = ({inheritance, username, avatar}) => {
     const [roomPassword, setRoomPassword] = useState<string>("");
     const [alert, setAlert] = useState<{title: string, message: string} | null>(null);
     const socket = useSocket();
+
+    const { setPlayerEntrando, setSalaCriada } = usePlayerEntryContext();
 
     function handleEnterRoom() {
         if(username.length < 1) {
@@ -44,13 +47,13 @@ const Enter: React.FC<EnterProps> = ({inheritance, username, avatar}) => {
             password: roomPassword
         })
 
-        socket?.on("userJoined", (data) => {
-            // Implementar a logica de trocar de tela aqui
-            console.log("User joined:", data.name);
+        socket?.on("roomUpdate", (data) => {
+            setPlayerEntrando({name: username, avatar: avatar, score: 0});
+            setSalaCriada(data.room);
             inheritance(true);
         });
 
-        socket?.on("joinError", (error) => {
+        socket?.on("error", (error) => {
             setAlert({ title: "Join Room Error", message: error.message });
         });
     }

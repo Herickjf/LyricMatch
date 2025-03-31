@@ -7,13 +7,15 @@ import Nav from "./pages/nav/nav";
 import GameScreen from "./pages/game/GameScreen";
 import './css/initialpages/App.css'
 import { SocketProvider } from "./utils/SocketContext";
+import { PlayerEntryProvider } from "./utils/PlayerEntryContext";
 
 import { useState } from "react";
 
 const App = () => {
-  const [ingame, setInGame] = useState(true);
+  const [ingame, setInGame] = useState(false);
 
   return (
+    <PlayerEntryProvider>
     <SocketProvider>
       <div className="App" id="App_Screen">
 
@@ -29,10 +31,10 @@ const App = () => {
         }
 
         { ingame && <GameScreen inheritance={setInGame}/>}
-      
 
       </div>
     </SocketProvider>
+    </PlayerEntryProvider>
   );
 };
 

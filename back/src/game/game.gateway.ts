@@ -66,7 +66,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         return;
       }
       await client.join(r.room.code); // Adiciona o cliente à sala
-      this.server.to(r.room.code).emit('roomUpsert', { room: r.room }); // Emite um evento 'roomUpsert' para todos os clientes na sala com os dados da sala
+      this.server.to(r.room.code).emit('roomUpdate', { room: r.room }); // Emite um evento 'roomUpdate' para todos os clientes na sala com os dados da sala
       return {
         event: 'joinedRoom',
         data: r.room,
@@ -99,7 +99,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         return;
       }
       client.join(r.room.code); // Adiciona o cliente à sala
-      this.server.to(r.room.code).emit('roomUpsert', r.room); // Emite um evento 'userJoined' para todos os clientes na sala com o nome do jogador
+      this.server.to(r.room.code).emit('roomUpdate', r.room); // Emite um evento 'userJoined' para todos os clientes na sala com o nome do jogador
     } catch (error) {
       console.error('Erro ao entrar na sala:', error);
       client.emit('joinError', {
@@ -121,7 +121,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         });
         return;
       }
-      this.server.to(room.code).emit('roomUpsert', room);
+      this.server.to(room.code).emit('roomUpdate', room);
       this.recursiveTimer(room.code, room.roundTimer);
     } catch (error) {
       console.error('Erro ao iniciar o jogo:', error);
@@ -141,7 +141,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
             this.logger.error('Erro ao finalizar a rodada pelo timer');
             return;
           }
-          this.server.to(roomCode).emit('roomUpsert', r.room);
+          this.server.to(roomCode).emit('roomUpdate', r.room);
         } catch (error) {
           this.logger.error('Erro ao finalizar a rodada pelo timer:', error);
           this.server.to(roomCode).emit('error', {
@@ -191,7 +191,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   //       });
   //       return;
   //     }
-  //     this.server.to(r.room.code).emit('roomUpsert', r.room);
+  //     this.server.to(r.room.code).emit('roomUpdate', r.room);
   //   } catch (error) {
   //     console.error('Erro ao finalizar a rodada:', error);
   //     client.emit('error', { message: 'Erro ao finalizar a rodada' });
@@ -211,7 +211,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         });
         return;
       }
-      this.server.to(room.code).emit('roomUpsert', room);
+      this.server.to(room.code).emit('roomUpdate', room);
     } catch (error) {
       console.error('Erro ao avançar para a próxima rodada:', error);
       client.emit('error', {
