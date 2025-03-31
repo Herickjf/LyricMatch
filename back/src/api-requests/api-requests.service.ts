@@ -8,10 +8,7 @@ dotenv.config();
 
 @Injectable()
 export class ApiRequestsService {
-  async searchTracks_Deezer(
-    track: string,
-    artist: string
-  ): Promise<any> {
+  async searchTracks_Deezer(track: string, artist: string): Promise<any> {
     const query = `${artist} ${track}`;
 
     try {
