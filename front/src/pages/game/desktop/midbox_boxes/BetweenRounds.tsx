@@ -1,7 +1,7 @@
 import { useState } from "react"
 
 const BetweenRounds: React.FC = () => {
-    const [word_of_round, setWordOfRound] = useState<string>("")
+    const [word_of_round, setWordOfRound] = useState<string>("PALAVRA")
     const [is_correct, setIsCorrect] = useState<boolean>(false)
     const [song_name, setSongName] = useState<string>("")
     const [song_artist, setSongArtist] = useState<string>("")

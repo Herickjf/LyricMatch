@@ -1,7 +1,8 @@
-import { useState } from "react"
+import { use, useState } from "react"
 
 import TextInput from "../../../../utils/TextInput"
 import Button    from "../../../../utils/Button"
+import { useSearchContext } from "../../../../utils/SearchContext"
 
 const back_url = "http://localhost:4000"
 
@@ -10,11 +11,14 @@ const SearchSong: React.FC = () => {
     const [song_name,       setSongName]    = useState<string>("");
     const [word_to_guess,   setWord]        = useState<string>("WORD");
 
+    const { setCount } = useSearchContext();
+
     function search_song(){
         fetch(`${back_url}/api-requests/search?artist=${artist_name}&track=${song_name}`)
         .then((response) => response.json())
         .then((data) => {
             console.log(data);
+            setCount(data);
         })
     }
 
