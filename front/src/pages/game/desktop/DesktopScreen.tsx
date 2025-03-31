@@ -4,6 +4,7 @@
 import LeftBox from "./LeftBox"
 import MidBox from "./MidBox"
 import RightBox from "./RightBox"
+import { SearchProvider } from "../../../utils/SearchContext"
 
 // css imports
 import "../../../css/game/desktop/desktopScreen.css"
@@ -14,11 +15,13 @@ interface DesktopScreenProps {
 
 const DesktopScreen: React.FC<DesktopScreenProps> = ({inheritance}) => {
     return(
-        <div id="desktop_screen">
-            <LeftBox/>
-            <MidBox/>
-            <RightBox/>
-        </div>
+        <SearchProvider>
+            <div id="desktop_screen">
+                <LeftBox/>
+                <MidBox/>
+                <RightBox/>
+            </div>
+        </SearchProvider>
     )
 }
 
