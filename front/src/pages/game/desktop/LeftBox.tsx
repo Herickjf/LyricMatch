@@ -17,7 +17,7 @@ const LeftBox: React.FC = () => {
 
     return(
         <div id="desktop_players_box" className="side_box">
-            <div className="game_box_title"><span>{current_players}</span> Players:</div>
+            <div id="game_box_title"><span>{current_players}</span> Players:</div>
 
             <div id="desktop_players_list">
             {
@@ -25,9 +25,14 @@ const LeftBox: React.FC = () => {
                     <PlayerCard name={player.name} avatar={player.avatar} points={player.points} key={player.name} />
                 ))
             }
-                <PlayerCard name={"bixin la"} avatar="http://localhost:4000/images/avatar1.png" points={256} key="key1" />
-                <PlayerCard name={"coisinho"} avatar="http://localhost:4000/images/avatar2.png" points={128} key="key2" />
-                <PlayerCard name={"veyr"} avatar="http://localhost:4000/images/avatar3.png" points={64} key="key3" />
+                <PlayerCard name={"bixin la"} avatar="http://localhost:4000/images/avatar30.png" points={256} />
+                <PlayerCard name={"coisinho"} avatar="http://localhost:4000/images/avatar31.png" points={128} />
+                <PlayerCard name={"veyr"} avatar="http://localhost:4000/images/avatar29.png" points={64} />
+                <PlayerCard name={"veyr"} avatar="http://localhost:4000/images/avatar35.png" points={32} />
+                <PlayerCard name={"veyr"} avatar="http://localhost:4000/images/avatar33.png" points={16} />
+                <PlayerCard name={"veyr"} avatar="http://localhost:4000/images/avatar34.png" points={8} />
+                <PlayerCard name={"veyr"} avatar="http://localhost:4000/images/avatar38.png" points={4} />
+                <PlayerCard name={"veyr"} avatar="http://localhost:4000/images/avatar39.png" points={2} />
             </div>
         </div>
 

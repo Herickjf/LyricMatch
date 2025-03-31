@@ -1,13 +1,16 @@
+import "../css/utils/songcard.css"
+
 interface SongCard_Props{
     song_name: string,
     artist_name: string,
     album_cover: string,
     func?: any
+    selected?: boolean
 }
 
-const SongCard: React.FC<SongCard_Props> = ({song_name, artist_name, album_cover, func}) => {
+const SongCard: React.FC<SongCard_Props> = ({song_name, artist_name, album_cover, func, selected}) => {
     return (
-        <div className="song_card" onClick={() => func}>
+        <div className="song_card " onClick={func} style={{opacity: selected ? "1" : "0.7"}}>
             <div className="song_card_album_cover" style={{backgroundImage: `url(${album_cover})`}}/>
 
             <div className="song_card_info">

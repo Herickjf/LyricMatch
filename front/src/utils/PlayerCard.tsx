@@ -1,3 +1,6 @@
+import React from 'react';
+import "../css/utils/playercard.css";
+
 interface PlayerCardProps {
     name: string,
     avatar: string,

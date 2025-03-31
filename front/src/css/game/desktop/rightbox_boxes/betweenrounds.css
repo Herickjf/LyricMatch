@@ -1,0 +1,53 @@
+#between_rounds_box{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 75%;
+    gap: 10px;
+    overflow-y: auto;
+    align-items: center;
+}
+
+#between_rounds_box > #between_rounds_title{
+    text-align: center;
+    font-size: 25px;
+    margin-bottom: 5px;
+    color: white;
+    font-weight: bold;
+}
+
+#between_rounds_select{
+    background-color: transparent;
+    color: white;
+    font-size: 20px;
+    width: 60%;
+    border: none;
+    outline: none;
+    text-align: center;
+}
+
+#between_rounds_select > option{
+    background-color: #22291c;
+    color: white;
+    outline: none;
+    font-size: 20px;
+}
+
+
+#search_results_box{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    overflow-y: auto;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    border-radius: 10px;
+    background-color: rgba(127, 79, 24, 0.2);
+}
+::-webkit-scrollbar-thumb {
+    background-color: #C2C5AA;
+    border-radius: 10px;
+}
