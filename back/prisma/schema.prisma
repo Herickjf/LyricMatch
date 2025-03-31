@@ -21,10 +21,14 @@ model Room {
   maxRounds   Int        @default(10)
   maxPlayers  Int        @default(4)
   active      Boolean    @default(false)
-  gameState   GameState? @relation("RoomToGameState")
-  gameStateId String?
   language    Language   @default(EN)
   players     Player[]
+
+  currentRound  Int            @default(1)
+  currentWord   String?
+  roundTimer         Int            @default(30)
+
+  playerAnswers PlayerAnswer[]
 }
 
 model Player {
@@ -48,18 +52,8 @@ model PlayerAnswer {
   albumImage  String?
   preview     String?
   isCorrect   Boolean
-  gameStateId String
-  gameState   GameState @relation(fields: [gameStateId], references: [id])
-}
-
-model GameState {
-  id            String         @id @default(uuid())
-  currentRound  Int            @default(1)
-  currentWord   String?
-  timer         Int            @default(30)
-  roomId        String         @unique
-  room          Room           @relation("RoomToGameState", fields: [roomId], references: [id])
-  playerAnswers PlayerAnswer[]
+  roomId String
+  room   Room @relation(fields: [roomId], references: [id])
 }
 
 model Word {
