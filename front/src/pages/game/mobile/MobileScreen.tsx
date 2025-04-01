@@ -1,8 +1,4 @@
-interface MobileScreenProps {
-    inheritance: (value: boolean) => void,
-}
-
-const MobileScreen: React.FC<MobileScreenProps> = ({inheritance}) => {
+const MobileScreen: React.FC = () => {
     return(
         <div>
             <h1>Mobile Screen</h1>

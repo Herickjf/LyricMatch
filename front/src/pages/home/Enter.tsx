@@ -3,24 +3,29 @@ import Button from '../../utils/Button'
 import "../../css/utils/form.css"
 import Alert from '../../utils/Alert'
 import { useSocket } from '../../utils/SocketContext'
-import { usePlayerEntryContext } from '../../utils/PlayerEntryContext'
+import { useRoomContext } from '../../utils/RoomContext'
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface EnterProps {
-    inheritance: (value: boolean) => void,
     username: string,
     avatar: number | string
 }
 
 
-const Enter: React.FC<EnterProps> = ({inheritance, username, avatar}) => {
+const Enter: React.FC<EnterProps> = ({ username, avatar}) => {
     const [roomCode, setRoomCode] = useState<string>("");
     const [roomPassword, setRoomPassword] = useState<string>("");
     const [alert, setAlert] = useState<{title: string, message: string} | null>(null);
     const socket = useSocket();
 
-    const { setPlayerEntrando, setSalaCriada } = usePlayerEntryContext();
+    const { setRoom, setPlayers, setInGame, in_game } = useRoomContext();
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get("code") || "";
+        setRoomCode(code);
+    }, []);
 
     function handleEnterRoom() {
         if(username.length < 1) {
@@ -48,9 +53,11 @@ const Enter: React.FC<EnterProps> = ({inheritance, username, avatar}) => {
         })
 
         socket?.on("roomUpdate", (data) => {
-            setPlayerEntrando({name: username, avatar: avatar, score: 0});
-            setSalaCriada(data.room);
-            inheritance(true);
+            if(in_game) return;
+            console.log(data)
+            setRoom(data);
+            setPlayers([...data!.players]);
+            setInGame(true);
         });
 
         socket?.on("error", (error) => {
@@ -60,7 +67,8 @@ const Enter: React.FC<EnterProps> = ({inheritance, username, avatar}) => {
 
     return(
         <div className="form_box">
-            <TextInput label="Code:" placeholder='Enter the room code' setText={setRoomCode}/>
+            
+            <TextInput label="Code:" placeholder='Enter the room code' setText={setRoomCode} value={roomCode}/>
             <TextInput label="Password:" placeholder='Enter the room password' setText={setRoomPassword}/>
 
             <Button 

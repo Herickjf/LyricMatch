@@ -3,6 +3,10 @@
     height: 95%;
 
     padding: 2% 3%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     
     background-color: rgba(67, 36, 11, .9);
     border-radius: 10px;

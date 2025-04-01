@@ -6,11 +6,7 @@ import Avatars from './Avatars';
 import TextInput from '../../utils/TextInput';
 import '../../css/initialpages/home.css';
 
-interface HomeProps {
-    inheritance: (value: boolean) => void;
-}
-
-const Home: React.FC<HomeProps> = ({inheritance}) => {
+const Home: React.FC = () => {
     const [mode, setMode] = useState<"enter" | "create">("enter");
     const [username, setUsername] = useState<string>("");
     const [avatar, setAvatar] = useState<string>("http://localhost:4000/images/avatar1.png");
@@ -59,8 +55,8 @@ const Home: React.FC<HomeProps> = ({inheritance}) => {
                 </div> {/*fim de fixed_box*/}
 
 
-                {mode === "enter" && <Enter inheritance={inheritance} username={username}  avatar={avatar}/>}
-                {mode === "create" && <Create inheritance={inheritance} username={username}  avatar={avatar}/>}
+                {mode === "enter" && <Enter username={username}  avatar={avatar}/>}
+                {mode === "create" && <Create username={username}  avatar={avatar}/>}
             </div>
 
             {openAvatarMenu && <Avatars setAvatarsOpenMenu={setOpenAvatarMenu} avatarOpenMenu={openAvatarMenu}  setAvatar={setAvatar}/> }

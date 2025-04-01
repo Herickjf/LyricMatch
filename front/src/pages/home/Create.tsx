@@ -3,7 +3,7 @@ import Button from "../../utils/Button"
 import NumberInput from "../../utils/NumberInput"
 import Alert from "../../utils/Alert"
 import { useSocket } from "../../utils/SocketContext"
-import { usePlayerEntryContext } from "../../utils/PlayerEntryContext"
+import { useRoomContext } from "../../utils/RoomContext"
 
 import "../../css/utils/form.css"
 import "../../css/utils/input.css"
@@ -11,20 +11,21 @@ import "../../css/utils/input.css"
 import { useState } from "react"
 
 interface CreateProps {
-    inheritance: (value: boolean) => void,
     username: string,
     avatar: number | string
 }
 
-const Create: React.FC<CreateProps> = ({inheritance, username, avatar}) => {
+const Create: React.FC<CreateProps> = ({username, avatar}) => {
     const [password, setPassword] = useState<string>("");
     const [max_players, setMaxPlayers] = useState<number>(3);
     const [max_rounds, setMaxRounds] = useState<number>(3);
     const [language, setLanguage] = useState<"PT" | "EN" | "SP">("EN");
     const [alert, setAlert] = useState<{title: string, message: string} | null>(null);
     const socket = useSocket();
+    const { setRoom, setPlayers, setInGame, in_game } = useRoomContext();
 
-    const { setPlayerEntrando, setSalaCriada } = usePlayerEntryContext();
+
+
 
     function handleCreateRoom() {
         if (username.length < 1) {
@@ -49,11 +50,14 @@ const Create: React.FC<CreateProps> = ({inheritance, username, avatar}) => {
             room: { password, maxPlayers: max_players, maxRounds: max_rounds, language } 
         });
 
+       
         socket?.on("roomUpdate", (data) => {
-            setPlayerEntrando({name: username, avatar: avatar, score: 0});
-            setSalaCriada(data.room);
-            inheritance(true);
+            if(in_game) return;
+            setRoom(data.room);
+            setPlayers([{ name: username, avatar: avatar, isHost: true, score: 0 }]);
+            setInGame(true);
         });
+        
 
         socket?.on("error", (error) => {
             setAlert({ title: "Create Room Error", message: error.message });

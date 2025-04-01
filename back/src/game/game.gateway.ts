@@ -108,6 +108,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
+
   @SubscribeMessage('startGame')
   async handleStartGame(
     @MessageBody() data: { hostId: string },

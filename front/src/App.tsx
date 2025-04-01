@@ -7,34 +7,30 @@ import Nav from "./pages/nav/nav";
 import GameScreen from "./pages/game/GameScreen";
 import './css/initialpages/App.css'
 import { SocketProvider } from "./utils/SocketContext";
-import { PlayerEntryProvider } from "./utils/PlayerEntryContext";
-
-import { useState } from "react";
+import { useRoomContext } from "./utils/RoomContext";
 
 const App = () => {
-  const [ingame, setInGame] = useState(false);
+  const { in_game } = useRoomContext();
 
   return (
-    <PlayerEntryProvider>
     <SocketProvider>
       <div className="App" id="App_Screen">
 
-        { !ingame && <Nav /> }
+        { !in_game && <Nav /> }
 
-        { !ingame && 
+        { !in_game && 
           <Routes>
-            <Route path="/" element={<Home inheritance={setInGame}/>} />
+            <Route path="/" element={!in_game && <Home/>} />
             <Route path="/about" element={<About />} />
             <Route path="/howtoplay" element={<About />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         }
 
-        { ingame && <GameScreen inheritance={setInGame}/>}
+        { in_game && <GameScreen />}
 
       </div>
     </SocketProvider>
-    </PlayerEntryProvider>
   );
 };
 

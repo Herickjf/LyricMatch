@@ -9,11 +9,8 @@ import { SearchProvider } from "../../../utils/SearchContext"
 // css imports
 import "../../../css/game/desktop/desktopScreen.css"
 
-interface DesktopScreenProps {
-    inheritance: (value: boolean) => void,
-}
 
-const DesktopScreen: React.FC<DesktopScreenProps> = ({inheritance}) => {
+const DesktopScreen: React.FC = () => {
     return(
         <SearchProvider>
             <div id="desktop_screen">

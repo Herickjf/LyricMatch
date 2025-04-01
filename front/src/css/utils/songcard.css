@@ -1,14 +1,21 @@
 .song_card{
     width: 98%;
-    height: 80px;
+    height: 100px;
     display: flex;
+    padding: 10px;
     gap: 10px;
     justify-content: space-around;
+
+    border-radius: 10px;
+}
+.selected{
+    background-color: rgba(255, 255, 255, .2)
 }
 
 .song_card:hover{
-    opacity: 1;
+    background-color: rgba(255, 255, 255, .05);
     cursor: pointer;
+    transition: ease-in-out .3s;
 }
 
 .song_card > .song_card_album_cover{
@@ -16,7 +23,7 @@
     min-width: 80px;
     height: 80px;
     background-size: cover;
-    border-radius: 10px;
+    border-radius: 5px;
 }
 
 .song_card > .song_card_info{
@@ -29,9 +36,9 @@
 }
 
 .song_card > .song_card_info > .song_card_song_name{
-    font-size: 15px;
+    font-size: 18px;
     color: white;
-    font-weight: bold;
+    font-weight: 500;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;

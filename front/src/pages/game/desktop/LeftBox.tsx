@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useSocket } from "../../../utils/SocketContext";
-import { usePlayerEntryContext } from "../../../utils/PlayerEntryContext";
-import { useRef } from "react";
+import { useRoomContext } from "../../../utils/RoomContext";
+// import { usePlayerEntryContext } from "../../../utils/PlayerEntryContext";
+// import { useRef } from "react";
 
 import PlayerCard from "../../../utils/PlayerCard"
 import '../../../css/game/desktop/leftBox.css'
+
 
 
 const LeftBox: React.FC = () => {
@@ -14,53 +16,51 @@ const LeftBox: React.FC = () => {
     const [player_list, setPlayerList] = useState<any[]>([]);
 
     const socket = useSocket();
+    const { room, players, setPlayers } = useRoomContext();
+    const [ already_joined, setAlreadyJoined ] = useState<boolean>(false);
 
-    const { playerEntrando, salaCriada } = usePlayerEntryContext() as { 
-        playerEntrando: any; 
-        salaCriada: any; 
-    };
-    const already_done = useRef(false);
 
-    useEffect(() => {
-        if("players" in salaCriada!) {
-            setRoomCode(salaCriada!.code as string);
-            setPlayerList([...(salaCriada!.players as any[])]);
-            setCurrentPlayers(salaCriada!.players.length as number);
-            setMaxPlayers(salaCriada!.maxPlayers as number);
-            already_done.current = true;
-
-        }else {
-            setRoomCode(salaCriada!.code as string);
-            setPlayerList((prev) => [...prev, playerEntrando]);
-            setCurrentPlayers((prev) => prev + 1);
-            setMaxPlayers(salaCriada!.maxPlayers as number);
-            already_done.current = true;
-        }
-        }
     
-    , []);
+    useEffect(() => {
+        if(already_joined) return;
+        setRoomCode(room!.code);
+        setMaxPlayers(room!.maxPlayers);
+        setCurrentPlayers(players.length);
+        setPlayerList([...players]);
+        setAlreadyJoined(true);
+    }
+    , [])
 
     socket?.on("roomUpdate", (data) => {
-        console.log(data);
-        setMaxPlayers(data.room.maxPlayers);
-        setPlayerList([...data.room.players]);
-        setCurrentPlayers(data.room.players.length);
+        console.log("roomUpdate", data);
+        setMaxPlayers(data.maxPlayers);
+        setPlayerList([...data.players]);
+        setCurrentPlayers(data.players.length);
+        setRoomCode(data.code);
+        setPlayers(data.players);
     })
 
     return(
         <div id="desktop_players_box" className="side_box">
-            <div id="game_box_title">{current_players}/{max_players} Players Code: {room_code}</div>
+            <div id="game_box_title">{current_players}/{max_players} Players</div>
 
             <div id="desktop_players_list">
             {
                 player_list.map((player) => (
-                    <PlayerCard name={player.name} avatar={player.avatar} points={player.score} key={player.name} />
+                    <PlayerCard name={player.name} avatar={player.avatar} points={player.score} isHost={player.isHost} key={player.name} />
                 ))
+
             }
+                {/* <PlayerCard name="Fulano" points={20} avatar="http://localhost:4000/images/avatar32.png"/>
+                <PlayerCard name="Fulano" points={20} avatar="http://localhost:4000/images/avatar30.png"/>
+                <PlayerCard name="Fulano" points={20} avatar="http://localhost:4000/images/avatar37.png"/>
+                <PlayerCard name="Fulano" points={20} avatar="http://localhost:4000/images/avatar38.png"/>
+                <PlayerCard name="Fulano" points={20} avatar="http://localhost:4000/images/avatar35.png"/>
+                <PlayerCard name="Fulano" points={20} avatar="http://localhost:4000/images/avatar29.png"/> */}
             </div>
+            
+            <a href={`http://localhost:5173?code=${room_code}`} target="blank">Copiar Código</a>
         </div>
-
-
     )
 }
 

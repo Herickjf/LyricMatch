@@ -1,0 +1,55 @@
+#search_song_box{
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#spinning_logo{
+    position: relative;
+    width: 100px;
+    height: 100px;
+    background-image: url('/assets/logo.svg');
+    background-size: cover;
+    background-position: center;
+    animation: spin 3s linear infinite;
+}
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+#search_song_word_box{
+    width: 100%;
+    height: 15%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 25px;
+    font-weight: 600;
+
+    background-color: #2E3725;
+    border: solid 2px #A4AC86;
+    border-radius: 10px;
+}
+
+#search_song_inputs_box{
+    width: 80%;
+    height: 20%;
+
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    /* justify-content: space-between; */
+    align-items: center;
+}
