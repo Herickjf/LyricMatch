@@ -5,19 +5,16 @@ import MobileScreen from './mobile/MobileScreen'
 
 import "../../css/game/gameScreen.css"
 
-interface GameScreenProps {
-    inheritance: (value: boolean) => void,
-}
 
-const GameScreen: React.FC<GameScreenProps> = ({inheritance}) => {
+const GameScreen: React.FC = () => {
     const { width } = useWindowSize();
 
     return (
         <div id='game_screen'>
             {width < 1200 ? (
-                <MobileScreen  inheritance={inheritance}/>
+                <MobileScreen  />
             ) : (
-                <DesktopScreen inheritance={inheritance}/>
+                <DesktopScreen />
             )}
         </div>
     );

@@ -3,6 +3,7 @@ import { use, useState } from "react"
 import TextInput from "../../../../utils/TextInput"
 import Button    from "../../../../utils/Button"
 import { useSearchContext } from "../../../../utils/SearchContext"
+import "../../../../css/game/desktop/midBox/searchSong.css"
 
 const back_url = "http://localhost:4000"
 
@@ -26,6 +27,8 @@ const SearchSong: React.FC = () => {
         <div id="search_song_box">
             <div id="search_song_word_box">{word_to_guess}</div>
             <div id="search_song_subtitle">Enter a song with with the word: {word_to_guess}</div>
+
+            {/* <div id="spinning_logo"></div> */}
 
             <div id="search_song_inputs_box">
                 <TextInput label="Artist:" setText={setArtistName} placeholder="Enter the name of the artist"/>
