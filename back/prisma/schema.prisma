@@ -14,25 +14,45 @@ enum Language {
   ES
 }
 
+enum RoomStatus {
+  waiting
+  playing
+  analyzing
+  finished
+}
+
 model Room {
-  id          String     @id @default(uuid())
-  code        String     @unique
-  password    String?
-  maxRounds   Int        @default(10)
-  maxPlayers  Int        @default(4)
-  active      Boolean    @default(false)
-  language    Language   @default(EN)
-  players     Player[]
+  id         String   @id @default(uuid())
+  code       String   @unique
+  password   String?
+  maxRounds  Int      @default(10)
+  maxPlayers Int      @default(4)
+  active     Boolean  @default(false)
+  language   Language @default(EN)
+  players    Player[]
 
-  currentRound  Int            @default(1)
-  currentWord   String?
-  roundTimer         Int            @default(30)
+  status     String   @default("waiting")
+  currentRound Int     @default(1)
+  currentWord  String?
+  roundTimer   Int     @default(30)
 
-  playerAnswers PlayerAnswer[]
+  answers PlayerAnswer[]
+  messages      Message[]
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  roomId    String
+  playerId  String
+  message   String
+  createdAt DateTime @default(now())
+  room      Room     @relation(fields: [roomId], references: [id])
+  player    Player   @relation(fields: [playerId], references: [id])
 }
 
 model Player {
   id           String         @id @default(uuid())
+  socketId     String         @unique
   name         String
   score        Int            @default(0)
   isHost       Boolean        @default(false)
@@ -40,20 +60,21 @@ model Player {
   roomId       String?
   room         Room?          @relation(fields: [roomId], references: [id])
   PlayerAnswer PlayerAnswer[]
+  messages     Message[]
 }
 
 model PlayerAnswer {
-  id          String    @id @default(uuid())
-  playerId    String
-  player      Player    @relation(fields: [playerId], references: [id])
-  round       Int
-  track       String
-  artist      String
-  albumImage  String?
-  preview     String?
-  isCorrect   Boolean
-  roomId String
-  room   Room @relation(fields: [roomId], references: [id])
+  id         String  @id @default(uuid())
+  playerId   String
+  player     Player  @relation(fields: [playerId], references: [id])
+  round      Int
+  track      String
+  artist     String
+  albumImage String?
+  preview    String?
+  isCorrect  Boolean
+  roomId     String
+  room       Room    @relation(fields: [roomId], references: [id])
 }
 
 model Word {

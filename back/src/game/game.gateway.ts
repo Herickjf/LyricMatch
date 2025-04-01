@@ -12,6 +12,7 @@ import { Language } from '@prisma/client';
 import { GameService } from './game.service';
 import { MusicApi } from '../api-requests/music-api.enum';
 import { Logger } from '@nestjs/common';
+import { subscribe } from 'diagnostics_channel';
 
 interface PlayerDto {
   name: string;
@@ -38,10 +39,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log(`Cliente conectado: ${client.id}`);
   }
 
-  handleDisconnect(client: Socket) {
-    console.log(`Cliente desconectado: ${client.id}`);
-    // Aqui você pode implementar a lógica para remover o usuário de todas as salas
-    // caso esteja mapeando client.id para usernames/salas
+  async handleDisconnect(client: Socket) {
+    try {
+      const room = await this.gameService.exitRoom(client.id);
+      if (room) this.server.to(room.code).emit('roomUpsert', room);
+    } catch (error) {
+      console.error('Erro na desconexão de client:', error);
+    }
   }
 
   // Lida com a mensagem 'createRoom' enviada pelo cliente
@@ -52,6 +56,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     try {
       const r = await this.gameService.createRoom(
+        client.id,
         data.host.name,
         data.host.avatar,
         data.room.password,
@@ -87,6 +92,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     try {
       const r = await this.gameService.joinRoom(
+        client.id,
         data.code,
         data.player.name,
         data.player.avatar,
@@ -102,7 +108,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.server.to(r.room.code).emit('roomUpsert', r.room); // Emite um evento 'userJoined' para todos os clientes na sala com o nome do jogador
     } catch (error) {
       console.error('Erro ao entrar na sala:', error);
-      client.emit('joinError', {
+      client.emit('error', {
         message: 'Erro ao entrar na sala' + error,
       });
     }
@@ -142,6 +148,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
             return;
           }
           this.server.to(roomCode).emit('roomUpsert', r.room);
+          this.server.to(roomCode).emit('roomAnswers', r.answers);
         } catch (error) {
           this.logger.error('Erro ao finalizar a rodada pelo timer:', error);
           this.server.to(roomCode).emit('error', {
@@ -152,12 +159,28 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }, 1000);
   }
 
+  @SubscribeMessage('sendMessage')
+  async handleSendMessage(
+    @MessageBody() data: { message: string },
+    @ConnectedSocket() client: Socket,
+  ) {
+    try {
+      const room = await this.gameService.sendMessage(client.id, data.message);
+      if (!room) {
+        client.emit('error', { message: 'Erro ao enviar mensagem' });
+        return;
+      }
+      this.server.to(room.code).emit('roomUpsert', room);
+    } catch (error) {
+      console.error('Erro ao enviar mensagem:', error);
+      client.emit('error', { message: 'Erro ao enviar mensagem' });
+    }
+  }
+
   @SubscribeMessage('submitAnswer')
   async handleSubmitAnswer(
     @MessageBody()
     data: {
-      roomCode: string;
-      playerId: string;
       track: string;
       artist: string;
       musicApi: MusicApi;
@@ -166,8 +189,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     try {
       const result = await this.gameService.processAnswer(
-        data.roomCode,
-        data.playerId,
+        client.id,
         data.track,
         data.artist,
         data.musicApi,
@@ -178,33 +200,42 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
-  // @SubscribeMessage('endRound')
-  // async handleEndRound(
-  //   @MessageBody() data: { roomCode: string },
-  //   @ConnectedSocket() client: Socket,
-  // ) {
-  //   try {
-  //     const r = await this.gameService.endRound(data.roomCode);
-  //     if (!r) {
-  //       client.emit('error', {
-  //         message: 'Erro ao finalizar a rodada',
-  //       });
-  //       return;
-  //     }
-  //     this.server.to(r.room.code).emit('roomUpsert', r.room);
-  //   } catch (error) {
-  //     console.error('Erro ao finalizar a rodada:', error);
-  //     client.emit('error', { message: 'Erro ao finalizar a rodada' });
-  //   }
-  // }
+  @SubscribeMessage('exitRoom')
+  async handleExitRoom(@ConnectedSocket() client: Socket) {
+    try {
+      const room = await this.gameService.exitRoom(client.id);
+      if (room) this.server.to(room.code).emit('roomUpsert', room);
+    } catch (error) {
+      console.error('Erro ao sair da sala:', error);
+      client.emit('error', { message: 'Erro ao sair da sala' });
+    }
+  }
 
-  @SubscribeMessage('nextRound')
-  async handleNextRound(
-    @MessageBody() data: { roomCode: string },
+  @SubscribeMessage('expelPlayer')
+  async handleExpelPlayer(
+    @MessageBody() data: { playerId: string },
     @ConnectedSocket() client: Socket,
   ) {
     try {
-      const room = await this.gameService.nextRound(data.roomCode);
+      const room = await this.gameService.expelPlayer(client.id, data.playerId);
+      if (!room) {
+        client.emit('error', {
+          message: 'Erro ao expulsar jogador',
+        });
+        return;
+      }
+      this.server.to(data.playerId).emit('expelled');
+      this.server.to(room.code).emit('roomUpsert', room);
+    } catch (error) {
+      console.error('Erro ao expulsar jogador:', error);
+      client.emit('error', {
+        message: 'Erro ao expulsar jogador',
+      });
+    }
+  }
+  async handleNextRound(@ConnectedSocket() client: Socket) {
+    try {
+      const room = await this.gameService.nextRound(client.id);
       if (!room) {
         client.emit('error', {
           message: 'Erro ao avançar para a próxima rodada',

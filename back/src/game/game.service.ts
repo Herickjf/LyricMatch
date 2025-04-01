@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { ApiRequestsService } from 'src/api-requests/api-requests.service';
 import { PrismaService } from 'src/prisma-client/prisma-client.service';
-import { Language, Player, PlayerAnswer, Room } from '@prisma/client';
+import {
+  Language,
+  Player,
+  PlayerAnswer,
+  Room,
+  RoomStatus,
+} from '@prisma/client';
 import { MusicApi } from '../api-requests/music-api.enum';
 import { Logger } from '@nestjs/common';
 
@@ -14,6 +20,7 @@ export class GameService {
   ) {}
 
   async createRoom(
+    clientId: string,
     hostName: string,
     hostAvatar: string,
     password: string,
@@ -32,16 +39,20 @@ export class GameService {
           language,
           roundTimer,
         },
+        include: { players: true, messages: true },
       });
 
       const host = await this.prisma.player.create({
         data: {
+          socketId: clientId,
           name: hostName,
           roomId: room.id,
           isHost: true,
           avatar: hostAvatar,
         },
       });
+
+      room.players = [host];
 
       return { room, host };
     } catch (error) {
@@ -50,7 +61,37 @@ export class GameService {
     }
   }
 
+  async expelPlayer(
+    HostId: string,
+    playerId: string,
+  ): Promise<Room | undefined> {
+    const host = await this.prisma.player.findUnique({
+      where: { socketId: HostId, isHost: true },
+    });
+    if (!host || !host.roomId || !host.isHost) {
+      this.logger.error('expelPlayer: Host not found or not the Host');
+      return;
+    }
+
+    await this.prisma.player.delete({
+      where: { id: playerId, roomId: host.roomId },
+    });
+
+    const room = await this.prisma.room.findUnique({
+      where: { id: host.roomId },
+      include: { players: true, messages: true },
+    });
+
+    if (!room) {
+      this.logger.error('expelPlayer: Room not found');
+      return;
+    }
+
+    return room;
+  }
+
   async joinRoom(
+    clientId: string,
     code: string,
     name: string,
     avatar: string,
@@ -59,7 +100,7 @@ export class GameService {
     try {
       const room = await this.prisma.room.findUnique({
         where: { code },
-        include: { players: true },
+        include: { players: true, messages: true },
       });
 
       if (!room) throw new Error('Room not found');
@@ -68,17 +109,13 @@ export class GameService {
         return;
       }
 
-      const players = await this.prisma.player.findMany({
-        where: { roomId: room.id },
-      });
-
-      if (players.length >= room.maxPlayers) {
+      if (room.players.length >= room.maxPlayers) {
         this.logger.error('joinRoom: Room is full');
         return;
       }
 
       const player = await this.prisma.player.create({
-        data: { name, roomId: room.id, avatar },
+        data: { name, roomId: room.id, avatar, socketId: clientId },
       });
 
       room.players = [...room.players, player];
@@ -88,6 +125,43 @@ export class GameService {
       this.logger.error('joinRoom: Error joining room:', error);
       return;
     }
+  }
+
+  async sendMessage(
+    clientId: string,
+    message: string,
+  ): Promise<Room | undefined> {
+    const player = await this.prisma.player.findUnique({
+      where: { socketId: clientId },
+    });
+    if (!player || !player.roomId) {
+      this.logger.error('sendMessage: Player or room not found');
+      return;
+    }
+
+    const newMessage = await this.prisma.message.create({
+      data: {
+        playerId: clientId,
+        roomId: player.roomId,
+        message,
+      },
+    });
+    if (!message) {
+      this.logger.error('sendMessage: Error sending message');
+      return;
+    }
+
+    const room = await this.prisma.room.findUnique({
+      where: { id: player.roomId },
+      include: { players: true, messages: true },
+    });
+
+    if (!room) {
+      this.logger.error('sendMessage: Room not found');
+      return;
+    }
+
+    return room;
   }
 
   async getRamdomWord(language: Language): Promise<string> {
@@ -104,7 +178,7 @@ export class GameService {
 
   async startGame(hostId: string): Promise<Room | undefined> {
     const player = await this.prisma.player.findUnique({
-      where: { id: hostId, isHost: true },
+      where: { socketId: hostId, isHost: true },
       include: { room: true },
     });
 
@@ -128,8 +202,9 @@ export class GameService {
         active: true,
         currentRound: 1,
         currentWord,
+        status: 'playing',
       },
-      include: { players: true },
+      include: { players: true, messages: true },
     });
 
     if (!room) {
@@ -142,9 +217,16 @@ export class GameService {
     return room;
   }
 
-  async endRound(hostId: string) {
+  async endRound(hostId: string): Promise<
+    | {
+        room: Room;
+        answers: PlayerAnswer[];
+      }
+    | undefined
+  > {
+    // verifica se o player tem permissão de host
     const player = await this.prisma.player.findUnique({
-      where: { id: hostId, isHost: true },
+      where: { socketId: hostId, isHost: true },
       include: { room: true },
     });
     if (!player || !player.room || !player.roomId) {
@@ -154,22 +236,27 @@ export class GameService {
       return;
     }
 
-    const room = await this.prisma.room.findFirst({
+    const room = await this.prisma.room.update({
       where: { id: player.room.id },
       include: {
-        playerAnswers: {
-          where: { round: player.room.currentRound },
-        },
         players: true,
+        messages: true,
+      },
+      data: {
+        status: RoomStatus.analyzing,
       },
     });
 
-    if (!room || !room.playerAnswers) {
+    if (!room) {
       this.logger.error('endRound: Room or player answers not found');
       return;
     }
 
-    const answers = room.playerAnswers;
+    const playerAnswers = await this.prisma.playerAnswer.findMany({
+      where: { roomId: room.id, round: room.currentRound },
+    });
+
+    const answers = playerAnswers;
     for (const answer of answers) {
       await this.prisma.player.update({
         where: { id: answer.playerId },
@@ -177,13 +264,24 @@ export class GameService {
       });
     }
 
-    return { room };
+    return { room, answers };
   }
 
-  async nextRound(roomCode: string) {
+  async nextRound(hostId: string) {
+    const host = await this.prisma.player.findUnique({
+      where: { socketId: hostId, isHost: true },
+    });
+
+    if (!host || !host.roomId || !host.isHost) {
+      this.logger.error(
+        'nextRound: Host not found or not associated with a room or not the Host',
+      );
+      return;
+    }
+
     const room = await this.prisma.room.findUnique({
-      where: { code: roomCode },
-      include: { players: true },
+      where: { id: host.roomId },
+      include: { players: true, messages: true },
     });
 
     if (!room || !room.players) {
@@ -194,7 +292,8 @@ export class GameService {
     if (room.currentRound >= room.maxRounds) {
       await this.prisma.room.update({
         where: { id: room.id },
-        data: { active: false },
+        include: { players: true, messages: true },
+        data: { active: false, status: RoomStatus.finished },
       });
       return room;
     }
@@ -211,25 +310,83 @@ export class GameService {
 
     const updatedRoom = await this.prisma.room.update({
       where: { id: room.id },
+      include: { players: true, messages: true },
       data: {
         currentRound: { increment: 1 },
         currentWord,
+        status: RoomStatus.playing,
       },
     });
 
     return updatedRoom;
   }
 
+  async exitRoom(playerId: string): Promise<Room | undefined> {
+    const player = await this.prisma.player.findUnique({
+      where: { socketId: playerId },
+    });
+    if (!player) {
+      this.logger.error('exitRoom: Player not found');
+      return;
+    }
+    await this.prisma.player.delete({
+      where: { id: player.id },
+    });
+
+    if (!player.roomId) {
+      this.logger.error('exitRoom: Player not associated with a room');
+      return;
+    }
+    const room = await this.prisma.room.findUnique({
+      where: { id: player.roomId },
+      include: { players: true, messages: true },
+    });
+    if (!room || !room.players) {
+      this.logger.error('exitRoom: Room not found');
+      return;
+    }
+    if (room.players.length === 0) {
+      await this.prisma.room.delete({
+        where: { id: room.id },
+      });
+      return undefined;
+    } else if (player.isHost) {
+      const newHost = room.players[0];
+      await this.prisma.player.update({
+        where: { id: newHost.id },
+        data: { isHost: true },
+      });
+    }
+
+    const updatedRoom = await this.prisma.room.findFirst({
+      where: { id: player.roomId },
+      include: { players: true, messages: true },
+    });
+    if (!updatedRoom) {
+      this.logger.error('exitRoom: Updated room not found');
+      return;
+    }
+    return updatedRoom;
+  }
+
   async processAnswer(
-    roomCode: string,
     playerId: string,
     track: string,
     artist: string,
     musicApi: MusicApi,
   ) {
+    const player = await this.prisma.player.findUnique({
+      where: { socketId: playerId },
+    });
+
+    if (!player || !player.roomId) {
+      this.logger.error('processAnswer: Player not found or not associated with a room');
+      return;
+    }
+
     const room = await this.prisma.room.findUnique({
-      where: { code: roomCode },
-      include: { players: true },
+      where: { code: player.roomId },
+      include: { players: true, messages: true },
     });
 
     if (!room) {
