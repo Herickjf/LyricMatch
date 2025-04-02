@@ -6,7 +6,7 @@ import GameStart from "./midbox_boxes/GameStart"
 import SearchSong from "./midbox_boxes/SearchSong"
 import BetweenRounds from "./midbox_boxes/BetweenRounds"
 import Rankings from "./midbox_boxes/Rankings"
-import "../../../css/game/desktop/midbox.css"
+import midBoxStyle from "../../../css/game/desktop/midBox.css"
 
 const MidBox: React.FC = () =>{
     const [room_status, setRoomStatus] = useState<string>("in_round");

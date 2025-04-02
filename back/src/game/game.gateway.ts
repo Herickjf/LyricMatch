@@ -114,7 +114,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
-
   @SubscribeMessage('startGame')
   async handleStartGame(
     @MessageBody() data: { hostId: string },
@@ -129,21 +128,21 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         return;
       }
       this.server.to(room.code).emit('roomUpdate', room);
-      this.recursiveTimer(room.code, room.roundTimer);
+      this.recursiveTimer(room.code, room.roundTimer, client.id);
     } catch (error) {
       console.error('Erro ao iniciar o jogo:', error);
       client.emit('error', { message: 'Erro ao iniciar o jogo' });
     }
   }
 
-  recursiveTimer(roomCode: string, time: number) {
+  recursiveTimer(roomCode: string, time: number, clientId: string) {
     setTimeout(async () => {
       if (time > 0) {
         this.server.to(roomCode).emit('roundTimer', time);
-        this.recursiveTimer(roomCode, time - 1);
+        this.recursiveTimer(roomCode, time - 1, clientId);
       } else {
         try {
-          const r = await this.gameService.endRound(roomCode);
+          const r = await this.gameService.endRound(clientId);
           if (!r) {
             this.logger.error('Erro ao finalizar a rodada pelo timer');
             return;
