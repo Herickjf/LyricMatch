@@ -380,7 +380,9 @@ export class GameService {
     });
 
     if (!player || !player.roomId) {
-      this.logger.error('processAnswer: Player not found or not associated with a room');
+      this.logger.error(
+        'processAnswer: Player not found or not associated with a room',
+      );
       return;
     }
 
@@ -419,6 +421,10 @@ export class GameService {
       track,
       artist,
     );
+
+    await this.prisma.playerAnswer.deleteMany({
+      where: { roomId: player.roomId, playerId, round: room.currentRound },
+    });
 
     // Salva a resposta do jogador no banco de dados
     await this.prisma.playerAnswer.create({
