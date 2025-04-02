@@ -387,7 +387,7 @@ export class GameService {
     }
 
     const room = await this.prisma.room.findUnique({
-      where: { code: player.roomId },
+      where: { id: player.roomId },
       include: { players: true, messages: true },
     });
 
