@@ -5,7 +5,6 @@ import LeftBox from "./LeftBox"
 import MidBox from "./MidBox"
 import RightBox from "./RightBox"
 import { SearchProvider } from "../../../utils/SearchContext"
-
 // css imports
 import "../../../css/game/desktop/desktopScreen.css"
 

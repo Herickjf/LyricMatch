@@ -1,5 +1,6 @@
 import { useSocket } from "../../../utils/SocketContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRoomContext } from '../../../utils/RoomContext';
 
 import GameStart from "./midbox_boxes/GameStart"
 import SearchSong from "./midbox_boxes/SearchSong"
@@ -9,10 +10,19 @@ import "../../../css/game/desktop/midbox.css"
 
 const MidBox: React.FC = () =>{
     const [room_status, setRoomStatus] = useState<string>("in_round");
+    const [loaded, setLoaded] = useState<boolean>(false);
+
 
     const socket = useSocket();
+    const { room } = useRoomContext();
 
-    socket?.on("update_room", (room) => {
+    useEffect(() => {
+        if(loaded) return;
+        setRoomStatus(room!.status);
+        setLoaded(true);
+    }, []);
+
+    socket?.on("roomUpdate", (room) => {
         setRoomStatus(room.status);
     })
 
@@ -20,13 +30,13 @@ const MidBox: React.FC = () =>{
         <div id="mid_box">
             {(() => {
                 switch (room_status) {
-                    case "game_start":
+                    case "waiting":
                         return <GameStart/>
-                    case "in_round":
+                    case "playing":
                         return <SearchSong/>
-                    case "between_rounds":
+                    case "analyzing":
                         return <BetweenRounds/>
-                    case "rankings":
+                    case "finished":
                         return <Rankings/>
                 }
             })()}

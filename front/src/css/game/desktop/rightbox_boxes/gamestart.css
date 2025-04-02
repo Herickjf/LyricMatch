@@ -1,0 +1,15 @@
+#game_start_box{
+    height: 70%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#game_start_title{
+    font-size: 1.6rem;
+    color: var(--color-text);
+    text-align: center;
+    margin-top: 1rem;
+}

@@ -1,9 +1,10 @@
-import { use, useState } from "react"
+import { use, useEffect, useState } from "react"
 
 import TextInput from "../../../../utils/TextInput"
 import Button    from "../../../../utils/Button"
 import { useSearchContext } from "../../../../utils/SearchContext"
 import "../../../../css/game/desktop/midBox/searchSong.css"
+import { useRoomContext } from "../../../../utils/RoomContext"
 
 const back_url = "http://localhost:4000"
 
@@ -13,6 +14,14 @@ const SearchSong: React.FC = () => {
     const [word_to_guess,   setWord]        = useState<string>("WORD");
 
     const { setCount } = useSearchContext();
+    const { room } = useRoomContext();
+    
+    useEffect(() => {
+        if(room) {
+            setWord(room!.currentWord);
+        }
+    }
+    , [room])
 
     function search_song(){
         fetch(`${back_url}/api-requests/search?artist=${artist_name}&track=${song_name}`)

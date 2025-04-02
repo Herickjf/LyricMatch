@@ -1,4 +1,4 @@
-#between_rounds_box{
+#search_song_box{
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -8,7 +8,7 @@
     align-items: center;
 }
 
-#between_rounds_box > #between_rounds_title{
+#search_song_box > #search_song_title{
     text-align: center;
     font-size: 25px;
     margin-bottom: 5px;
@@ -16,7 +16,7 @@
     font-weight: bold;
 }
 
-#between_rounds_select{
+#search_song_select{
     background-color: transparent;
     color: white;
     font-size: 20px;
@@ -26,7 +26,7 @@
     text-align: center;
 }
 
-#between_rounds_select > option{
+#search_song_select > option{
     background-color: #22291c;
     color: white;
     outline: none;

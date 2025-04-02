@@ -42,7 +42,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleDisconnect(client: Socket) {
     try {
       const room = await this.gameService.exitRoom(client.id);
-      if (room) this.server.to(room.code).emit('roomUpsert', room);
+      if (room) this.server.to(room.code).emit('roomUpdate', room);
     } catch (error) {
       console.error('Erro na desconexão de client:', error);
     }
@@ -148,7 +148,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
             this.logger.error('Erro ao finalizar a rodada pelo timer');
             return;
           }
-          this.server.to(roomCode).emit('roomUpsert', r.room);
+          this.server.to(roomCode).emit('roomUpdate', r.room);
           this.server.to(roomCode).emit('roomAnswers', r.answers);
         } catch (error) {
           this.logger.error('Erro ao finalizar a rodada pelo timer:', error);
@@ -171,7 +171,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client.emit('error', { message: 'Erro ao enviar mensagem' });
         return;
       }
-      this.server.to(room.code).emit('roomUpsert', room);
+      this.server.to(room.code).emit('roomUpdate', room);
     } catch (error) {
       console.error('Erro ao enviar mensagem:', error);
       client.emit('error', { message: 'Erro ao enviar mensagem' });
@@ -205,7 +205,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleExitRoom(@ConnectedSocket() client: Socket) {
     try {
       const room = await this.gameService.exitRoom(client.id);
-      if (room) this.server.to(room.code).emit('roomUpsert', room);
+      if (room) this.server.to(room.code).emit('roomUpdate', room);
     } catch (error) {
       console.error('Erro ao sair da sala:', error);
       client.emit('error', { message: 'Erro ao sair da sala' });
@@ -226,7 +226,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         return;
       }
       this.server.to(data.playerId).emit('expelled');
-      this.server.to(room.code).emit('roomUpsert', room);
+      this.server.to(room.code).emit('roomUpdate', room);
     } catch (error) {
       console.error('Erro ao expulsar jogador:', error);
       client.emit('error', {
