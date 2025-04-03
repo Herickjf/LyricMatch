@@ -71,7 +71,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         return;
       }
       await client.join(r.room.code); // Adiciona o cliente à sala
-      this.server.to(r.room.code).emit('roomUpdate', { room: r.room }); // Emite um evento 'roomUpdate' para todos os clientes na sala com os dados da sala
+      this.server.to(r.room.code).emit('roomUpdate', r.room); // Emite um evento 'roomUpdate' para todos os clientes na sala com os dados da sala
       return {
         event: 'joinedRoom',
         data: r.room,
@@ -233,6 +233,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       });
     }
   }
+
+  @SubscribeMessage('nextRound')
   async handleNextRound(@ConnectedSocket() client: Socket) {
     try {
       const room = await this.gameService.nextRound(client.id);
@@ -247,6 +249,25 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       console.error('Erro ao avançar para a próxima rodada:', error);
       client.emit('error', {
         message: 'Erro ao avançar para a próxima rodada',
+      });
+    }
+  }
+
+  @SubscribeMessage('getRoomInfo')
+  async handleGetRoomInfo(@ConnectedSocket() client: Socket) {
+    try {
+      const room = await this.gameService.getRoomInfo(client.id);
+      if (!room) {
+        client.emit('error', {
+          message: 'Erro ao obter informações da sala',
+        });
+        return;
+      }
+      client.emit('roomUpdate', room);
+    } catch (error) {
+      console.error('Erro ao obter informações da sala:', error);
+      client.emit('error', {
+        message: 'Erro ao obter informações da sala',
       });
     }
   }

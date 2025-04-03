@@ -15,14 +15,14 @@ const LeftBox: React.FC = () => {
     const [max_players, setMaxPlayers] = useState<number>(0);
     const [player_list, setPlayerList] = useState<any[]>([]);
 
-    const socket = useSocket();
-    const { room, players, setPlayers } = useRoomContext();
+    const { room, players } = useRoomContext();
     const [ already_joined, setAlreadyJoined ] = useState<boolean>(false);
 
 
     
     useEffect(() => {
         if(already_joined) return;
+        console.log(room)
         setRoomCode(room!.code);
         setMaxPlayers(room!.maxPlayers);
         setCurrentPlayers(players.length);
@@ -31,14 +31,12 @@ const LeftBox: React.FC = () => {
     }
     , [])
 
-    socket?.on("roomUpdate", (data) => {
-        console.log("roomUpdate", data);
-        setMaxPlayers(data.maxPlayers);
-        setPlayerList([...data.players]);
-        setCurrentPlayers(data.players.length);
-        setRoomCode(data.code);
-        setPlayers(data.players);
-    })
+    useEffect(() => {
+        setRoomCode(room!.code);
+        setMaxPlayers(room!.maxPlayers);
+        setCurrentPlayers(room!.players.length);
+        setPlayerList([...room!.players]);
+    }, [room])
 
     return(
         <div id="desktop_players_box" className="side_box">

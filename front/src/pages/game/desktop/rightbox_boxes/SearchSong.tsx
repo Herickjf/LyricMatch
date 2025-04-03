@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { useSearchContext } from "../../../../utils/SearchContext";
 import SongCard from "../../../../utils/SongCard";
@@ -6,7 +6,7 @@ import "../../../../css/game/desktop/rightbox_boxes/searchsong.css"
 import { useSocket } from "../../../../utils/SocketContext";
 
 const SearchSong: React.FC = () => {
-    const [api_selected, setApiSelected] = useState<string>("");
+    const [api_selected, setApiSelected] = useState<string>("LETRAS");
     const [song_name_selected, setSongNameSelected] = useState<string>("");
     const [artist_name_selected, setArtistNameSelected] = useState<string>("");
     const socket = useSocket();
@@ -14,8 +14,15 @@ const SearchSong: React.FC = () => {
     const { count } = useSearchContext();
 
     const makeChoice = () => {
+        console.log("Song selected: ", song_name_selected, artist_name_selected, api_selected);
         socket?.emit("submitAnswer", { musicApi: api_selected, track: song_name_selected, artist: artist_name_selected });
     }
+
+    useEffect(() => {
+        if (song_name_selected && artist_name_selected) {
+            makeChoice();
+        }
+    }, [song_name_selected, artist_name_selected]);
 
     return (
         <div id="search_song_box">
@@ -37,9 +44,8 @@ const SearchSong: React.FC = () => {
                             func={() => {
                                 setSongNameSelected(result.track_name);
                                 setArtistNameSelected(result.artist);
-                                makeChoice();
                             }}
-                            selected={song_name_selected === result.track_name && artist_name_selected === result.artist}
+                            selected={song_name_selected == result.track_name && artist_name_selected == result.artist}
                         />
                     ))
                 }

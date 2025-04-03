@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 
-import { useAudioSelectedContext } from '../../../../utils/AudioSelectedContext';
+import { useSongContext } from '../../../../utils/SongContext';
 
 import '../../../../css/game/desktop/midBox/songPlayer.css'
 
@@ -10,7 +10,8 @@ const SongPlayer: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const { artist, song, cover, audio, correct } = useAudioSelectedContext();
+  const { song_selected } = useSongContext();
+  const { song, artist, cover, audio, correct } = song_selected;
 
   useEffect(() => {
     const audio = audioRef.current;

@@ -12,22 +12,37 @@ const SearchSong: React.FC = () => {
     const [artist_name,     setArtistName]  = useState<string>("");
     const [song_name,       setSongName]    = useState<string>("");
     const [word_to_guess,   setWord]        = useState<string>("WORD");
+    const [timer,           setTimer]       = useState<number>(30);
+    const [already_started, setAlreadyStarted] = useState<boolean>(false);
 
     const { setCount } = useSearchContext();
     const { room } = useRoomContext();
     
     useEffect(() => {
         if(room) {
-            setWord(room!.currentWord);
+            setWord(room?.currentWord);
         }
     }
     , [room])
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setTimer((prevTimer) => {
+                if (prevTimer <= 0) {
+                    clearInterval(interval);
+                    return 0;
+                }
+                return prevTimer - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(interval); // Limpa o intervalo ao desmontar o componente
+    }, []); // Apenas ao montar o componente
 
     function search_song(){
         fetch(`${back_url}/api-requests/search?artist=${artist_name}&track=${song_name}`)
         .then((response) => response.json())
         .then((data) => {
-            console.log(data);
             setCount(data);
         })
     }
@@ -50,7 +65,7 @@ const SearchSong: React.FC = () => {
 
             <div id="search_song_timer_back">
                 <div id="search_song_timer_icon"/>
-                <div id="search_song_timer_bar"/>
+                <div id="search_song_timer_bar" style={{width: `${100/30 * timer}%`}}/>
             </div>
         </div>
     )

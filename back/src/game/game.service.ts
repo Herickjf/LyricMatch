@@ -442,4 +442,27 @@ export class GameService {
 
     return;
   }
+
+  async getRoomInfo(clientId){
+    const player = await this.prisma.player.findUnique({
+      where: { socketId: clientId },
+      include: { room: true },
+    });
+    if (!player || !player.roomId) {
+      this.logger.error('getRoomInfo: Player not found or not associated with a room');
+      return;
+    }
+
+    const room = await this.prisma.room.findUnique({
+      where: { id: player.roomId },
+      include: { players: true, messages: true },
+    });
+
+    if (!room) {
+      this.logger.error('getRoomInfo: Room not found');
+      return;
+    }
+
+    return room;
+  }
 }

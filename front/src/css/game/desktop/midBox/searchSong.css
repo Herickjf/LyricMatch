@@ -1,8 +1,8 @@
 #search_song_box{
+    display: flex;
     width: 100%;
     height: 100%;
 
-    display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
@@ -27,11 +27,26 @@
 
 #search_song_inputs_box{
     width: 80%;
-    height: 20%;
+    height: 50%;
 
     display: flex;
     flex-direction: column;
     gap: 20px;
     /* justify-content: space-between; */
     align-items: center;
+}
+
+#search_song_timer_back{
+    width: 100%;
+    height: 3%;
+    display: flex;
+    border-radius: 15px;
+    background-color: rgba(127, 79, 36, 0.5);
+}
+
+#search_song_timer_bar{
+    height: 100%;
+    border-radius: 15px;
+    background-color: rgba(194, 197, 170);
+    transition: width 1s linear;
 }

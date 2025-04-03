@@ -6,16 +6,38 @@ import NotFound from "./pages/notFound/NotFound";
 import Nav from "./pages/nav/nav";
 import GameScreen from "./pages/game/GameScreen";
 import './css/initialpages/App.css'
-import { SocketProvider } from "./utils/SocketContext";
-import { AudioSelectedProvider } from "./utils/AudioSelectedContext";
+
 import { useRoomContext } from "./utils/RoomContext";
+import { useSocket } from "./utils/SocketContext";
+import { useSongContext } from "./utils/SongContext";
+import { useEffect } from "react";
+
 
 const App = () => {
-  const { in_game } = useRoomContext();
+  const socket = useSocket();
+  const { setRoom, setPlayers, in_game } = useRoomContext();
+  const { setSongSelected } = useSongContext();
+  const { setGuesses } = useSongContext();
+
+  useEffect(() => {
+    if(in_game)
+      socket?.emit("getRoomInfo");
+  }, []);
+
+  socket?.on("roomUpdate", (room: any) => {
+    console.log("roomUpdate", room);
+    setRoom(room);
+    if (room.players){
+      setPlayers(room.players);
+    }
+
+  })
+
+  socket?.on("roomAnswers", (data: any) => {
+    console.log("roomAnswers", data);
+  })
 
   return (
-    <SocketProvider>
-    <AudioSelectedProvider>
       <div className="App" id="App_Screen">
 
         { !in_game && <Nav /> }
@@ -32,8 +54,6 @@ const App = () => {
         { in_game && <GameScreen />}
 
       </div>
-    </AudioSelectedProvider>
-    </SocketProvider>
   );
 };
 

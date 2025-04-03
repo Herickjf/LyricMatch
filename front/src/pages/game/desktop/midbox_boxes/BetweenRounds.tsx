@@ -1,46 +1,19 @@
 import { useState } from "react"
 import { useRoomContext } from "../../../../utils/RoomContext"
 import { useSocket } from "../../../../utils/SocketContext"
-import { useAudioSelectedContext } from "../../../../utils/AudioSelectedContext"
+import { useAudioSelectedContext } from "../../../../utils/SongContext"
 import SongPlayer from "./SongPlayer"
+import Button from "../../../../utils/Button"
 
 
 
 const BetweenRounds: React.FC = () => {
-    const { room, setRoom } = useRoomContext()
-    const { 
-        artist, 
-        song, 
-        cover,
-        audio, 
-        correct,
-        setArtist,
-        setSong,
-        setCover,
-        setAudio,
-        setCorrect,
-    } = useAudioSelectedContext()
-    const socket = useSocket()
+    const socket = useSocket();
+    const { players } = useRoomContext();
 
-    socket?.on("updateRoom", (room: any) => {
-        setRoom(room)
-    })
+    const isTheHost = players.find((player: any) => player.isHost && player.socketId == socket?.id);
 
-    socket?.on("roomAnswers", (data: any) => {
-        console.log(data)
-        if(data){
-            data.answers.forEach((answer: any) => {
-                if(answer.playerId == socket.id){
-                    setCorrect(answer.is_correct)
-                    setSong(answer.song_name)
-                    setArtist(answer.artist_name)
-                    setCover(answer.song_cover)
-                    setAudio(answer.song_audio)
-                    return;
-                }
-            })
-        }
-    })
+
 
     return (
         <div id="between_rounds_box">
@@ -66,6 +39,13 @@ const BetweenRounds: React.FC = () => {
             </div> */}
 
             <SongPlayer/>
+            
+            {
+                isTheHost &&
+                <Button text="Next Round" func={() => {
+                    socket?.emit("nextRound")
+                }}/>
+            }
         </div>
     )
 }

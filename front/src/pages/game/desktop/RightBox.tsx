@@ -14,7 +14,7 @@ const RightBox: React.FC = () =>{
     const [loaded, setLoaded] = useState<boolean>(false);
 
     const socket = useSocket();
-    const { room, setRoom } = useRoomContext();
+    const { room } = useRoomContext();
 
     useEffect(() => {
         if(loaded) return;
@@ -22,11 +22,9 @@ const RightBox: React.FC = () =>{
         setRoomStatus(room!.status);
     }, []);
 
-    socket?.on("roomUpdate", (room) => {
-        console.log(room)
-        setRoomStatus(room.status);
-        setRoom(room);
-    })
+    useEffect(() => {
+        setRoomStatus(room!.status);
+    }, [room]);
 
     return (
         <div id="right_box" className='side_box'>

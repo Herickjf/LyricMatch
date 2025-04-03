@@ -1,4 +1,4 @@
-import { useAudioSelectedContext } from "./AudioSelectedContext";
+import { useAudioSelectedContext } from "./SongContext";
 
 interface GuessCardProps {
     player: string;
