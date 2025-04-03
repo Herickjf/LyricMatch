@@ -1,8 +1,19 @@
 #search_song_box{
-    display: flex;
     width: 100%;
     height: 100%;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
 
+#search_box{
+    width: 100%;
+    height: 50%;
+    flex: 1 0 50%;
+
+    display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
@@ -13,7 +24,7 @@
     height: 15%;
 
     display: flex;
-    flex-direction: column;
+    /* flex-direction: column; */
     justify-content: center;
     align-items: center;
 
@@ -23,6 +34,14 @@
     background-color: #2E3725;
     border: solid 2px #A4AC86;
     border-radius: 10px;
+}
+
+#search_song_subtitle {
+    height: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
 #search_song_inputs_box{
@@ -35,6 +54,7 @@
     /* justify-content: space-between; */
     align-items: center;
 }
+
 
 #search_song_timer_back{
     width: 100%;
@@ -50,3 +70,8 @@
     background-color: rgba(194, 197, 170);
     transition: width 1s linear;
 }
+
+
+#search_song_word_box { background: rgba(0,255,0,0.2); }
+#search_box { background: rgba(255,0,0,0.2); }
+#search_song_timer_back { background: rgba(0,0,255,0.2); }

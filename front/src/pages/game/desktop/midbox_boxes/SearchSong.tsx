@@ -52,15 +52,15 @@ const SearchSong: React.FC = () => {
             <div id="search_song_word_box">{word_to_guess}</div>
             <div id="search_song_subtitle">Enter a song with with the word: {word_to_guess}</div>
 
-            {/* <div id="spinning_logo"></div> */}
+            <div id="search_box">
+                <div id="search_song_inputs_box">
+                    <TextInput label="Artist:" setText={setArtistName} placeholder="Enter the name of the artist"/>
+                    <TextInput label="Song:" setText={setSongName} placeholder="Enter the name of the song" enterFunc={search_song}/>
+                </div>
 
-            <div id="search_song_inputs_box">
-                <TextInput label="Artist:" setText={setArtistName} placeholder="Enter the name of the artist"/>
-                <TextInput label="Song:" setText={setSongName} placeholder="Enter the name of the song"/>
-            </div>
-
-            <div id="search_song_button">
-                <Button text="Search" func={search_song}/>
+                <div id="search_song_button">
+                    <Button text="Search" func={search_song}/>
+                </div>
             </div>
 
             <div id="search_song_timer_back">

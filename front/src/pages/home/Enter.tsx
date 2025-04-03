@@ -67,7 +67,7 @@ const Enter: React.FC<EnterProps> = ({ username, avatar}) => {
         <div className="form_box">
             
             <TextInput label="Code:" placeholder='Enter the room code' setText={setRoomCode} value={roomCode}/>
-            <TextInput label="Password:" placeholder='Enter the room password' setText={setRoomPassword}/>
+            <TextInput label="Password:" placeholder='Enter the room password' setText={setRoomPassword} enterFunc={handleEnterRoom}/>
 
             <Button 
                 text="Enter room" 

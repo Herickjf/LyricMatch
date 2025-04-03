@@ -5,9 +5,19 @@ interface TextInput_Params{
     placeholder?: string,
     value?: string,
     setText?: (text: string) => void
+    enterFunc?: () => void
 }
 
-const TextInput : React.FC<TextInput_Params> = ({label, placeholder, setText, value}) =>{
+const TextInput : React.FC<TextInput_Params> = ({label, placeholder, setText, value, enterFunc}) =>{
+
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+            if (enterFunc) {
+                enterFunc();
+            }
+        }
+    }
+
     return(
         <div className="input_box" id="text_input_box">
             {
@@ -18,6 +28,7 @@ const TextInput : React.FC<TextInput_Params> = ({label, placeholder, setText, va
                     className="text_input"
                     onChange={(e) => setText && setText(e.target.value)} 
                     placeholder = {placeholder}
+                    onKeyDown={handleKeyDown}
                     // autoComplete="off"
                     value={value}
             />
