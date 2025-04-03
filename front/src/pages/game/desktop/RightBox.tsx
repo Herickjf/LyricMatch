@@ -10,7 +10,7 @@ import SearchSong from './rightbox_boxes/SearchSong';
 import Chat from './rightbox_boxes/Chat';
 
 const RightBox: React.FC = () =>{
-    const [room_status, setRoomStatus] = useState<string>("playing");
+    const [room_status, setRoomStatus] = useState<string>("waiting");
     const [loaded, setLoaded] = useState<boolean>(false);
 
     const socket = useSocket();

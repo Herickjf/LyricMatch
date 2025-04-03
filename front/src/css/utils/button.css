@@ -1,4 +1,4 @@
-button{
+.button{
     /* margin: 0 auto; */
     padding: 9px 15px;
 
@@ -13,7 +13,7 @@ button{
     transition: .2s ease-in-out;
 }
 
-button:hover{
+.button:hover{
     transform: scale(1.01);
     box-shadow: #8f9c61be 0px 0px 10px;
     background-color: #afbf77;

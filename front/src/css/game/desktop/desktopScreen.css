@@ -9,6 +9,7 @@
 
     background-color: rgba(67, 36, 11, .4);
     border: 2px solid rgba(255, 255, 255, 0.148);
+    box-shadow: 0 0 30px #b5c38b62;
     border-radius: 10px;
 }
 

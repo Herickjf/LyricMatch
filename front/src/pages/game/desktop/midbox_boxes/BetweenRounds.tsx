@@ -1,35 +1,71 @@
 import { useState } from "react"
+import { useRoomContext } from "../../../../utils/RoomContext"
+import { useSocket } from "../../../../utils/SocketContext"
+import { useAudioSelectedContext } from "../../../../utils/AudioSelectedContext"
+import SongPlayer from "./SongPlayer"
+
+
 
 const BetweenRounds: React.FC = () => {
-    const [word_of_round, setWordOfRound] = useState<string>("PALAVRA")
-    const [is_correct, setIsCorrect] = useState<boolean>(false)
-    const [song_name, setSongName] = useState<string>("")
-    const [song_artist, setSongArtist] = useState<string>("")
-    const [song_cover, setSongCover] = useState<string>("")
-    const [song_audio, setSongAudio] = useState<string>("")
+    const { room, setRoom } = useRoomContext()
+    const { 
+        artist, 
+        song, 
+        cover,
+        audio, 
+        correct,
+        setArtist,
+        setSong,
+        setCover,
+        setAudio,
+        setCorrect,
+    } = useAudioSelectedContext()
+    const socket = useSocket()
+
+    socket?.on("updateRoom", (room: any) => {
+        setRoom(room)
+    })
+
+    socket?.on("roomAnswers", (data: any) => {
+        console.log(data)
+        if(data){
+            data.answers.forEach((answer: any) => {
+                if(answer.playerId == socket.id){
+                    setCorrect(answer.is_correct)
+                    setSong(answer.song_name)
+                    setArtist(answer.artist_name)
+                    setCover(answer.song_cover)
+                    setAudio(answer.song_audio)
+                    return;
+                }
+            })
+        }
+    })
 
     return (
         <div id="between_rounds_box">
-            <div id="between_rounds_word_box">{word_of_round}</div>
+            {/* <div id="between_rounds_word_box">{room!.currentWord}</div>
 
             <div id="between_rounds_subtitle_box">
-                <p>For the word "{word_of_round}" you are...</p>
-                <p>{is_correct? "RIGHTTT!" : "WROOONG!"}</p>
+                <p>For the word "{room!.currentWord}" you are...</p>
+                <p>{correct? "RIGHTTT!" : "WROOONG!"}</p>
             </div>
 
             <div id="between_rounds_song_player_box">
                 <div id="between_rounds_song_info">
-                    <div id="between_rounds_song_cover" style={{backgroundImage: `url(${song_cover})`}}/>
+                    <div id="between_rounds_song_cover" style={{backgroundImage: `url(${cover})`}}/>
                     <div id="between_rounds_song_description">
-                        <h1>{song_name}</h1>
-                        <h2>{song_artist}</h2>
+                        <h1>{song}</h1>
+                        <h2>{artist}</h2>
                     </div>
                 </div>
 
                 <div id="between_rounds_song_player">
-                    <audio controls src={song_audio} id="between_rounds_song_audio"/>
+                    <audio controls src={audio} id="between_rounds_song_audio"/>
                 </div>
-            </div>
+            </div> */}
+
+            <SongPlayer/>
         </div>
     )
 }

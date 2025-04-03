@@ -9,12 +9,12 @@ const SearchSong: React.FC = () => {
     const [api_selected, setApiSelected] = useState<string>("");
     const [song_name_selected, setSongNameSelected] = useState<string>("");
     const [artist_name_selected, setArtistNameSelected] = useState<string>("");
-    const { socket } = useSocket();
+    const socket = useSocket();
 
     const { count } = useSearchContext();
 
     const makeChoice = () => {
-        socket?.emit("submitAnswer", { api: api_selected, song: song_name_selected, artist: artist_name_selected });
+        socket?.emit("submitAnswer", { musicApi: api_selected, track: song_name_selected, artist: artist_name_selected });
     }
 
     return (

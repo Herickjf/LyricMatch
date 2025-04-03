@@ -8,24 +8,6 @@
     align-items: center;
 }
 
-#spinning_logo{
-    position: relative;
-    width: 100px;
-    height: 100px;
-    background-image: url('/assets/logo.svg');
-    background-size: cover;
-    background-position: center;
-    animation: spin 3s linear infinite;
-}
-@keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
 #search_song_word_box{
     width: 100%;
     height: 15%;

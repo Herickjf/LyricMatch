@@ -7,6 +7,7 @@ import Nav from "./pages/nav/nav";
 import GameScreen from "./pages/game/GameScreen";
 import './css/initialpages/App.css'
 import { SocketProvider } from "./utils/SocketContext";
+import { AudioSelectedProvider } from "./utils/AudioSelectedContext";
 import { useRoomContext } from "./utils/RoomContext";
 
 const App = () => {
@@ -14,6 +15,7 @@ const App = () => {
 
   return (
     <SocketProvider>
+    <AudioSelectedProvider>
       <div className="App" id="App_Screen">
 
         { !in_game && <Nav /> }
@@ -30,6 +32,7 @@ const App = () => {
         { in_game && <GameScreen />}
 
       </div>
+    </AudioSelectedProvider>
     </SocketProvider>
   );
 };

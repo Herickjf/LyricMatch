@@ -6,6 +6,7 @@
     gap: 10px;
     overflow-y: auto;
     align-items: center;
+    justify-content: start;
 }
 
 #search_song_box > #search_song_title{
