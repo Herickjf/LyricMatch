@@ -4,6 +4,8 @@ interface RoomContextType {
     room: any;
     in_game: boolean;
     players: any;
+    player: any;
+    setPlayer: (player: any) => void;
     setPlayers: (players: any) => void;
     setRoom: (room: any) => void;
     setInGame: (inGame: boolean) => void;
@@ -15,9 +17,10 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
     const [room, setRoom] = useState<any>();
     const [in_game, setInGame] = useState<boolean>(false);
     const [players, setPlayers] = useState<any>([]);
+    const [player, setPlayer] = useState<any>(null);
 
     return (
-        <RoomContext.Provider value={{ room, in_game, players, setPlayers, setRoom, setInGame }}>
+        <RoomContext.Provider value={{ room, in_game, players, player, setPlayer, setPlayers, setRoom, setInGame }}>
             {children}
         </RoomContext.Provider>
     );

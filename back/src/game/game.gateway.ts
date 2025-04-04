@@ -245,6 +245,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         return;
       }
       this.server.to(room.code).emit('roomUpdate', room);
+      this.recursiveTimer(room.code, room.roundTimer, client.id);
     } catch (error) {
       console.error('Erro ao avançar para a próxima rodada:', error);
       client.emit('error', {

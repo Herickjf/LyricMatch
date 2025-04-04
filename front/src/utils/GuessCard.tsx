@@ -1,41 +1,32 @@
-import { useAudioSelectedContext } from "./SongContext";
+import { useRoomContext } from "./RoomContext";
+import { useSongContext } from "./SongContext";
+import "../css/utils/guesscard.css"
 
 interface GuessCardProps {
-    player: string;
-    song_name: string;
-    artist_name: string;
-    song_cover: string;
-    is_correct: boolean;
-    song_audio: string;
+    song_param: any;
 }
 
 const GuessCard: React.FC<GuessCardProps> = ({
-    player,
-    song_name,
-    artist_name,
-    song_cover,
-    is_correct,
-    song_audio,
+    song_param
 }) => {
-    const { setArtist, setSong, setCover, setAudio, setCorrect } = useAudioSelectedContext()
+    const { setSongSelected } = useSongContext();
+    const { players } = useRoomContext();
+
+const player = players.find((player: any) => player.id == song_param.playerId);
 
     return (
         <div className="guess_card_box">
-            <div className="guess_card_player_name">{player}</div>
+            <div className="guess_card_player_name">{player.name}:</div>
             <div 
-                className={`guess_card_song_info ${is_correct ? "guess_card_song_info_correct" : "guess_card_song_info_wrong"}`}
+                className={`guess_card_song_info ${song_param.isCorrect ? "guess_card_song_info_correct" : "guess_card_song_info_wrong"}`}
                 onClick={() => {
-                    setArtist(artist_name)
-                    setSong(song_name)
-                    setCover(song_cover)
-                    setAudio(song_audio)
-                    setCorrect(is_correct)
+                    setSongSelected(song_param)
                 }}
             >
-                <div className="guess_card_song_cover" style={{backgroundImage: `url(${song_cover})`}}/>
+                <div className="guess_card_song_cover" style={{backgroundImage: `url(${song_param.albumImage})`}}/>
                 <div className="guess_card_song_description">
-                    <h1>{song_name}</h1>
-                    <h2>{artist_name}</h2>
+                    <div className="guess_card_song_name">{song_param.track}</div>
+                    <div className="guess_card_artist_name">{song_param.artist}</div>
                 </div>
             </div>
         </div>

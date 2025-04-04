@@ -14,7 +14,6 @@ const SearchSong: React.FC = () => {
     const { count } = useSearchContext();
 
     const makeChoice = () => {
-        console.log("Song selected: ", song_name_selected, artist_name_selected, api_selected);
         socket?.emit("submitAnswer", { musicApi: api_selected, track: song_name_selected, artist: artist_name_selected });
     }
 

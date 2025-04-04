@@ -1,0 +1,24 @@
+#between_rounds_box{
+    width: 100%;
+    height: 70%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#between_rounds_title{
+    width: 100%;
+    height: 5%;
+    text-align: center;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+#between_rounds_guesses_list{
+    width: 100%;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    gap: 15px;
+}

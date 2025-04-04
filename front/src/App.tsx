@@ -16,8 +16,9 @@ import { useEffect } from "react";
 const App = () => {
   const socket = useSocket();
   const { setRoom, setPlayers, in_game } = useRoomContext();
-  const { setSongSelected } = useSongContext();
+  const { song_selected, setSongSelected } = useSongContext();
   const { setGuesses } = useSongContext();
+  const { player, setPlayer } = useRoomContext();
 
   useEffect(() => {
     if(in_game)
@@ -25,7 +26,7 @@ const App = () => {
   }, []);
 
   socket?.on("roomUpdate", (room: any) => {
-    console.log("roomUpdate", room);
+    setPlayer(room.players.find((p: any) => p.socketId == socket?.id));
     setRoom(room);
     if (room.players){
       setPlayers(room.players);
@@ -34,7 +35,8 @@ const App = () => {
   })
 
   socket?.on("roomAnswers", (data: any) => {
-    console.log("roomAnswers", data);
+    setSongSelected(data.find((song: any) => song.playerId == player?.id));
+    setGuesses(data);
   })
 
   return (

@@ -1,17 +1,9 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 
-interface SongSelected{
-    song: string;
-    artist: string;
-    cover: string;
-    audio: string;
-    correct: boolean;
-}
-
 // Definição do tipo do contexto
 interface SongContextType {
-    song_selected: SongSelected;
-    setSongSelected: (song_selected: SongSelected) => void;
+    song_selected: any;
+    setSongSelected: (song_selected: any) => void;
     guesses: any;
     setGuesses: (guesses: any) => void;
 }
@@ -21,13 +13,7 @@ const SongContext = createContext<SongContextType | undefined>(undefined);
 
 // Criando o Provider
 export const SongProvider = ({ children }: { children: ReactNode }) => {
-    const [song_selected, setSongSelected] = useState<SongSelected>({
-        song: "",
-        artist: "",
-        cover: "",
-        audio: "",
-        correct: false,
-    });
+    const [song_selected, setSongSelected] = useState<any>(null);
     const [guesses, setGuesses] = useState<any>([]);
 
     return (

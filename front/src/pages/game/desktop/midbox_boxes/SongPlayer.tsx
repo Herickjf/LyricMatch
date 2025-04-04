@@ -11,7 +11,12 @@ const SongPlayer: React.FC = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const { song_selected } = useSongContext();
-  const { song, artist, cover, audio, correct } = song_selected;
+  const song = song_selected?.track;
+  const artist = song_selected?.artist;
+  const cover = song_selected?.albumImage;
+  const audio = song_selected?.preview;
+  const correct = song_selected?.isCorrect;
+
 
   useEffect(() => {
     const audio = audioRef.current;

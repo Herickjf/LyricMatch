@@ -1,7 +1,6 @@
 import { useState } from "react"
 import { useRoomContext } from "../../../../utils/RoomContext"
 import { useSocket } from "../../../../utils/SocketContext"
-import { useAudioSelectedContext } from "../../../../utils/SongContext"
 import SongPlayer from "./SongPlayer"
 import Button from "../../../../utils/Button"
 

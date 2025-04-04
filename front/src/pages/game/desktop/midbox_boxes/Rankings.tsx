@@ -5,7 +5,7 @@ import RankingCard from "../../../../utils/RankingCard";
 
 const Rankings: React.FC = () => {
     const { room } = useRoomContext();
-    const { socket } = useSocket();
+    const socket = useSocket();
     const [players, setPlayers] = useState<any[]>([]);
 
     useEffect(() => {
@@ -34,7 +34,7 @@ const Rankings: React.FC = () => {
                         name={player.name}
                         position={index + 1}
                         score={player.score}
-                        isMe={player.socketID == socket.id}
+                        isMe={player.socketId == socket?.id}
                     />
                 ))}
             </div>
