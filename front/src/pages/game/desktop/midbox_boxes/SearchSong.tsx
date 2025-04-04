@@ -2,7 +2,6 @@ import { use, useEffect, useState } from "react"
 
 import TextInput from "../../../../utils/TextInput"
 import Button    from "../../../../utils/Button"
-import Alert    from "../../../../utils/Alert"
 import { useSearchContext } from "../../../../utils/SearchContext"
 import "../../../../css/game/desktop/midBox/searchSong.css"
 import { useRoomContext } from "../../../../utils/RoomContext"
@@ -14,8 +13,7 @@ const SearchSong: React.FC = () => {
     const [song_name,       setSongName]    = useState<string>("");
     const [word_to_guess,   setWord]        = useState<string>("WORD");
     const [timer,           setTimer]       = useState<number>(30);
-    const [already_started, setAlreadyStarted] = useState<boolean>(false);
-    const [alert, setAlert] = useState<{title: string, message: string} | null>(null);
+    const [alert, setAlert] = useState<boolean>(false);
 
     const { setCount } = useSearchContext();
     const { room } = useRoomContext();
@@ -45,9 +43,11 @@ const SearchSong: React.FC = () => {
         fetch(`${back_url}/api-requests/search?artist=${artist_name}&track=${song_name}`)
         .then((response) => response.json())
         .then((data) => {
-            console.log(data);
             if(data.length == 0 || data.statusCode == 500){
-                setAlert({title: "Song not found", message: `${song_name} not found. Please, try again.`});
+                setAlert(true);
+                setTimeout(() => {
+                    setAlert(false);
+                }, 3000);
                 return;
             }
             setCount(data);
@@ -75,7 +75,11 @@ const SearchSong: React.FC = () => {
                 <div id="search_song_timer_bar" style={{width: `${100/30 * timer}%`}}/>
             </div>
 
-            {alert && <Alert title={alert.title} message={alert.message} />}
+            {alert && (
+                <div className="custom-alert">
+                    Song not found! Please try again.
+                </div>
+            )}
         </div>
     )
 }
