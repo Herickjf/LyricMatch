@@ -375,28 +375,34 @@ export class GameService {
     artist: string,
     musicApi: MusicApi,
   ) {
-    const player = await this.prisma.player.findUnique({
+    const playerExists = await this.prisma.player.findUnique({
       where: { socketId: playerId },
     });
+    if (!playerExists) {
+      this.logger.error(
+        `processAnswer: Player with socketId ${playerId} not found`,
+      );
+      return;
+    }
 
-    if (!player || !player.roomId) {
+    if (!playerExists || !playerExists.roomId) {
       this.logger.error(
         'processAnswer: Player not found or not associated with a room',
       );
       return;
     }
 
-    const room = await this.prisma.room.findUnique({
-      where: { id: player.roomId },
-      include: { players: true, messages: true },
+    const roomExists = await this.prisma.room.findUnique({
+      where: { id: playerExists.roomId },
     });
-
-    if (!room) {
-      this.logger.error('processAnswer: Room not found');
+    if (!roomExists) {
+      this.logger.error(
+        `processAnswer: Room with ID ${playerExists.roomId} not found`,
+      );
       return;
     }
 
-    if (!room.currentWord) {
+    if (!roomExists.currentWord) {
       this.logger.error('processAnswer: Current word not found');
       return;
     }
@@ -415,7 +421,7 @@ export class GameService {
     // Valida se a palavra da rodada está presente na letra da música
     const isCorrect = lyrics
       .toLowerCase()
-      .includes(String(room.currentWord).toLowerCase());
+      .includes(String(roomExists.currentWord).toLowerCase());
 
     const playerAnswer = await this.apiRequestsService.searchTracks_Deezer(
       track,
@@ -423,15 +429,19 @@ export class GameService {
     );
 
     await this.prisma.playerAnswer.deleteMany({
-      where: { roomId: player.roomId, playerId, round: room.currentRound },
+      where: {
+        roomId: playerExists.roomId,
+        playerId,
+        round: roomExists.currentRound,
+      },
     });
 
     // Salva a resposta do jogador no banco de dados
     await this.prisma.playerAnswer.create({
       data: {
-        playerId,
-        roomId: room.id,
-        round: room.currentRound,
+        playerId: playerExists.id,
+        roomId: roomExists.id,
+        round: roomExists.currentRound,
         track: playerAnswer[0].track_name,
         artist: playerAnswer[0].artist,
         albumImage: playerAnswer[0].album_image,
@@ -443,13 +453,15 @@ export class GameService {
     return;
   }
 
-  async getRoomInfo(clientId){
+  async getRoomInfo(clientId) {
     const player = await this.prisma.player.findUnique({
       where: { socketId: clientId },
       include: { room: true },
     });
     if (!player || !player.roomId) {
-      this.logger.error('getRoomInfo: Player not found or not associated with a room');
+      this.logger.error(
+        'getRoomInfo: Player not found or not associated with a room',
+      );
       return;
     }
 
