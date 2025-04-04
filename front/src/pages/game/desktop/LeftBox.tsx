@@ -59,12 +59,6 @@ const LeftBox: React.FC = () => {
                 ))
 
             }
-                {/* <PlayerCard name="Fulano" points={20} avatar="http://localhost:4000/images/avatar32.png"/>
-                <PlayerCard name="Fulano" points={20} avatar="http://localhost:4000/images/avatar30.png"/>
-                <PlayerCard name="Fulano" points={20} avatar="http://localhost:4000/images/avatar37.png"/>
-                <PlayerCard name="Fulano" points={20} avatar="http://localhost:4000/images/avatar38.png"/>
-                <PlayerCard name="Fulano" points={20} avatar="http://localhost:4000/images/avatar35.png"/>
-                <PlayerCard name="Fulano" points={20} avatar="http://localhost:4000/images/avatar29.png"/> */}
             </div>
 
             <button className="copy-code-button" onClick={copyToClipboard}>Copiar Código</button>

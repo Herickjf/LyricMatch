@@ -14,6 +14,7 @@ const Alert : React.FC<AlertProps> = ({title, message, error_code, seconds = 3})
     const [visible, setVisible] = React.useState(true);
     const [timebar, setTimeBar] = React.useState(100);
 
+
     React.useEffect(() => {
         setVisible(true);
         setTimeBar(100);
@@ -25,7 +26,7 @@ const Alert : React.FC<AlertProps> = ({title, message, error_code, seconds = 3})
         }, interval);
 
         const hideTimer = setTimeout(() => {
-            setVisible(false);
+            handleClose();
             clearInterval(timer);
         }, seconds * 1000);
 
@@ -37,6 +38,8 @@ const Alert : React.FC<AlertProps> = ({title, message, error_code, seconds = 3})
 
 
     function handleClose() {
+        title = "";
+        message = "";
         setVisible(false);
     }
 

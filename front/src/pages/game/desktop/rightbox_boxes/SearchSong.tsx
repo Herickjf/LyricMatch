@@ -35,7 +35,7 @@ const SearchSong: React.FC = () => {
 
             <div id="search_results_box">
                 {
-                    count.map((result: any, index: number) => (
+                    count?.map((result: any, index: number) => (
                         <SongCard 
                             album_cover={result.album_image} 
                             song_name={result.track_name} 
