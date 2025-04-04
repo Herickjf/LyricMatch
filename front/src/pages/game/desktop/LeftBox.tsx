@@ -14,6 +14,7 @@ const LeftBox: React.FC = () => {
     const [room_code, setRoomCode] = useState<string>("");
     const [max_players, setMaxPlayers] = useState<number>(0);
     const [player_list, setPlayerList] = useState<any[]>([]);
+    const [showAlert, setShowAlert] = useState<boolean>(false);
 
     const { room, players } = useRoomContext();
     const [ already_joined, setAlreadyJoined ] = useState<boolean>(false);
@@ -36,7 +37,16 @@ const LeftBox: React.FC = () => {
         setMaxPlayers(room!.maxPlayers);
         setCurrentPlayers(room!.players.length);
         setPlayerList([...room!.players]);
-    }, [room])
+    }, [room]);
+
+    const copyToClipboard = () => {
+        navigator.clipboard.writeText(`http://localhost:5173?code=${room_code}`).then(() => {
+            setShowAlert(true); // Exibe o alerta
+            setTimeout(() => setShowAlert(false), 3000); // Oculta o alerta após 3 segundos
+        }).catch((err) => {
+            console.error("Erro ao copiar o código:", err);
+        });
+    };
 
     return(
         <div id="desktop_players_box" className="side_box">
@@ -56,8 +66,14 @@ const LeftBox: React.FC = () => {
                 <PlayerCard name="Fulano" points={20} avatar="http://localhost:4000/images/avatar35.png"/>
                 <PlayerCard name="Fulano" points={20} avatar="http://localhost:4000/images/avatar29.png"/> */}
             </div>
-            
-            <a href={`http://localhost:5173?code=${room_code}`} target="blank">Copiar Código</a>
+
+            <button className="copy-code-button" onClick={copyToClipboard}>Copiar Código</button>
+
+            {showAlert && ( // Renderiza o alerta se showAlert for true
+                <div className="custom-alert">
+                    Código copiado para a área de transferência!
+                </div>
+            )}
         </div>
     )
 }
