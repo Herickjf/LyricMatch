@@ -296,12 +296,12 @@ export class GameService {
     return updatedRoom;
   }
 
-  async exitRoom(playerId: string): Promise<Room> {
+  async exitRoom(playerId: string): Promise<Room | null> {
     const player = await this.prisma.player.findUnique({
       where: { socketId: playerId },
     });
     if (!player) {
-      throw new Error('exitRoom: Player not found');
+      return null;
     }
     await this.prisma.player.delete({
       where: { id: player.id },
