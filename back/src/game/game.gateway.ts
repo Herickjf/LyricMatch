@@ -42,9 +42,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleDisconnect(client: Socket) {
     try {
       const room = await this.gameService.exitRoom(client.id);
+      if (!room){
+        return;   // Se o cliente não estava em uma sala, não faz nada
+      }
       if (room) this.server.to(room.code).emit('roomUpdate', room);
     } catch (error) {
-      console.error('Erro na desconexão de client:', error);
+      console.error('Erro na desconexão de client:', client.id, error);
     }
   }
 
