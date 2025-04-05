@@ -26,14 +26,14 @@ const PlayerCard: React.FC<PlayerCardProps> = ({name, avatar, points, isHost, ho
     return (
         <div className={`player-card ${isHost ? "host" : ""}`}>
             <div className="player-card-avatar" style={{backgroundImage: `url(${avatar})`}}>
-                {isHost && <div className="player-card-host-icon"></div>}
+                {isHost && <div className="player-card-host-icon fa fa-crown"></div>}
             </div>
             <div className="player-card-infos">
                 {
                     hostView && !isHost && 
                     <div className="player-card-host-options">
                         <i className="fa fa-crown player-card-host-options-turn-to-host" onClick={() => turnHost()}></i>
-                        <i className="fa fa-ban player-card-host-options-kick" onClick={() => expel()}></i>
+                        <i className="fa fa-times-circle player-card-host-options-kick" onClick={() => expel()}></i>
                     </div>
                 }
                 <div className="player-card-name">{name}</div>
