@@ -289,14 +289,14 @@ export class GameService {
       return;
     }
 
-    if (room.currentRound >= room.maxRounds) {
-      await this.prisma.room.update({
-        where: { id: room.id },
-        include: { players: true, messages: true },
-        data: { active: false, status: RoomStatus.finished },
-      });
-      return room;
-    }
+    // if (room.currentRound >= room.maxRounds) {
+    //   await this.prisma.room.update({
+    //     where: { id: room.id },
+    //     include: { players: true, messages: true },
+    //     data: { active: false, status: RoomStatus.finished },
+    //   });
+    //   return room;
+    // }
 
     const words = await this.prisma.word.findMany({
       where: { language: room.language },
@@ -431,7 +431,7 @@ export class GameService {
     await this.prisma.playerAnswer.deleteMany({
       where: {
         roomId: playerExists.roomId,
-        playerId,
+        playerId: playerExists.id,
         round: roomExists.currentRound,
       },
     });
@@ -476,5 +476,74 @@ export class GameService {
     }
 
     return room;
+  }
+
+  async getPlayersGuesses(clientId: string, roomCode: string){
+    const player = await this.prisma.player.findUnique({
+      where: { socketId: clientId },
+    });
+    if (!player || !player.roomId) {
+      this.logger.error(
+        'getPlayersGuesses: Player not found or not associated with a room',
+      );
+      return;
+    }
+
+    const room = await this.prisma.room.findUnique({
+      where: { code: roomCode },
+      include: { players: true, messages: true },
+    });
+
+    if (!room) {
+      this.logger.error('getPlayersGuesses: Room not found');
+      return;
+    }
+
+    const playerAnswers = await this.prisma.playerAnswer.findMany({
+      where: { roomId: room.id, round: room.currentRound },
+    });
+
+    return playerAnswers;
+  }
+
+  async getRankings(clientId: string) {
+    // Coloca a sala em estado de finished e retorna, uma ultima vez, o objeto da sala com os players nele
+    const player = await this.prisma.player.findUnique({
+      where: { socketId: clientId },
+      include: { room: true },
+    });
+
+    if (!player || !player.roomId) {
+      this.logger.error(
+        'getRankings: Player not found or not associated with a room',
+      );
+      return;
+    }
+
+    const room = await this.prisma.room.findUnique({
+      where: { id: player.roomId },
+      include: { players: true, messages: true },
+    });
+
+    if (!room) {
+      this.logger.error('getRankings: Room not found');
+      return;
+    }
+
+    const players = await this.prisma.player.findMany({
+      where: { roomId: room.id },
+      orderBy: { score: 'desc' },
+    });
+
+    const updatedRoom = await this.prisma.room.update({
+      where: { id: room.id },
+      data: { status: RoomStatus.finished },
+      include: { players: true, messages: true },
+    });
+    if (!updatedRoom) {
+      this.logger.error('getRankings: Updated room not found');
+      return;
+    }
+    return updatedRoom;
   }
 }

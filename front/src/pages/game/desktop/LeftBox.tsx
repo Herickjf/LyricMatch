@@ -11,33 +11,23 @@ import '../../../css/game/desktop/leftBox.css'
 
 const LeftBox: React.FC = () => {
     const [current_players, setCurrentPlayers] = useState<number>(0);
-    const [room_code, setRoomCode] = useState<string>("");
     const [max_players, setMaxPlayers] = useState<number>(0);
-    const [player_list, setPlayerList] = useState<any[]>([]);
+    const [current_round, setCurrentRound] = useState<number>(0);
+    const [max_rounds, setMaxRounds] = useState<number>(0);
+
+    const [room_code, setRoomCode] = useState<string>("");
     const [showAlert, setShowAlert] = useState<boolean>(false);
 
     const { room, players } = useRoomContext();
-    const [ already_joined, setAlreadyJoined ] = useState<boolean>(false);
-
-
     
     useEffect(() => {
-        if(already_joined) return;
-        console.log(room)
-        setRoomCode(room!.code);
-        setMaxPlayers(room!.maxPlayers);
-        setCurrentPlayers(players.length);
-        setPlayerList([...players]);
-        setAlreadyJoined(true);
+        setRoomCode(room?.code);
+        setMaxPlayers(room?.maxPlayers);
+        setCurrentPlayers(players?.length);
+        setMaxRounds(room?.maxRounds);
+        setCurrentRound(room?.currentRound);
     }
-    , [])
-
-    useEffect(() => {
-        setRoomCode(room!.code);
-        setMaxPlayers(room!.maxPlayers);
-        setCurrentPlayers(room!.players.length);
-        setPlayerList([...room!.players]);
-    }, [room]);
+    , [players, room])
 
     const copyToClipboard = () => {
         navigator.clipboard.writeText(`http://localhost:5173?code=${room_code}`).then(() => {
@@ -50,22 +40,25 @@ const LeftBox: React.FC = () => {
 
     return(
         <div id="desktop_players_box" className="side_box">
-            <div id="game_box_title">{current_players}/{max_players} Players</div>
+            <div id="game_box_info">
+                <div id="game_box_players"><span>{current_players}</span>/<span>{max_players}</span> Players</div>
+                <div id="game_box_rounds"><span>{current_round}</span>/<span>{max_rounds}</span> Rounds</div>
+            </div>
 
             <div id="desktop_players_list">
             {
-                player_list.map((player) => (
+                players.map((player: any) => (
                     <PlayerCard name={player.name} avatar={player.avatar} points={player.score} isHost={player.isHost} key={player.name} />
                 ))
 
             }
             </div>
 
-            <button className="copy-code-button" onClick={copyToClipboard}>Copiar Código</button>
+            <button className="copy-code-button" onClick={copyToClipboard}>Share</button>
 
             {showAlert && ( // Renderiza o alerta se showAlert for true
                 <div className="custom-alert">
-                    Código copiado para a área de transferência!
+                    Code copied to the clipboard!
                 </div>
             )}
         </div>

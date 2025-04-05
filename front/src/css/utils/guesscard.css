@@ -14,8 +14,10 @@
 }
 
 .guess_card_song_info{
-    display: flex;
     width: 98%;
+    padding: 10px;
+
+    display: flex;
     cursor: pointer;
     border-radius: 10px;
     flex-grow: 1;

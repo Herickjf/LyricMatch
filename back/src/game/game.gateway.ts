@@ -246,6 +246,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }
       this.server.to(room.code).emit('roomUpdate', room);
       this.recursiveTimer(room.code, room.roundTimer, client.id);
+      
     } catch (error) {
       console.error('Erro ao avançar para a próxima rodada:', error);
       client.emit('error', {
@@ -258,6 +259,41 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleGetRoomInfo(@ConnectedSocket() client: Socket) {
     try {
       const room = await this.gameService.getRoomInfo(client.id);
+      if (!room) {
+        client.emit('error', {
+          message: 'Erro ao obter informações da sala',
+        });
+        return;
+      }
+
+      const playersguesses = await this.gameService.getPlayersGuesses(
+        client.id,
+        room.code,
+      );
+      if (!playersguesses) {
+        client.emit('error', {
+          message: 'Erro ao obter informações da sala',
+        });
+        return;
+      }
+
+      client.emit('roomUpdate', room);
+      client.emit('roomAnswers', playersguesses);
+    } catch (error) {
+      console.error('Erro ao obter informações da sala:', error);
+      client.emit('error', {
+        message: 'Erro ao obter informações da sala',
+      });
+    }
+  }
+
+  @SubscribeMessage('getRankings')
+  async handleGetRankings(
+    @ConnectedSocket() client: Socket
+  ){
+    // Coloca a sala em estado de finished e retorna, uma ultima vez, o objeto da sala com os players nele
+    try {
+      const room = await this.gameService.getRankings(client.id);
       if (!room) {
         client.emit('error', {
           message: 'Erro ao obter informações da sala',

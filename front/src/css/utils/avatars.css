@@ -70,18 +70,18 @@
 }
 
 .avatars_selection_box > #avatar_menu_list::-webkit-scrollbar-track {
-    background-color: rgba(0, 0, 0, 0); /* Fundo da barra */
+    background-color: rgba(234, 247, 194, .2); /* Fundo da barra */
     border-radius: 10px;
 }
 
 .avatars_selection_box > #avatar_menu_list::-webkit-scrollbar-thumb {
     background: #cfe587; /* A barrinha em si */
     border-radius: 10px;
-    border: 2px solid #2d2d2d; /* Dá espaço interno fake */
+    border: 2px solid #2d2d2d80; /* Dá espaço interno fake */
 }
   
 .avatars_selection_box > #avatar_menu_list::-webkit-scrollbar-thumb:hover {
-    background: #eaf7c2;
+    background: rgb(234, 247, 194);
 }
 
 .avatars_selection_box > #avatar_menu_list > .avatar_item{

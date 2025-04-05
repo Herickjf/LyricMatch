@@ -15,23 +15,20 @@ import { useEffect } from "react";
 
 const App = () => {
   const socket = useSocket();
-  const { setRoom, setPlayers, in_game } = useRoomContext();
+  const { setRoom, setPlayers, in_game, room } = useRoomContext();
   const { song_selected, setSongSelected } = useSongContext();
   const { setGuesses } = useSongContext();
   const { player, setPlayer } = useRoomContext();
 
   useEffect(() => {
-    if(in_game)
+    if(in_game && (room?.status != "finished"))
       socket?.emit("getRoomInfo");
   }, []);
 
   socket?.on("roomUpdate", (room: any) => {
-    setPlayer(room.players.find((p: any) => p.socketId == socket?.id));
+    setPlayers(room.players);
     setRoom(room);
-    if (room.players){
-      setPlayers(room.players);
-    }
-
+    setPlayer(room.players.find((p: any) => p.socketId == socket?.id));
   })
 
   socket?.on("roomAnswers", (data: any) => {
@@ -54,6 +51,7 @@ const App = () => {
         }
 
         { in_game && <GameScreen />}
+
 
       </div>
   );

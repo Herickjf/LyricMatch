@@ -55,7 +55,7 @@ const SearchSong: React.FC = () => {
     }
 
     return (
-        <div id="search_song_box">
+        <div id="search_song_mid_box">
             <div id="search_song_word_box">{word_to_guess}</div>
             <div id="search_song_subtitle">Enter a song with with the word: {word_to_guess}</div>
 
@@ -71,7 +71,6 @@ const SearchSong: React.FC = () => {
             </div>
 
             <div id="search_song_timer_back">
-                <div id="search_song_timer_icon"/>
                 <div id="search_song_timer_bar" style={{width: `${100/30 * timer}%`}}/>
             </div>
 

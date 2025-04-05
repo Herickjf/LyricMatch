@@ -53,7 +53,6 @@ const Create: React.FC<CreateProps> = ({username, avatar}) => {
        
         socket?.on("roomUpdate", (data) => {
             if(in_game) return;
-            setPlayers([{ name: username, avatar: avatar, isHost: true, score: 0 }]);
             setInGame(true);
         });
         

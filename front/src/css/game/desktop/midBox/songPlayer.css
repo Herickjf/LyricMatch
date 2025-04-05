@@ -16,8 +16,10 @@
 }
 
 #song_cover{
-    width: 200px;
-    height: 200px;
+    width: 180px;
+    height: 180px;
+
+    margin: 0 auto;
 
     border-radius: 5px;
     

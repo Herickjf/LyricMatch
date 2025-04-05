@@ -27,7 +27,6 @@ export class ApiRequestsService {
 
       return tracks;
     } catch (error) {
-      console.error('Error searching tracks on Deezer');
       throw new Error('Failed to search tracks on Deezer');
     }
   }

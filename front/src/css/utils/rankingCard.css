@@ -1,0 +1,77 @@
+.ranking_card{
+    width: 100%;
+    height: auto;
+
+    display: grid;
+    grid-template-columns: 7fr 1.5fr 1.5fr;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 18px;
+    font-weight: 400;
+    
+    padding: 5px 0 5px 0;
+    border-top: solid 2px #a4ac8678;
+
+}
+
+
+#player_info{
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    /* justify-content: center; */
+    align-items: center;
+
+    font-size: 20px;
+    font-weight: 600;
+    margin-left: 10px;
+}
+
+.ranking_card_name{
+    font-weight: 400;
+    color: #f6d3a2;
+}
+
+.is_the_user{
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.ranking_card_avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: solid 3px #dfe7c0;
+    background-size: cover;
+    background-position: center;
+    margin-right: 10px;
+}
+
+.pos1{
+    border: solid 3px #f9e867;
+    box-shadow: 0px 0px 5px #E6D025;
+}
+.pos2{
+    border: solid 3px #c9c8c8;
+    box-shadow: 0px 0px 5px #848484;
+}
+.pos3{
+    border: solid 3px #efb39f;
+    box-shadow: 0px 0px 5px #A97563;
+}
+
+
+/*
+    .ranking_card{
+        width: 100%;
+        height: 30px;
+        display: flex;
+
+    }
+
+    .ranking_card_avatar {
+        width: 
+:%0
+*/

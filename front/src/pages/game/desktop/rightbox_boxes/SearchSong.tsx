@@ -21,7 +21,7 @@ const SearchSong: React.FC = () => {
         if (song_name_selected && artist_name_selected) {
             makeChoice();
         }
-    }, [song_name_selected, artist_name_selected]);
+    }, [song_name_selected, artist_name_selected, api_selected]);
 
     return (
         <div id="search_song_box">

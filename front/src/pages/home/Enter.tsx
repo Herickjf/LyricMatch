@@ -54,7 +54,6 @@ const Enter: React.FC<EnterProps> = ({ username, avatar}) => {
 
         socket?.on("roomUpdate", (data) => {
             if(in_game) return;
-            setPlayers([...data!.players]);
             setInGame(true);
         });
 
