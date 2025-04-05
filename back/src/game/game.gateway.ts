@@ -213,7 +213,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('expelPlayer')
   async handleExpelPlayer(
-    @MessageBody() data: { playerId: string },
+    @MessageBody() data: { playerId: string, socketId: string },
     @ConnectedSocket() client: Socket,
   ) {
     try {
@@ -224,12 +224,34 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         });
         return;
       }
-      this.server.to(data.playerId).emit('expelled');
+      this.server.to(data.socketId).emit('expelled');
       this.server.to(room.code).emit('roomUpdate', room);
     } catch (error) {
       console.error('Erro ao expulsar jogador:', error);
       client.emit('error', {
         message: 'Erro ao expulsar jogador',
+      });
+    }
+  }
+
+  @SubscribeMessage('changeHost')
+  async handleChangeHost(
+    @MessageBody() data: { playerId: string },
+    @ConnectedSocket() client: Socket,
+  ) {
+    try {
+      const room = await this.gameService.changeHost(client.id, data.playerId);
+      if (!room) {
+        client.emit('error', {
+          message: 'Erro ao mudar o host',
+        });
+        return;
+      }
+      this.server.to(room.code).emit('roomUpdate', room);
+    } catch (error) {
+      console.error('Erro ao mudar o host:', error);
+      client.emit('error', {
+        message: 'Erro ao mudar o host',
       });
     }
   }
@@ -267,7 +289,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }
 
       const playersguesses = await this.gameService.getPlayersGuesses(
-        client.id,
         room.code,
       );
       if (!playersguesses) {

@@ -18,7 +18,8 @@ const LeftBox: React.FC = () => {
     const [room_code, setRoomCode] = useState<string>("");
     const [showAlert, setShowAlert] = useState<boolean>(false);
 
-    const { room, players } = useRoomContext();
+    const { room, players, player } = useRoomContext();
+    const isTheHost = player?.isHost;
     
     useEffect(() => {
         setRoomCode(room?.code);
@@ -48,7 +49,16 @@ const LeftBox: React.FC = () => {
             <div id="desktop_players_list">
             {
                 players.map((player: any) => (
-                    <PlayerCard name={player.name} avatar={player.avatar} points={player.score} isHost={player.isHost} key={player.name} />
+                    <PlayerCard 
+                        name={player.name} 
+                        avatar={player.avatar} 
+                        points={player.score} 
+                        isHost={player.isHost}
+                        hostView={isTheHost} 
+                        playerId={player.id}
+                        socketId={player.socketId}
+                        key={player.name} 
+                    />
                 ))
 
             }

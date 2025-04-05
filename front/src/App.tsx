@@ -10,31 +10,67 @@ import './css/initialpages/App.css'
 import { useRoomContext } from "./utils/RoomContext";
 import { useSocket } from "./utils/SocketContext";
 import { useSongContext } from "./utils/SongContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 const App = () => {
   const socket = useSocket();
-  const { setRoom, setPlayers, in_game, room } = useRoomContext();
-  const { song_selected, setSongSelected } = useSongContext();
+  const { setRoom, setPlayers, setInGame, in_game, room } = useRoomContext();
+  const { setSongSelected } = useSongContext();
   const { setGuesses } = useSongContext();
   const { player, setPlayer } = useRoomContext();
+  const [alert, setAlert] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if(in_game && (room?.status != "finished"))
+    if(in_game && room && (room?.status != "finished")){
       socket?.emit("getRoomInfo");
+    }
   }, []);
 
-  socket?.on("roomUpdate", (room: any) => {
-    setPlayers(room.players);
-    setRoom(room);
-    setPlayer(room.players.find((p: any) => p.socketId == socket?.id));
-  })
+  useEffect(() => {
+    if (in_game && room && room?.status != "finished") {
+      socket?.emit("getRoomInfo");
+    }
+  }, [in_game]);
 
-  socket?.on("roomAnswers", (data: any) => {
-    setSongSelected(data.find((song: any) => song.playerId == player?.id));
-    setGuesses(data);
-  })
+  useEffect(() => {
+    if (!socket) return;
+  
+    socket.on("roomUpdate", (room: any) => {
+      setPlayers(room.players);
+      setRoom(room);
+      setPlayer(room.players.find((p: any) => p.socketId == socket.id));
+    });
+  
+    socket.on("roomAnswers", (data: any) => {
+      setSongSelected(data.find((song: any) => song.playerId == player?.id));
+      setGuesses(data);
+    });
+  
+    socket.on("expelled", () => {
+      setInGame(false);
+      setRoom(null);
+      setPlayers([]);
+      setPlayer(null);
+      setGuesses([]);
+      setSongSelected(null);
+      setAlert(true);
+      navigate("/"); // 🔁 redireciona para a tela inicial
+  
+      setTimeout(() => {
+        setAlert(false);
+      }, 5000);
+    });
+  
+    // limpeza dos eventos para evitar múltiplas chamadas
+    return () => {
+      socket.off("roomUpdate");
+      socket.off("roomAnswers");
+      socket.off("expelled");
+    };
+  }, [socket, navigate, player?.id]);
 
   return (
       <div className="App" id="App_Screen">
@@ -52,7 +88,12 @@ const App = () => {
 
         { in_game && <GameScreen />}
 
-
+        {
+          alert &&
+          <div className="custom-alert">
+            You were expelled from the room.
+          </div>
+        }
       </div>
   );
 };

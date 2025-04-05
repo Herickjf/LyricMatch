@@ -75,7 +75,7 @@ export class GameService {
 
     await this.prisma.player.delete({
       where: { id: playerId, roomId: host.roomId },
-    });
+    }); 
 
     const room = await this.prisma.room.findUnique({
       where: { id: host.roomId },
@@ -478,17 +478,7 @@ export class GameService {
     return room;
   }
 
-  async getPlayersGuesses(clientId: string, roomCode: string){
-    const player = await this.prisma.player.findUnique({
-      where: { socketId: clientId },
-    });
-    if (!player || !player.roomId) {
-      this.logger.error(
-        'getPlayersGuesses: Player not found or not associated with a room',
-      );
-      return;
-    }
-
+  async getPlayersGuesses(roomCode: string){
     const room = await this.prisma.room.findUnique({
       where: { code: roomCode },
       include: { players: true, messages: true },
@@ -502,6 +492,11 @@ export class GameService {
     const playerAnswers = await this.prisma.playerAnswer.findMany({
       where: { roomId: room.id, round: room.currentRound },
     });
+
+    if (!playerAnswers) {
+      this.logger.error('getPlayersGuesses: Player answers not found');
+      return;
+    }
 
     return playerAnswers;
   }
@@ -542,6 +537,49 @@ export class GameService {
     });
     if (!updatedRoom) {
       this.logger.error('getRankings: Updated room not found');
+      return;
+    }
+    return updatedRoom;
+  }
+
+  async changeHost(currentHostId: string, newHostId: string) {
+    const currentHost = await this.prisma.player.findUnique({
+      where: { socketId: currentHostId },
+    });
+    if (!currentHost || !currentHost.roomId) {
+      this.logger.error(
+        'changeHost: Current host not found or not associated with a room',
+      );
+      return;
+    }
+
+    const newHost = await this.prisma.player.findUnique({
+      where: { id: newHostId },
+    });
+    if (!newHost || !newHost.roomId) {
+      this.logger.error(
+        'changeHost: New host not found or not associated with a room',
+      );
+      return;
+    }
+
+    await this.prisma.player.update({
+      where: { id: currentHost.id },
+      data: { isHost: false },
+    });
+
+    await this.prisma.player.update({
+      where: { id: newHost.id },
+      data: { isHost: true },
+    });
+
+    // Retorna a sala atualizada com o novo host
+    const updatedRoom = await this.prisma.room.findUnique({
+      where: { id: currentHost.roomId },
+      include: { players: true, messages: true },
+    });
+    if (!updatedRoom) {
+      this.logger.error('changeHost: Updated room not found');
       return;
     }
     return updatedRoom;
