@@ -198,8 +198,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         data.musicApi,
       );
     } catch (error) {
-      console.error('Erro ao enviar resposta:', error);
-      client.emit('error', { message: 'Erro ao enviar resposta' });
+      console.error('Erro ao enviar resposta');
+      client.emit('errorOnSearch');
     }
   }
 

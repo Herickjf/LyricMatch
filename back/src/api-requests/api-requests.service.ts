@@ -62,13 +62,14 @@ export class ApiRequestsService {
 
           return lyrics || 'Letra não encontrada na página.';
         } else {
+          throw new Error('Letra não encontrada na página.');
           return 'Letra não encontrada na página.';
         }
       } else {
         return 'Erro ao acessar a página da música.';
       }
     } catch (error) {
-      return `Erro ao buscar a letra: ${error}`;
+      throw new Error(`Erro ao buscar a letra: ${error.message}`);
     }
   }
 
@@ -105,13 +106,14 @@ export class ApiRequestsService {
             .join('\n');
           return lyrics;
         } else {
+          throw new Error('Letra não encontrada na página.');
           return 'Letra não encontrada na página.';
         }
       } else {
         return 'Erro ao acessar a página da música.';
       }
     } catch (error) {
-      return `Erro ao buscar a letra: ${error.message}`;
+      throw new Error(`Erro ao buscar a letra: ${error.message}`);
     }
   }
 
@@ -136,8 +138,7 @@ export class ApiRequestsService {
 
       return lyrics.trim(); // Remove espaços extras no início e no final
     } catch (error) {
-      console.error('Erro ao buscar a letra da música:', error);
-      return null;
+      throw new Error('Erro ao buscar a letra da música');
     }
   }
 
