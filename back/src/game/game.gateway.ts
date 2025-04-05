@@ -332,4 +332,25 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       });
     }
   }
+
+  @SubscribeMessage('resetRoom')
+  async handleResetRoom(
+    @ConnectedSocket() client: Socket
+  ){
+    try {
+      const room = await this.gameService.resetRoom(client.id);
+      if (!room) {
+        client.emit('error', {
+          message: 'Erro ao obter informações da sala',
+        });
+        return;
+      }
+      client.emit('roomUpdate', room);
+    } catch (error) {
+      console.error('Erro ao obter informações da sala:', error);
+      client.emit('error', {
+        message: 'Erro ao obter informações da sala',
+      });
+    }
+  }
 }

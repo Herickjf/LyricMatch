@@ -1,0 +1,23 @@
+#rankings_box_right_box{
+    width: 100%;
+    height: 70%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#rankings_title{
+    width: 100%;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+#rankings_right_box_buttons{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 50%;
+    gap: 10px;
+}

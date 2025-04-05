@@ -2,8 +2,8 @@ import { createContext, useContext, useState, ReactNode } from "react";
 
 // Definição do tipo do contexto
 interface SearchContextType {
-    count: number[];  // Se count for um array de números
-    setCount: (value: number[]) => void;
+    count: any;  // Se count for um array de números
+    setCount: (value: any) => void;
 }
 
 // Criando o contexto
@@ -11,7 +11,7 @@ const SearchContext = createContext<SearchContextType | undefined>(undefined);
 
 // Criando o Provider
 export const SearchProvider = ({ children }: { children: ReactNode }) => {
-    const [count, setCount] = useState<number[]>([]); // Estado global
+    const [count, setCount] = useState<any>(); // Estado global
 
     return (
         <SearchContext.Provider value={{ count, setCount }}>
