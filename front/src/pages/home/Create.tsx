@@ -20,28 +20,45 @@ const Create: React.FC<CreateProps> = ({username, avatar}) => {
     const [max_players, setMaxPlayers] = useState<number>(3);
     const [max_rounds, setMaxRounds] = useState<number>(3);
     const [language, setLanguage] = useState<"PT" | "EN" | "SP">("EN");
-    const [alert, setAlert] = useState<{title: string, message: string} | null>(null);
+    const [alert_active, setAlertActive] = useState<boolean>(false);
+    const [alert_message, setAlertMessage] = useState<string>("");
     const socket = useSocket();
-    const { setRoom, setPlayers, setInGame, in_game } = useRoomContext();
+    const { setInGame, in_game } = useRoomContext();
 
 
 
 
     function handleCreateRoom() {
         if (username.length < 1) {
-            setAlert({ title: "Input Error", message: "Please, set a username first." });
+            setAlertMessage("Input Error: Please, set a username first.");
+            setAlertActive(true);
+            setTimeout(() => {
+                setAlertActive(false);
+            }, 3000);
             return;
         }
         if (password.length < 1) {
-            setAlert({ title: "Input Error", message: "Please, set a room password." });
+            setAlertMessage("Input Error: Please, set a password.");
+            setAlertActive(true);
+            setTimeout(() => {
+                setAlertActive(false);
+            }, 3000);
             return;
         }
         if (max_players < 1 || max_players > 100) {
-            setAlert({ title: "Input Error", message: "Please, set a valid number of players [1 - 100]." });
+            setAlertMessage("Input Error: Max players must be between 1 and 100.");
+            setAlertActive(true);
+            setTimeout(() => {
+                setAlertActive(false);
+            }, 3000);
             return;
         }
         if (max_rounds < 1 || max_rounds > 50) {
-            setAlert({ title: "Input Error", message: "Please, set a valid number of rounds [1 - 50]." });
+            setAlertMessage("Input Error: Max rounds must be between 1 and 50.");
+            setAlertActive(true);
+            setTimeout(() => {
+                setAlertActive(false);
+            }, 3000);
             return;
         }
 
@@ -58,12 +75,16 @@ const Create: React.FC<CreateProps> = ({username, avatar}) => {
         
 
         socket?.on("error", (error) => {
-            setAlert({ title: "Create Room Error", message: error.message });
+            setAlertMessage(error);
+            setAlertActive(true);
+            setTimeout(() => {
+                setAlertActive(false);
+            }, 3000);
         });
     }
 
     return(
-        <div className="form_box">
+        <div className="form_box create_room_box">
             <TextInput label="Password:" placeholder="Create the room password" setText={setPassword} enterFunc={handleCreateRoom}/>
 
             <div className="number_inputs">
@@ -84,10 +105,15 @@ const Create: React.FC<CreateProps> = ({username, avatar}) => {
                          className={`language_icon ${language === "SP" ? "flag-selected" : ""}`} 
                          onClick={() => setLanguage("SP")}/>
                 </div>
-            </div>
+            </div> 
 
             <Button text="Create room" func={handleCreateRoom} />
-            {alert && <Alert title={alert.title} message={alert.message} />}
+            {
+                alert_active &&
+                <div className="custom-alert">
+                    {alert_message}
+                </div>
+            }
         </div>
     )
 }

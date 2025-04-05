@@ -16,10 +16,11 @@ interface EnterProps {
 const Enter: React.FC<EnterProps> = ({ username, avatar}) => {
     const [roomCode, setRoomCode] = useState<string>("");
     const [roomPassword, setRoomPassword] = useState<string>("");
-    const [alert, setAlert] = useState<{title: string, message: string} | null>(null);
+    const [alert_active, setAlertActive] = useState<boolean>(false);
+    const [alert_message, setAlertMessage] = useState<string>("");
     const socket = useSocket();
 
-    const { setRoom, setPlayers, setInGame, in_game } = useRoomContext();
+    const { setInGame, in_game } = useRoomContext();
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -29,17 +30,29 @@ const Enter: React.FC<EnterProps> = ({ username, avatar}) => {
 
     function handleEnterRoom() {
         if(username.length < 1) {
-            setAlert({ title: "Input Error", message: "Please, set a username first." });
+            setAlertMessage("Input Error: Please, set a username first.");
+            setAlertActive(true);
+            setTimeout(() => {
+                setAlertActive(false);
+            }, 3000);
             return;
         }
 
         if (roomCode.length < 1) {
-            setAlert({ title: "Input Error", message: "Please, set a room code first." });
+            setAlertMessage("Input Error: Please, set a room code.");
+            setAlertActive(true);
+            setTimeout(() => {
+                setAlertActive(false);
+            }, 3000);
             return;
         }
 
         if (roomPassword.length < 1) {
-            setAlert({ title: "Input Error", message: "Please, set a room password first." });
+            setAlertMessage("Input Error: Please, set a room password.");
+            setAlertActive(true);
+            setTimeout(() => {
+                setAlertActive(false);
+            }, 3000);
             return;
         }
 
@@ -58,22 +71,33 @@ const Enter: React.FC<EnterProps> = ({ username, avatar}) => {
         });
 
         socket?.on("error", (error) => {
-            setAlert({ title: "Join Room Error", message: error.message });
+            setAlertMessage(error);
+            setAlertActive(true);
+            setTimeout(() => {
+                setAlertActive(false);
+            }, 3000);
         });
     }
 
     return(
         <div className="form_box">
             
+
             <TextInput label="Code:" placeholder='Enter the room code' setText={setRoomCode} value={roomCode}/>
             <TextInput label="Password:" placeholder='Enter the room password' setText={setRoomPassword} enterFunc={handleEnterRoom}/>
+    
 
             <Button 
                 text="Enter room" 
                 func={handleEnterRoom}
             />
 
-            {alert && <Alert title={alert.title} message={alert.message} />}
+            {
+                alert_active &&
+                <div className="custom-alert">
+                    {alert_message}
+                </div>
+            }
         </div>
     )
 }
