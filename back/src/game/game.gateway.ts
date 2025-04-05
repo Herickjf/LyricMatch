@@ -188,7 +188,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
   ) {
     try {
-      const result = await this.gameService.processAnswer(
+      await this.gameService.processAnswer(
         client.id,
         data.track,
         data.artist,

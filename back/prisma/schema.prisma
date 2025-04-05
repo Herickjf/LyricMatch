@@ -34,10 +34,12 @@ model Room {
   status     String   @default("waiting")
   currentRound Int     @default(1)
   currentWord  String?
+  prevWords   String[]
   roundTimer   Int     @default(30)
 
   answers PlayerAnswer[]
   messages      Message[]
+
 }
 
 model Message {

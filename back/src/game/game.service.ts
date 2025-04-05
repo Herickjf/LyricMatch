@@ -176,8 +176,27 @@ export class GameService {
       throw new Error('startGame: Player not found or not the Host');
     }
 
-    const currentWord = await this.getRamdomWord(player.room.language);
-    const room = await this.prisma.room.update({
+    let room = await this.prisma.room.findUnique({
+      where: { id: player.roomId },
+    });
+
+    if (!room) {
+      throw new Error('startGame: Room not found');
+    }
+
+    let tries = 0;
+    let currentWord: string;
+    do {
+      currentWord = await this.getRamdomWord(player.room.language);
+      tries++;
+      if (tries > 10) {
+        throw new Error(
+          'startGame: Too many attempts to find a word not in prevWords',
+        );
+      }
+    } while (room.prevWords.includes(currentWord));
+
+    room = await this.prisma.room.update({
       where: {
         id: player.roomId,
       },
@@ -185,14 +204,13 @@ export class GameService {
         active: true,
         currentRound: 1,
         currentWord,
+        prevWords: {
+          push: currentWord,
+        },
         status: 'playing',
       },
       include: { players: true, messages: true },
     });
-
-    if (!room) {
-      throw new Error('startGame: Room not found');
-    }
 
     this.logger.log('Round started');
 
@@ -264,36 +282,84 @@ export class GameService {
       throw new Error('nextRound: Room or players not found');
     }
 
-    // if (room.currentRound >= room.maxRounds) {
-    //   await this.prisma.room.update({
-    //     where: { id: room.id },
-    //     include: { players: true, messages: true },
-    //     data: { active: false, status: RoomStatus.finished },
-    //   });
-    //   return room;
-    // }
+    if (room.currentRound <= room.maxRounds) {
+      const words = await this.prisma.word.findMany({
+        where: { language: room.language },
+      });
+      if (words.length === 0) {
+        throw new Error(
+          'nextRound: No words available for the selected language',
+        );
+      }
+      const currentWord = words[Math.floor(Math.random() * words.length)].word;
 
-    const words = await this.prisma.word.findMany({
-      where: { language: room.language },
+      const updatedRoom = await this.prisma.room.update({
+        where: { id: room.id },
+        include: { players: true, messages: true },
+        data: {
+          currentRound: { increment: 1 },
+          currentWord,
+          status: RoomStatus.playing,
+        },
+      });
+
+      return updatedRoom;
+    } else {
+      await this.prisma.room.update({
+        where: { id: room.id },
+        include: { players: true, messages: true },
+        data: { active: false, status: RoomStatus.finished },
+      });
+      return room;
+    }
+  }
+
+  async resetRoom(hostId: string): Promise<Room> {
+    const host = await this.prisma.player.findUnique({
+      where: { socketId: hostId, isHost: true },
     });
-    if (words.length === 0) {
+
+    if (!host || !host.roomId || !host.isHost) {
       throw new Error(
-        'nextRound: No words available for the selected language',
+        'resetRoom: Host not found or not associated with a room or not the Host',
       );
     }
-    const currentWord = words[Math.floor(Math.random() * words.length)].word;
 
-    const updatedRoom = await this.prisma.room.update({
-      where: { id: room.id },
+    const room = await this.prisma.room.findUnique({
+      where: { id: host.roomId },
       include: { players: true, messages: true },
+    });
+
+    if (!room) {
+      throw new Error('resetRoom: Room not found');
+    }
+
+    const resetRoom = await this.prisma.room.update({
+      where: { id: room.id },
       data: {
-        currentRound: { increment: 1 },
-        currentWord,
-        status: RoomStatus.playing,
+        currentRound: 0,
+        currentWord: null,
+        status: RoomStatus.waiting,
+        active: false,
+      },
+      include: { players: true, messages: true },
+    });
+
+    const players = await this.prisma.player.updateManyAndReturn({
+      where: { roomId: room.id },
+      data: {
+        score: 0,
       },
     });
 
-    return updatedRoom;
+    resetRoom.players = players;
+
+    await this.prisma.player.updateMany({
+      where: { roomId: room.id },
+      data: { score: 0 },
+    });
+
+    return resetRoom;
   }
 
   async exitRoom(playerId: string): Promise<Room> {
@@ -394,6 +460,11 @@ export class GameService {
       artist,
     );
 
+    if (!playerAnswer || playerAnswer.length === 0) {
+      throw new Error('processAnswer: Player answer not found');
+    }
+
+    // deleta as tentativas de resposta do jogador na rodada atual
     await this.prisma.playerAnswer.deleteMany({
       where: {
         roomId: playerExists.roomId,
@@ -503,9 +574,9 @@ export class GameService {
     const currentHost = await this.prisma.player.findUnique({
       where: { socketId: currentHostId },
     });
-    if (!currentHost || !currentHost.roomId) {
+    if (!currentHost || !currentHost.roomId || !currentHost.isHost) {
       throw new Error(
-        'changeHost: Current host not found or not associated with a room',
+        'changeHost: Current host not found or not associated with a room or not the Host',
       );
     }
 
