@@ -119,11 +119,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('startGame')
   async handleStartGame(
-    @MessageBody() data: { hostId: string },
     @ConnectedSocket() client: Socket,
   ) {
     try {
-      const room = await this.gameService.startGame(data.hostId);
+      const room = await this.gameService.startGame(client.id);
       if (!room) {
         client.emit('error', {
           message: 'Erro ao iniciar o jogo',

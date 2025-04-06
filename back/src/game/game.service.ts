@@ -368,10 +368,11 @@ export class GameService {
     });
     if (!player) {
       return null;
+    }else{
+      await this.prisma.player.delete({
+        where: { id: player.id },
+      });
     }
-    await this.prisma.player.delete({
-      where: { id: player.id },
-    });
 
     if (!player.roomId) {
       throw new Error('exitRoom: Player not associated with a room');

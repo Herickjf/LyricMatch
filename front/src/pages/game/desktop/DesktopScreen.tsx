@@ -11,13 +11,11 @@ import "../../../css/game/desktop/desktopScreen.css"
 
 const DesktopScreen: React.FC = () => {
     return(
-        <SearchProvider>
-            <div id="desktop_screen">
-                <LeftBox/>
-                <MidBox/>
-                <RightBox/>
-            </div>
-        </SearchProvider>
+        <div id="desktop_screen">
+            <LeftBox/>
+            <MidBox/>
+            <RightBox/>
+        </div>
     )
 }
 

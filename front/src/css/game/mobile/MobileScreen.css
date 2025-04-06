@@ -1,0 +1,43 @@
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+#mobile_screen_box{
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+}
+
+#mobile_screen_logo_box{
+    width: 100px;
+    height: 100px;
+    background-image: url('/assets/logo.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin-left: 10%;
+}
+
+#mobile_main_frame{
+    width: 80%;
+    height: 75%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    background-color: rgba(93, 66, 39, 0.4);
+    border: 1px solid rgba(166, 138, 100)
+}
+
+
+
+
+
