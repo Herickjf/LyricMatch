@@ -18,8 +18,8 @@ const LeftBox: React.FC = () => {
     const [room_code, setRoomCode] = useState<string>("");
     const [showAlert, setShowAlert] = useState<boolean>(false);
 
-    const { room, players, player } = useRoomContext();
-    const isTheHost = player?.isHost;
+    const { room, players, player, setInGame } = useRoomContext();
+    const socket = useSocket();
     
     useEffect(() => {
         setRoomCode(room?.code);
@@ -48,23 +48,36 @@ const LeftBox: React.FC = () => {
 
             <div id="desktop_players_list">
             {
-                players.map((player: any) => (
+                players.map((p: any) => (
                     <PlayerCard 
-                        name={player.name} 
-                        avatar={player.avatar} 
-                        points={player.score} 
-                        isHost={player.isHost}
-                        hostView={isTheHost} 
-                        playerId={player.id}
-                        socketId={player.socketId}
-                        key={player.name} 
+                        name={p.name} 
+                        avatar={p.avatar} 
+                        points={p.score} 
+                        isHost={p.isHost}
+                        hostView={player.isHost} 
+                        playerId={p.id}
+                        socketId={p.socketId}
+                        key={p.name} 
                     />
                 ))
 
             }
             </div>
 
-            <button className="copy-code-button" onClick={copyToClipboard}>Share</button>
+            <div id="actions">
+                <button className="copy-code-button" onClick={() => {
+                    socket?.emit("exitRoom")
+                    setInGame(false);
+                }}>
+                    <i className="fa fa-sign-out" id="sign_out_invert"></i> 
+                </button>
+                <button className="copy-code-button" onClick={copyToClipboard}>
+                    <i className="fa fa-share"></i> 
+                </button>
+                <button className="copy-code-button" onClick={copyToClipboard}>
+                    <i className="fa fa-share"></i> 
+                </button>
+            </div>
 
             {showAlert && ( // Renderiza o alerta se showAlert for true
                 <div className="custom-alert">

@@ -1,6 +1,6 @@
 import "../../../../css/game/desktop/rightbox_boxes/chat.css"
 import TextInput from "../../../../utils/TextInput";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRoomContext } from "../../../../utils/RoomContext";
 import { useSocket } from "../../../../utils/SocketContext";
 
@@ -8,6 +8,12 @@ const Chat: React.FC = () => {
     const [message, setMessage] = useState<string>("");
     const { room, players } = useRoomContext();
     const socket = useSocket();
+
+    // Para rolar a tela para baixo quando uma nova mensagem é recebida
+    const messagesEndRef = useRef<HTMLDivElement | null>(null);
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [room?.messages]);
 
     const sendMessage = () => {
         if (message.trim() !== "") {
@@ -33,6 +39,7 @@ const Chat: React.FC = () => {
                         )
                     })
                 }
+                <div ref={messagesEndRef} />
             </div>
             <div id="chat_input_box">
                 <input 

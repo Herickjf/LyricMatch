@@ -71,7 +71,7 @@ const Enter: React.FC<EnterProps> = ({ username, avatar}) => {
         });
 
         socket?.on("error", (error) => {
-            setAlertMessage(error);
+            setAlertMessage(error.message);
             setAlertActive(true);
             setTimeout(() => {
                 setAlertActive(false);

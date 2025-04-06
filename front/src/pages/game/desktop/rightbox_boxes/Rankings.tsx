@@ -23,11 +23,11 @@ const Rankings: React.FC = () => {
                         }}
                     />
                 }
-                <Button text="Exit" func={() => {
+                {/* <Button text="Exit" func={() => {
                     socket?.emit("exitRoom");
                     setInGame(false);
                 }}
-                />
+                /> */}
 
             </div>
             

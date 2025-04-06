@@ -1,4 +1,5 @@
 #desktop_players_box{
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -23,25 +24,36 @@
     overflow-y: auto;
 }
 
+#actions{
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    margin: 0 auto;
+    width: 70%;
+    height: 20%;
+
+    display: flex;
+    justify-content: space-evenly;
+}
+
 .copy-code-button {
     align-self: center;
-    padding: 10px 20px;
+    padding: 10px;
     font-size: 16px;
     font-weight: bold;
     color: white;
-    background-color: rgba(163, 117, 80, 0.9);
+    background-color: #A4AC86;
     border: none;
-    border-radius: 5px;
+    border-radius: 50%;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 .copy-code-button:hover {
-    background-color: rgb(112, 76, 46); 
-}
-
-.copy-code-button:active {
-    background-color: rgb(112, 76, 46); 
+    background-color: #ced8ab; 
+    box-shadow: 0 5px 10px #1d2500;
 }
 
 .custom-alert {
@@ -49,7 +61,7 @@
     top: 20px; /* Alerta no topo */
     left: 50%;
     transform: translateX(-50%);
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(41, 65, 1, 0.8);
     color: white;
     padding: 10px 20px;
     border-radius: 5px;
@@ -62,4 +74,9 @@
     0% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
     10%, 90% { opacity: 1; transform: translateX(-50%) translateY(0); }
     100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+}
+
+
+#sign_out_invert{
+    rotate: 180deg;
 }

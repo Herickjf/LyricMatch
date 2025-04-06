@@ -7,12 +7,12 @@ interface GuessCardProps {
 }
 
 const GuessCard: React.FC<GuessCardProps> = ({
-    song_param
-}) => {
+        song_param
+    }) => {
     const { setSongSelected } = useSongContext();
     const { players } = useRoomContext();
 
-const player = players.find((player: any) => player.id == song_param.playerId);
+    const player = players.find((player: any) => player.id == song_param.playerId);
 
     return (
         <div className="guess_card_box">
@@ -21,8 +21,8 @@ const player = players.find((player: any) => player.id == song_param.playerId);
                 className={`guess_card_song_info ${song_param.isCorrect ? "guess_card_song_info_correct" : "guess_card_song_info_wrong"}`}
                 onClick={() => {
                     setSongSelected(song_param)
-                }}
-            >
+                }}>
+                    
                 <div className="guess_card_song_cover" style={{backgroundImage: `url(${song_param.albumImage})`}}/>
                 <div className="guess_card_song_description">
                     <div className="guess_card_song_name">{song_param.track}</div>
