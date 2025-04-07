@@ -12,6 +12,7 @@ import { useSocket } from "./utils/SocketContext";
 import { useSongContext } from "./utils/SongContext";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSearchContext } from "./utils/SearchContext";
 
 
 const App = () => {
@@ -20,6 +21,7 @@ const App = () => {
   const { setSongSelected } = useSongContext();
   const { setGuesses } = useSongContext();
   const { player, setPlayer } = useRoomContext();
+  const { setCount } = useSearchContext();
   const [alert, setAlert] = useState(false);
   const navigate = useNavigate();
 
@@ -42,6 +44,9 @@ const App = () => {
       setPlayers(room.players);
       setRoom(room);
       setPlayer(room.players.find((p: any) => p.socketId == socket.id));
+      if(room.status == "analyzing" || room.status == "finished"){
+        setCount(null);
+      }
     });
   
     socket.on("roomAnswers", (data: any) => {

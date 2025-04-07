@@ -15,6 +15,11 @@ export class ApiRequestsController {
     return this.apiRequestsService.searchTracks_Deezer(track, artist);
   }
 
+  @Get('searchById')
+  async searchTrackById(@Query('id') id: string): Promise<any> {
+    return this.apiRequestsService.searchTrack_Deezzer_byId(id);
+  }
+
   @Get('lyrics')
   @ApiQuery({
     name: 'api_option',

@@ -186,6 +186,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       track: string;
       artist: string;
       musicApi: MusicApi;
+      music_id: string;
     },
     @ConnectedSocket() client: Socket,
   ) {
@@ -195,6 +196,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         data.track,
         data.artist,
         data.musicApi,
+        data.music_id,
       );
     } catch (error) {
       console.error('Erro ao enviar resposta');
