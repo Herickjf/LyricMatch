@@ -40,7 +40,8 @@ const MobileLeftFrame: React.FC<MobileLeftFrameProps> = ({ setFrame }) => {
     };
 
     return(
-        <div id="mobile_players_box" className="side_box">
+        <div id="mobile_players_box_background" className="side_box">
+            <div id="mobile_players_box_content">
             <div id="game_box_info">
                 <div id="game_box_players"><span>{current_players}</span>/<span>{max_players}</span> Players</div>
                 <div id="game_box_rounds"><span>{current_round}</span>/<span>{max_rounds}</span> Rounds</div>
@@ -64,13 +65,14 @@ const MobileLeftFrame: React.FC<MobileLeftFrameProps> = ({ setFrame }) => {
             }
             </div>
 
-            <button className="copy-code-button" onClick={copyToClipboard}>Share</button>
+            <button className="mobile-copy-code-button" onClick={copyToClipboard}>Share</button>
 
             {showAlert && ( // Renderiza o alerta se showAlert for true
                 <div className="custom-alert">
                     Code copied to the clipboard!
                 </div>
             )}
+            </div>
         </div>
     )
 }

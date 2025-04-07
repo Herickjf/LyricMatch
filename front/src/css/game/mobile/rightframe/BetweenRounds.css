@@ -1,0 +1,42 @@
+#mobile_between_rounds_box{
+    width: 80%;
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    position: relative;
+    margin: 0 auto;
+}
+
+#mobile_between_rounds_return_button{
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    border: none;
+    top: 5px;
+    left: 10px;
+    background-color: #656D4A;
+    color: #F5F7E4;
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#mobile_between_rounds_return_button:hover{
+    background-color: #afbf77;
+    box-shadow: #8f9c61be 0px 0px 10px;
+    transform: scale(1.01);
+    transition: .2s ease-in-out;
+}
+
+#mobile_between_rounds_title{
+    width: 100%;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    font-weight: bold;
+}

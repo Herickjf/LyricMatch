@@ -1,11 +1,39 @@
 import React from "react";
+import { useSongContext } from "../../../../utils/SongContext";
+import GuessCard from "../../../../utils/GuessCard";
+import "../../../../css/game/mobile/rightframe/BetweenRounds.css"
 
-const SearchSong: React.FC = () => {
+interface BetweenRoundsProps {
+    setFrame: (s: string) => void;
+}
+
+
+const BetweenRounds: React.FC<BetweenRoundsProps> = ({setFrame}) => {
+    const { guesses } = useSongContext();
+
     return (
-        <div>
-            <h1>BetweenRounds</h1>
+        <div id="mobile_between_rounds_box">
+            <div 
+                id="mobile_between_rounds_return_button" 
+                className=" fa fa-arrow-left"
+                onClick={() => setFrame("middle_frame")}
+            />
+            <div id="mobile_between_rounds_title">Players tried:</div>
+            
+            <div id="mobile_between_rounds_guesses_list">
+            {
+                guesses.map((guess: any, index: number) => (
+                    <GuessCard
+                        key={index}
+                        song_param={guess}
+                        change_screen={setFrame}
+                    />
+                ))
+            }
+            </div>
+
         </div>
     );
 }
 
-export default SearchSong;
+export default BetweenRounds;

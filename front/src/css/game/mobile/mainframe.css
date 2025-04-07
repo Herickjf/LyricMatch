@@ -19,6 +19,8 @@
     width: 40px;
     border-radius: 20px;
     cursor: pointer;
+    outline: none;
+    border: none;
 }
 
 #mobile_main_frame_option_buttons > button:hover{

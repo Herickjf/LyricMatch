@@ -58,20 +58,6 @@ const SearchSong: React.FC = () => {
         })
     }
 
-    useEffect(() => {
-        socket?.on("errorOnSearch", () => {
-            setAlertMessage(`Error: the song was not found on this api/source. Please, try another one.`);
-            setAlert(true);
-            setTimeout(() => {
-                setAlert(false);
-            }, 3000);
-        });
-
-        return () => {
-            socket?.off("errorOnSearch");
-        };
-    }, [socket]);
-
     return (
         <div id="search_song_mid_box">
             <div id="search_song_word_box">{word_to_guess}</div>
