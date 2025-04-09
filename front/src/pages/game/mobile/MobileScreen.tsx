@@ -8,7 +8,7 @@ import "../../../css/game/mobile/MobileScreen.css";
 const MobileScreen: React.FC = () => {
     return(
         <div id="mobile_screen_box">
-            <div id="mobile_screen_logo_box"></div>
+            {/* <div id="mobile_screen_logo_box"></div> */}
             <MainFrame/>
         </div>
     )

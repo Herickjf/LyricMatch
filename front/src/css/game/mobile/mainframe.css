@@ -15,9 +15,9 @@
 #mobile_main_frame_option_buttons > button{
     background-color: #656D4A;
     color: #F5F7E4;
-    height: 40px;
-    width: 40px;
-    border-radius: 20px;
+    height: 50px;
+    width: 50px;
+    border-radius: 25px;
     cursor: pointer;
     outline: none;
     border: none;
