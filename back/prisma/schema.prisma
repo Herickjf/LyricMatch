@@ -27,7 +27,6 @@ model Room {
   password   String?
   maxRounds  Int      @default(10)
   maxPlayers Int      @default(4)
-  active     Boolean  @default(false)
   language   Language @default(EN)
   players    Player[]
 
@@ -62,7 +61,6 @@ model Player {
   room         Room?          @relation(fields: [roomId], references: [id])
   PlayerAnswer PlayerAnswer[]
   messages     Message[]
-  active       Boolean        @default(true) 
 }
 
 model PlayerAnswer {

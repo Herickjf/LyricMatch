@@ -37,20 +37,10 @@ export class DashboardService {
   }
 
   private async countActiveRooms(): Promise<number> {
-    return this.prisma.room.count({
-      where: {
-        active: true,
-      },
-    });
+    return this.prisma.room.count();
   }
 
   private async countActivePlayers(): Promise<number> {
-    return this.prisma.player.count({
-      where: {
-        roomId: {
-          not: null,
-        },
-      },
-    });
+    return this.prisma.player.count();
   }
 }

@@ -49,7 +49,6 @@ export class GameService {
           roomId: room.id,
           isHost: true,
           avatar: hostAvatar,
-          active: true,
         },
       });
 
@@ -202,7 +201,6 @@ export class GameService {
         id: player.roomId,
       },
       data: {
-        active: true,
         currentRound: 1,
         currentWord,
         prevWords: {
@@ -309,7 +307,7 @@ export class GameService {
       await this.prisma.room.update({
         where: { id: room.id },
         include: { players: true, messages: true },
-        data: { active: false, status: RoomStatus.finished },
+        data: { status: RoomStatus.finished },
       });
       return room;
     }
@@ -341,7 +339,6 @@ export class GameService {
         currentRound: 0,
         currentWord: null,
         status: RoomStatus.waiting,
-        active: false,
       },
       include: { players: true, messages: true },
     });
