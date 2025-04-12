@@ -1,5 +1,5 @@
 import { io } from "socket.io-client";
-import { useEffect, useMemo, createContext, useContext } from "react";
+import { useMemo, createContext, useContext } from "react";
 import { Socket } from "socket.io-client";
 
 type SocketContextType = Socket | null;

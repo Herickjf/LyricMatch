@@ -3,7 +3,6 @@
     which contains the home screen menu icons (in the left corner) and the logo (in the right corner).
 */
 import React from 'react'
-import ReactDOM from 'react-dom';
 
 import '../../css/initialpages/nav.css'
 import Menu from './Menu'

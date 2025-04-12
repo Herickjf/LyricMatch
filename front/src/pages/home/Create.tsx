@@ -1,7 +1,6 @@
 import TextInput from "../../utils/TextInput"
 import Button from "../../utils/Button"
 import NumberInput from "../../utils/NumberInput"
-import Alert from "../../utils/Alert"
 import { useSocket } from "../../utils/SocketContext"
 import { useRoomContext } from "../../utils/RoomContext"
 
@@ -68,7 +67,7 @@ const Create: React.FC<CreateProps> = ({username, avatar}) => {
         });
 
        
-        socket?.on("roomUpdate", (data) => {
+        socket?.on("roomUpdate", () => {
             if(in_game) return;
             setInGame(true);
         });

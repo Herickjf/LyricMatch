@@ -1,7 +1,6 @@
 import TextInput from '../../utils/TextInput'
 import Button from '../../utils/Button'
 import "../../css/utils/form.css"
-import Alert from '../../utils/Alert'
 import { useSocket } from '../../utils/SocketContext'
 import { useRoomContext } from '../../utils/RoomContext'
 
@@ -65,7 +64,7 @@ const Enter: React.FC<EnterProps> = ({ username, avatar}) => {
             password: roomPassword
         })
 
-        socket?.on("roomUpdate", (data) => {
+        socket?.on("roomUpdate", () => {
             if(in_game) return;
             setInGame(true);
         });
