@@ -1,5 +1,4 @@
 import "../../../../css/game/desktop/rightbox_boxes/chat.css"
-import TextInput from "../../../../utils/TextInput";
 import { useState } from "react";
 import { useRoomContext } from "../../../../utils/RoomContext";
 import { useSocket } from "../../../../utils/SocketContext";

@@ -1,6 +1,5 @@
 import '../../../css/game/desktop/rightBox.css'
 import { useEffect, useState } from 'react';
-import { useSocket } from '../../../utils/SocketContext';
 import { useRoomContext } from '../../../utils/RoomContext';
 
 import BetweenRounds from './rightbox_boxes/BetweenRounds';
@@ -13,7 +12,6 @@ const RightBox: React.FC = () =>{
     const [room_status, setRoomStatus] = useState<string>("waiting");
     const [loaded, setLoaded] = useState<boolean>(false);
 
-    const socket = useSocket();
     const { room } = useRoomContext();
 
     useEffect(() => {
