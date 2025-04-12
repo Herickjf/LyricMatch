@@ -19,6 +19,7 @@ export class ApiRequestsService {
       const data: any = result.data;
 
       const tracks = data.data.map((item: any) => ({
+        id: item.id,
         track_name: item.title,
         artist: item.artist.name,
         album_image: item.album.cover_xl,
@@ -28,6 +29,23 @@ export class ApiRequestsService {
       return tracks;
     } catch (error) {
       throw new Error('Failed to search tracks on Deezer');
+    }
+  }
+
+  async searchTrack_Deezzer_byId(id: string): Promise<any> {
+    try {
+      const result = await axios.get(`https://api.deezer.com/track/${id}`);
+      const data: any = result.data;
+
+      return {
+        id: data.id,
+        track_name: data.title,
+        artist: data.artist.name,
+        album_image: data.album.cover_xl,
+        preview: data.preview,
+      };
+    } catch (error) {
+      throw new Error('Failed to search track on Deezer');
     }
   }
 
@@ -62,13 +80,14 @@ export class ApiRequestsService {
 
           return lyrics || 'Letra não encontrada na página.';
         } else {
+          throw new Error('Letra não encontrada na página.');
           return 'Letra não encontrada na página.';
         }
       } else {
         return 'Erro ao acessar a página da música.';
       }
     } catch (error) {
-      return `Erro ao buscar a letra: ${error}`;
+      throw new Error(`Erro ao buscar a letra: ${error.message}`);
     }
   }
 
@@ -76,42 +95,36 @@ export class ApiRequestsService {
     songName: string,
     artistName: string,
   ): Promise<string> {
-    // Formatação do nome da música e do artista para se ajustar à URL do site
-    songName = songName.replace(' ', '-');
-    artistName = artistName.replace(' ', '-');
+    // Formatações
+    const formattedSong = songName.replace(/ /g, '-');
+    const formattedArtist = artistName.replace(/ /g, '-');
 
+    const url = `https://www.musixmatch.com/lyrics/${formattedArtist}/${formattedSong}`;
     const headers = {
       'User-Agent':
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
     };
 
-    // Construção da URL da página da música no Musixmatch
-    const url = `https://www.musixmatch.com/lyrics/${artistName}/${songName}`;
-
     try {
-      // Realizando a requisição HTTP
       const response = await axios.get(url, { headers });
 
-      // Verificando se a requisição foi bem-sucedida (status 200)
-      if (response.status === 200) {
-        const $ = cheerio.load(response.data);
-
-        // A letra geralmente está dentro de divs com as classes específicas
-        const lyricsSpans = $('.css-175oi2r.r-18u37iz.r-1w6e6rj');
-        if (lyricsSpans.length > 0) {
-          const lyrics = lyricsSpans
-            .map((index, span) => $(span).text().trim())
-            .get()
-            .join('\n');
-          return lyrics;
-        } else {
-          return 'Letra não encontrada na página.';
-        }
-      } else {
+      if (response.status !== 200) {
         return 'Erro ao acessar a página da música.';
       }
+
+      const $ = cheerio.load(response.data);
+
+      const lyrics = $('.css-175oi2r.r-zd98yo .css-175oi2r.r-18u37iz.r-1w6e6rj')
+        .filter((_, el) => !$(el).hasClass('r-awgt0'))
+        .map((_, el) => $(el).text().trim())
+        .get()
+        .join('\n');
+
+      if (!lyrics) throw new Error('Letra não encontrada na página.');
+
+      return lyrics;
     } catch (error) {
-      return `Erro ao buscar a letra: ${error.message}`;
+      throw new Error(`Erro ao buscar a letra: ${error.message}`);
     }
   }
 
@@ -136,8 +149,7 @@ export class ApiRequestsService {
 
       return lyrics.trim(); // Remove espaços extras no início e no final
     } catch (error) {
-      console.error('Erro ao buscar a letra da música:', error);
-      return null;
+      throw new Error('Erro ao buscar a letra da música');
     }
   }
 

@@ -4,15 +4,17 @@ import "../css/utils/guesscard.css"
 
 interface GuessCardProps {
     song_param: any;
+    change_screen?: (s: string) => void;
 }
 
 const GuessCard: React.FC<GuessCardProps> = ({
-    song_param
-}) => {
+        song_param,
+        change_screen,
+    }) => {
     const { setSongSelected } = useSongContext();
     const { players } = useRoomContext();
 
-const player = players.find((player: any) => player.id == song_param.playerId);
+    const player = players.find((player: any) => player.id == song_param.playerId);
 
     return (
         <div className="guess_card_box">
@@ -21,8 +23,11 @@ const player = players.find((player: any) => player.id == song_param.playerId);
                 className={`guess_card_song_info ${song_param.isCorrect ? "guess_card_song_info_correct" : "guess_card_song_info_wrong"}`}
                 onClick={() => {
                     setSongSelected(song_param)
-                }}
-            >
+                    if(change_screen) {
+                        change_screen("middle_frame")
+                    }
+                }}>
+                    
                 <div className="guess_card_song_cover" style={{backgroundImage: `url(${song_param.albumImage})`}}/>
                 <div className="guess_card_song_description">
                     <div className="guess_card_song_name">{song_param.track}</div>

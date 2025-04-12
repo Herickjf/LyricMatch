@@ -1,0 +1,50 @@
+#MOBILE_search_song_box{
+    width: 80%;
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 40px;
+    align-items: center;
+    background-color: #22291C;
+    position: relative;
+}
+
+#MOBILE_search_song_box > 
+#mobile_search_song_button_return{
+    width: 40px;
+    height: 40px;
+    background-color: #656D4A;
+    border: none;
+    color: #F5F7E4;
+    position: absolute;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 10px;
+    left: 10px;
+}
+
+#MOBILE_search_song_box > 
+#mobile_search_song_button_return:hover{
+    background-color: #afbf77;
+    box-shadow: #8f9c61be 0px 0px 10px;
+    transform: scale(1.01);
+    transition: .2s ease-in-out;
+}
+
+#MOBILE_search_song_box > #search_song_title{
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+#MOBILE_search_song_box > #search_results_box{
+    width: 100%;
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+}

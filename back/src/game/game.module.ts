@@ -12,5 +12,6 @@ import { GameGateway } from './game.gateway';
     ApiRequestsService,
     Logger,
   ],
+  exports: [GameGateway],
 })
 export class GameModule {}

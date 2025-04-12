@@ -5,6 +5,7 @@ import Button    from "../../../../utils/Button"
 import { useSearchContext } from "../../../../utils/SearchContext"
 import "../../../../css/game/desktop/midBox/searchSong.css"
 import { useRoomContext } from "../../../../utils/RoomContext"
+import { useSocket } from "../../../../utils/SocketContext"
 
 const back_url = "http://localhost:4000"
 
@@ -14,9 +15,11 @@ const SearchSong: React.FC = () => {
     const [word_to_guess,   setWord]        = useState<string>("WORD");
     const [timer,           setTimer]       = useState<number>(30);
     const [alert, setAlert] = useState<boolean>(false);
+    const [alertMessage, setAlertMessage] = useState<string>("");
 
     const { setCount } = useSearchContext();
     const { room } = useRoomContext();
+    const socket = useSocket();
     
     useEffect(() => {
         if(room) {
@@ -44,6 +47,7 @@ const SearchSong: React.FC = () => {
         .then((response) => response.json())
         .then((data) => {
             if(data.length == 0 || data.statusCode == 500){
+                setAlertMessage("No song found with this name or artist");
                 setAlert(true);
                 setTimeout(() => {
                     setAlert(false);
@@ -76,7 +80,7 @@ const SearchSong: React.FC = () => {
 
             {alert && (
                 <div className="custom-alert">
-                    Song not found! Please try again.
+                    {alertMessage}
                 </div>
             )}
         </div>

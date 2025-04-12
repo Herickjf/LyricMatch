@@ -1,0 +1,23 @@
+#mobile_game_start{
+    display: flex;
+    width: 50%;
+    height: 100%;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#mobile_game_start > #mobile_spinning_logo{
+    position: relative;
+    width: 150px;
+    height: 150px;
+    background-image: url('/assets/logo.svg');
+    background-size: cover;
+    background-position: center;
+    animation: spin 5s linear infinite;
+    transition: all 1s ease;
+}
+
+#mobile_game_start_text{
+    font-size: 1.0rem;
+}

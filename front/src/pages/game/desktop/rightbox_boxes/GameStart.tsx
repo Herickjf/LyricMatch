@@ -10,7 +10,7 @@ const GameStart: React.FC = () => {
 
     const startGame = () => {
         if(hostPlayer)
-            socket?.emit("startGame", { hostId: hostPlayer.socketId });
+            socket?.emit("startGame");
     }
 
 

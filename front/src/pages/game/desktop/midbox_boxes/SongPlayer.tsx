@@ -17,6 +17,9 @@ const SongPlayer: React.FC = () => {
   const audio = song_selected?.preview;
   const correct = song_selected?.isCorrect;
 
+  if(audioRef.current){
+    audioRef.current.volume = 0.2; // Fixa o volume em 50% (0.5)
+  }
 
   useEffect(() => {
     const audio = audioRef.current;

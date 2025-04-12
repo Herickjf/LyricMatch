@@ -1,3 +1,4 @@
+import React from "react";
 import { Routes, Route } from "react-router-dom";
 
 import Home from "./pages/home/Home";
@@ -12,6 +13,7 @@ import { useSocket } from "./utils/SocketContext";
 import { useSongContext } from "./utils/SongContext";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSearchContext } from "./utils/SearchContext";
 
 
 const App = () => {
@@ -20,7 +22,9 @@ const App = () => {
   const { setSongSelected } = useSongContext();
   const { setGuesses } = useSongContext();
   const { player, setPlayer } = useRoomContext();
+  const { setCount } = useSearchContext();
   const [alert, setAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,6 +46,9 @@ const App = () => {
       setPlayers(room.players);
       setRoom(room);
       setPlayer(room.players.find((p: any) => p.socketId == socket.id));
+      if(room.status == "analyzing" || room.status == "finished"){
+        setCount(null);
+      }
     });
   
     socket.on("roomAnswers", (data: any) => {
@@ -56,19 +63,28 @@ const App = () => {
       setPlayer(null);
       setGuesses([]);
       setSongSelected(null);
-      setAlert(true);
       navigate("/"); // 🔁 redireciona para a tela inicial
-  
+      setAlert(true);
+      setAlertMessage("You were expelled from the room.");
       setTimeout(() => {
         setAlert(false);
       }, 5000);
     });
+
+    socket.on("errorOnSearch", () => {
+      setAlert(true);
+      setAlertMessage("Error on search song, please try other source/site.");
+      setTimeout(() => {
+        setAlert(false);
+      }, 5000);
+    })
   
     // limpeza dos eventos para evitar múltiplas chamadas
     return () => {
       socket.off("roomUpdate");
       socket.off("roomAnswers");
       socket.off("expelled");
+      socket.off("errorOnSearch");
     };
   }, [socket, navigate, player?.id]);
 
@@ -91,9 +107,10 @@ const App = () => {
         {
           alert &&
           <div className="custom-alert">
-            You were expelled from the room.
+            {alertMessage}
           </div>
         }
+
       </div>
   );
 };

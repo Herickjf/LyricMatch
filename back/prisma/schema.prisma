@@ -31,15 +31,14 @@ model Room {
   language   Language @default(EN)
   players    Player[]
 
-  status     String   @default("waiting")
-  currentRound Int     @default(1)
+  status       String   @default("waiting")
+  currentRound Int      @default(1)
   currentWord  String?
-  prevWords   String[]
-  roundTimer   Int     @default(30)
+  prevWords    String[]
+  roundTimer   Int      @default(30)
 
-  answers PlayerAnswer[]
-  messages      Message[]
-
+  answers  PlayerAnswer[]
+  messages Message[]
 }
 
 model Message {
@@ -49,7 +48,7 @@ model Message {
   message   String
   createdAt DateTime @default(now())
   room      Room     @relation(fields: [roomId], references: [id])
-  player    Player   @relation(fields: [playerId], references: [id])
+  player    Player   @relation(fields: [playerId], references: [id], onDelete: Cascade)
 }
 
 model Player {
@@ -63,12 +62,13 @@ model Player {
   room         Room?          @relation(fields: [roomId], references: [id])
   PlayerAnswer PlayerAnswer[]
   messages     Message[]
+  active       Boolean        @default(true) 
 }
 
 model PlayerAnswer {
   id         String  @id @default(uuid())
   playerId   String
-  player     Player  @relation(fields: [playerId], references: [id])
+  player     Player  @relation(fields: [playerId], references: [id], onDelete: Cascade)
   round      Int
   track      String
   artist     String
@@ -76,7 +76,7 @@ model PlayerAnswer {
   preview    String?
   isCorrect  Boolean
   roomId     String
-  room       Room    @relation(fields: [roomId], references: [id])
+  room       Room    @relation(fields: [roomId], references: [id], onDelete: Cascade)
 }
 
 model Word {

@@ -17,7 +17,7 @@ interface CreateProps {
 const Create: React.FC<CreateProps> = ({username, avatar}) => {
     const [password, setPassword] = useState<string>("");
     const [max_players, setMaxPlayers] = useState<number>(3);
-    const [max_rounds, setMaxRounds] = useState<number>(3);
+    const [max_rounds, setMaxRounds] = useState<number>(1);
     const [language, setLanguage] = useState<"PT" | "EN" | "SP">("EN");
     const [alert_active, setAlertActive] = useState<boolean>(false);
     const [alert_message, setAlertMessage] = useState<string>("");
@@ -87,8 +87,8 @@ const Create: React.FC<CreateProps> = ({username, avatar}) => {
             <TextInput label="Password:" placeholder="Create the room password" setText={setPassword} enterFunc={handleCreateRoom}/>
 
             <div className="number_inputs">
-                <NumberInput label="Max Players:" placeholder="3 - 100" setNumber={setMaxPlayers} enterFunc={handleCreateRoom}/>
-                <NumberInput label="Max Rounds:"  placeholder="3 - 50" setNumber={setMaxRounds} enterFunc={handleCreateRoom}/>
+                <NumberInput label="Max Players:" placeholder="1 - 100" setNumber={setMaxPlayers} enterFunc={handleCreateRoom}/>
+                <NumberInput label="Max Rounds:"  placeholder="1 - 50" setNumber={setMaxRounds} enterFunc={handleCreateRoom}/>
             </div>
 
             <div className="input_box" id="language_selection_box">

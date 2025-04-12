@@ -5,9 +5,16 @@ import { ApiRequestsModule } from './api-requests/api-requests.module';
 import { PrismaModule } from './prisma-client/prisma-client.module';
 import { GameModule } from './game/game.module';
 import { ImageModule } from './image/image.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
-  imports: [ApiRequestsModule, PrismaModule, GameModule, ImageModule],
+  imports: [
+    ApiRequestsModule,
+    PrismaModule,
+    GameModule,
+    ImageModule,
+    DashboardModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

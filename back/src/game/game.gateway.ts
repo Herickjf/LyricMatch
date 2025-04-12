@@ -42,8 +42,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleDisconnect(client: Socket) {
     try {
       const room = await this.gameService.exitRoom(client.id);
-      if (!room){
-        return;   // Se o cliente não estava em uma sala, não faz nada
+      if (!room) {
+        return; // Se o cliente não estava em uma sala, não faz nada
       }
       if (room) this.server.to(room.code).emit('roomUpdate', room);
     } catch (error) {
@@ -118,12 +118,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('startGame')
-  async handleStartGame(
-    @MessageBody() data: { hostId: string },
-    @ConnectedSocket() client: Socket,
-  ) {
+  async handleStartGame(@ConnectedSocket() client: Socket) {
     try {
-      const room = await this.gameService.startGame(data.hostId);
+      const room = await this.gameService.startGame(client.id);
       if (!room) {
         client.emit('error', {
           message: 'Erro ao iniciar o jogo',
@@ -187,6 +184,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       track: string;
       artist: string;
       musicApi: MusicApi;
+      music_id: string;
     },
     @ConnectedSocket() client: Socket,
   ) {
@@ -196,10 +194,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         data.track,
         data.artist,
         data.musicApi,
+        data.music_id,
       );
     } catch (error) {
-      console.error('Erro ao enviar resposta:', error);
-      client.emit('error', { message: 'Erro ao enviar resposta' });
+      console.error('Erro ao enviar resposta');
+      client.emit('errorOnSearch');
     }
   }
 
@@ -216,7 +215,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('expelPlayer')
   async handleExpelPlayer(
-    @MessageBody() data: { playerId: string, socketId: string },
+    @MessageBody() data: { playerId: string; socketId: string },
     @ConnectedSocket() client: Socket,
   ) {
     try {
@@ -271,7 +270,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }
       this.server.to(room.code).emit('roomUpdate', room);
       this.recursiveTimer(room.code, room.roundTimer, client.id);
-      
     } catch (error) {
       console.error('Erro ao avançar para a próxima rodada:', error);
       client.emit('error', {
@@ -312,9 +310,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('getRankings')
-  async handleGetRankings(
-    @ConnectedSocket() client: Socket
-  ){
+  async handleGetRankings(@ConnectedSocket() client: Socket) {
     // Coloca a sala em estado de finished e retorna, uma ultima vez, o objeto da sala com os players nele
     try {
       const room = await this.gameService.getRankings(client.id);
@@ -331,5 +327,57 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         message: 'Erro ao obter informações da sala',
       });
     }
+  }
+
+  @SubscribeMessage('resetRoom')
+  async handleResetRoom(@ConnectedSocket() client: Socket) {
+    try {
+      const room = await this.gameService.resetRoom(client.id);
+      if (!room) {
+        client.emit('error', {
+          message: 'Erro ao obter informações da sala',
+        });
+        return;
+      }
+      client.emit('roomUpdate', room);
+    } catch (error) {
+      console.error('Erro ao obter informações da sala:', error);
+      client.emit('error', {
+        message: 'Erro ao obter informações da sala',
+      });
+    }
+  }
+
+  getConnectedClientsCount(): number {
+    return this.server.sockets.sockets.size; // Retorna o número de clientes conectados
+  }
+
+  private connectedClients: number[] = []; // Array para armazenar o número de clientes conectados em cada segundo
+  private intervalId: NodeJS.Timeout;
+
+  startTrackingClients() {
+    this.intervalId = setInterval(() => {
+      const count = this.server.sockets.sockets.size;
+      this.connectedClients.push(count);
+
+      // Limita o tamanho do array para evitar crescimento infinito
+      if (this.connectedClients.length > 60) {
+        this.connectedClients.shift(); // Remove o valor mais antigo
+      }
+    }, 1000); // Executa a cada segundo
+  }
+
+  stopTrackingClients() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
+  }
+
+  getAverageClients(): number {
+    if (this.connectedClients.length === 0) {
+      return 0; // Evita divisão por zero
+    }
+    const sum = this.connectedClients.reduce((a, b) => a + b, 0);
+    return sum / this.connectedClients.length;
   }
 }

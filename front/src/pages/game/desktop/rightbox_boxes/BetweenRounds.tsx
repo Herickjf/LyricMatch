@@ -5,7 +5,7 @@ import "../../../../css/game/desktop/rightbox_boxes/betweenRounds.css"
 
 const BetweenRounds: React.FC = () => {
     const { guesses } = useSongContext();
-
+    
     return (
         <div id="between_rounds_box">
             <div id="between_rounds_title">Players tried:</div>
