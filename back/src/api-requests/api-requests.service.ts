@@ -98,30 +98,30 @@ export class ApiRequestsService {
     // Formatações
     const formattedSong = songName.replace(/ /g, '-');
     const formattedArtist = artistName.replace(/ /g, '-');
-  
+
     const url = `https://www.musixmatch.com/lyrics/${formattedArtist}/${formattedSong}`;
     const headers = {
       'User-Agent':
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
     };
-  
+
     try {
       const response = await axios.get(url, { headers });
-  
+
       if (response.status !== 200) {
         return 'Erro ao acessar a página da música.';
       }
-  
+
       const $ = cheerio.load(response.data);
-  
+
       const lyrics = $('.css-175oi2r.r-zd98yo .css-175oi2r.r-18u37iz.r-1w6e6rj')
         .filter((_, el) => !$(el).hasClass('r-awgt0'))
         .map((_, el) => $(el).text().trim())
         .get()
         .join('\n');
-  
+
       if (!lyrics) throw new Error('Letra não encontrada na página.');
-  
+
       return lyrics;
     } catch (error) {
       throw new Error(`Erro ao buscar a letra: ${error.message}`);
