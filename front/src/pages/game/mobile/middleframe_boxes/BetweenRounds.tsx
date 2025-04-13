@@ -17,7 +17,7 @@ const BetweenRounds: React.FC<BetweenRoundsProps> = ({setFrame}) => {
     const { player, room } = useRoomContext();
     const { song_selected } = useSongContext();
 
-    const isTheHost = player.isHost;
+    const isTheHost = player?.isHost;
 
     return (
         <div id="mobile_between_rounds_mid_box">

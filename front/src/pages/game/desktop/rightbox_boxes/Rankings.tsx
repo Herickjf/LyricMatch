@@ -19,7 +19,7 @@ const Rankings: React.FC = () => {
                     <Button 
                         text="New Game"
                         func={() => {
-                            socket?.emit("newGame");
+                            socket?.emit("resetRoom");
                         }}
                     />
                 }

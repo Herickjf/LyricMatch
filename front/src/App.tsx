@@ -41,11 +41,28 @@ const App = () => {
 
   useEffect(() => {
     if (!socket) return;
+
+    socket.on("error", (data) => {
+      setAlertMessage(data.message);
+      setAlert(true);
+      setTimeout(() => {
+        setAlert(false);
+      }, 5000);
+    });
+
+    return () => {
+      socket.off("error");
+    };
+  }, [socket]);
+
+  useEffect(() => {
+    if (!socket) return;
   
     socket.on("roomUpdate", (room: any) => {
       setPlayers(room.players);
       setRoom(room);
-      setPlayer(room.players.find((p: any) => p.socketId == socket.id));
+      setPlayer(room.players.find((p: any) => p.socketId == socket.id) || null);
+      
       if(room.status == "analyzing" || room.status == "finished"){
         setCount(null);
       }
@@ -64,20 +81,12 @@ const App = () => {
       setGuesses([]);
       setSongSelected(null);
       navigate("/"); // 🔁 redireciona para a tela inicial
-      setAlert(true);
       setAlertMessage("You were expelled from the room.");
+      setAlert(true);
       setTimeout(() => {
         setAlert(false);
       }, 5000);
     });
-
-    socket.on("errorOnSearch", () => {
-      setAlert(true);
-      setAlertMessage("Error on search song, please try other source/site.");
-      setTimeout(() => {
-        setAlert(false);
-      }, 5000);
-    })
   
     // limpeza dos eventos para evitar múltiplas chamadas
     return () => {
@@ -87,6 +96,8 @@ const App = () => {
       socket.off("errorOnSearch");
     };
   }, [socket, navigate, player?.id]);
+
+
 
   return (
       <div className="App" id="App_Screen">

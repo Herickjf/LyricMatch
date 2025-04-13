@@ -1,0 +1,19 @@
+#mobile_chat_frame_box{
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    background-color: #22291c;
+}
+
+#mobile_chat_frame{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to top, #2d4814, #3e580e00);
+}
+

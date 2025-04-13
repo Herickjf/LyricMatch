@@ -12,7 +12,7 @@ const BetweenRounds: React.FC = () => {
     const { player, room } = useRoomContext();
     const { song_selected } = useSongContext();
 
-    const isTheHost = player.isHost;
+    const isTheHost = player?.isHost;
 
     return (
         <div id="between_rounds_mid_box">

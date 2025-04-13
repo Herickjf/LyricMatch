@@ -231,7 +231,7 @@ export class GameService {
       );
     }
 
-    const room = await this.prisma.room.update({
+    let room = await this.prisma.room.update({
       where: { id: player.room.id },
       include: {
         players: true,
@@ -254,10 +254,22 @@ export class GameService {
     for (const answer of answers) {
       await this.prisma.player.update({
         where: { id: answer.playerId },
-        data: { score: { increment: answer.isCorrect ? 10 : -2 } },
+        data: { score: { increment: answer.isCorrect ? 10 : 0 } },
       });
     }
 
+    // Atualiza a variavel sala com as novas pontuações dos jogadores
+    let updatedRoom = await this.prisma.room.findUnique({
+      where: { id: room.id },
+      include: {
+        players: true,
+        messages: true,
+      },
+    });
+
+    if (updatedRoom) {
+      room = updatedRoom;
+    }
     return { room, answers };
   }
 

@@ -12,13 +12,12 @@ const GuessCard: React.FC<GuessCardProps> = ({
         change_screen,
     }) => {
     const { setSongSelected } = useSongContext();
-    const { players } = useRoomContext();
+    const { player } = useRoomContext();
 
-    const player = players.find((player: any) => player.id == song_param.playerId);
 
     return (
         <div className="guess_card_box">
-            <div className="guess_card_player_name">{player.name}:</div>
+            <div className="guess_card_player_name">{player?.name}:</div>
             <div 
                 className={`guess_card_song_info ${song_param.isCorrect ? "guess_card_song_info_correct" : "guess_card_song_info_wrong"}`}
                 onClick={() => {

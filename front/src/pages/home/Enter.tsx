@@ -68,14 +68,6 @@ const Enter: React.FC<EnterProps> = ({ username, avatar}) => {
             if(in_game) return;
             setInGame(true);
         });
-
-        socket?.on("error", (error) => {
-            setAlertMessage(error.message);
-            setAlertActive(true);
-            setTimeout(() => {
-                setAlertActive(false);
-            }, 3000);
-        });
     }
 
     return(

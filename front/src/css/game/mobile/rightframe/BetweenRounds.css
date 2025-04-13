@@ -23,3 +23,24 @@
     font-size: 1.8rem;
     font-weight: bold;
 }
+
+#mobile_between_rounds_guesses_list{
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+#mobile_between_return_button{
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #A4AC86;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

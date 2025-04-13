@@ -1,6 +1,27 @@
 #mobile_chat_box{
     width: 80%;
-    height: 20%;
+    height: 80%;
     margin: 0 auto;
     margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#mobile_chat_box > #chat_messages_box{
+    height: 80%;
+    font-size: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#mobile_chat_box > #chat_input_box{
+    height: 10%;
+}
+
+#mobile_chat_box > #chat_input_box > button{
+    height: 35px;
+    width: 35px;
+    margin-right: 10px;
 }

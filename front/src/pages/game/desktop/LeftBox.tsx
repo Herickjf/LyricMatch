@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useRoomContext } from "../../../utils/RoomContext";
-// import { usePlayerEntryContext } from "../../../utils/PlayerEntryContext";
 // import { useRef } from "react";
+import { useSocket } from "../../../utils/SocketContext";
 
 import PlayerCard from "../../../utils/PlayerCard"
 import '../../../css/game/desktop/leftBox.css'
@@ -27,7 +27,7 @@ const LeftBox: React.FC = () => {
         setMaxRounds(room?.maxRounds);
         setCurrentRound(room?.currentRound);
     }
-    , [players, room])
+    , [players, room]);
 
     const copyToClipboard = () => {
         navigator.clipboard.writeText(`http://localhost:5173?code=${room_code}`).then(() => {
@@ -53,7 +53,7 @@ const LeftBox: React.FC = () => {
                         avatar={p.avatar} 
                         points={p.score} 
                         isHost={p.isHost}
-                        hostView={player.isHost} 
+                        hostView={player?.isHost} 
                         playerId={p.id}
                         socketId={p.socketId}
                         key={p.name} 

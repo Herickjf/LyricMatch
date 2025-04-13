@@ -103,7 +103,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       );
       if (!r) {
         client.emit('error', {
-          message: 'Erro ao entrar na sala',
+          message: 'error joining room, certify the code and password',
         });
         return;
       }
@@ -112,7 +112,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     } catch (error) {
       console.error('Erro ao entrar na sala:', error);
       client.emit('error', {
-        message: 'Erro ao entrar na sala' + error,
+        message: 'error joining room, certify the code and password',
       });
     }
   }
@@ -131,7 +131,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.recursiveTimer(room.code, room.roundTimer, client.id);
     } catch (error) {
       console.error('Erro ao iniciar o jogo:', error);
-      client.emit('error', { message: 'Erro ao iniciar o jogo' });
+      client.emit('error', { message: 'error starting game' });
     }
   }
 
@@ -152,7 +152,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         } catch (error) {
           this.logger.error('Erro ao finalizar a rodada pelo timer:', error);
           this.server.to(roomCode).emit('error', {
-            message: 'Erro ao finalizar a rodada pelo timer',
+            message: 'error finalizing round',
           });
         }
       }
@@ -167,13 +167,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     try {
       const room = await this.gameService.sendMessage(client.id, data.message);
       if (!room) {
-        client.emit('error', { message: 'Erro ao enviar mensagem' });
+        client.emit('error', { message: 'error sending message' });
         return;
       }
       this.server.to(room.code).emit('roomUpdate', room);
     } catch (error) {
       console.error('Erro ao enviar mensagem:', error);
-      client.emit('error', { message: 'Erro ao enviar mensagem' });
+      client.emit('error', { message: 'error sending message' });
     }
   }
 
@@ -197,8 +197,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         data.music_id,
       );
     } catch (error) {
-      console.error('Erro ao enviar resposta');
-      client.emit('errorOnSearch');
+      console.error('Erro ao enviar resposta de busca de musica');
+      client.emit('error', { message: "This song was not found in this source, try another one"});
     }
   }
 
@@ -209,7 +209,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       if (room) this.server.to(room.code).emit('roomUpdate', room);
     } catch (error) {
       console.error('Erro ao sair da sala:', error);
-      client.emit('error', { message: 'Erro ao sair da sala' });
+      client.emit('error', { message: 'error leaving the room' });
     }
   }
 
@@ -222,7 +222,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const room = await this.gameService.expelPlayer(client.id, data.playerId);
       if (!room) {
         client.emit('error', {
-          message: 'Erro ao expulsar jogador',
+          message: 'Error expelling player',
         });
         return;
       }
@@ -231,7 +231,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     } catch (error) {
       console.error('Erro ao expulsar jogador:', error);
       client.emit('error', {
-        message: 'Erro ao expulsar jogador',
+        message: 'Error expelling player',
       });
     }
   }
@@ -245,7 +245,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const room = await this.gameService.changeHost(client.id, data.playerId);
       if (!room) {
         client.emit('error', {
-          message: 'Erro ao mudar o host',
+          message: 'Error changing host',
         });
         return;
       }
@@ -253,7 +253,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     } catch (error) {
       console.error('Erro ao mudar o host:', error);
       client.emit('error', {
-        message: 'Erro ao mudar o host',
+        message: 'Error changing host',
       });
     }
   }
@@ -264,7 +264,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const room = await this.gameService.nextRound(client.id);
       if (!room) {
         client.emit('error', {
-          message: 'Erro ao avançar para a próxima rodada',
+          message: 'Error advancing to the next round',
         });
         return;
       }
@@ -273,7 +273,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     } catch (error) {
       console.error('Erro ao avançar para a próxima rodada:', error);
       client.emit('error', {
-        message: 'Erro ao avançar para a próxima rodada',
+        message: error.message,
       });
     }
   }
@@ -284,7 +284,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const room = await this.gameService.getRoomInfo(client.id);
       if (!room) {
         client.emit('error', {
-          message: 'Erro ao obter informações da sala',
+          message: 'Error getting room information',
         });
         return;
       }
@@ -294,7 +294,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       );
       if (!playersguesses) {
         client.emit('error', {
-          message: 'Erro ao obter informações da sala',
+          message: 'Error getting players guesses',
         });
         return;
       }
@@ -304,7 +304,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     } catch (error) {
       console.error('Erro ao obter informações da sala:', error);
       client.emit('error', {
-        message: 'Erro ao obter informações da sala',
+        message: 'Error getting room information',
       });
     }
   }
@@ -316,7 +316,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const room = await this.gameService.getRankings(client.id);
       if (!room) {
         client.emit('error', {
-          message: 'Erro ao obter informações da sala',
+          message: 'Error getting room information',
         });
         return;
       }
@@ -324,7 +324,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     } catch (error) {
       console.error('Erro ao obter informações da sala:', error);
       client.emit('error', {
-        message: 'Erro ao obter informações da sala',
+        message: 'Error getting room information',
       });
     }
   }
@@ -335,7 +335,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const room = await this.gameService.resetRoom(client.id);
       if (!room) {
         client.emit('error', {
-          message: 'Erro ao obter informações da sala',
+          message: 'Error resetting room',
         });
         return;
       }
@@ -343,7 +343,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     } catch (error) {
       console.error('Erro ao obter informações da sala:', error);
       client.emit('error', {
-        message: 'Erro ao obter informações da sala',
+        message: 'Error resetting room',
       });
     }
   }
