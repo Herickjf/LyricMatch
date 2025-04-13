@@ -1,18 +1,14 @@
-FROM node:18-alpine
+FROM node:18
 
 WORKDIR /app
 
 COPY package*.json ./
 RUN npm install
 
-# Gera o Prisma Client com os binary targets configurados
-
 COPY . .
-RUN npx prisma generate
-RUN npx prisma migrate deploy
 
 RUN npm run build
 
-EXPOSE 4000
+RUN npx ts-node words/importWords.ts
 
-CMD ["npm", "run", "start:prod"]
+CMD ["node", "dist/main"]
