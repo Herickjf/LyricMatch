@@ -312,6 +312,11 @@ export class GameService {
       throw new Error('nextRound: Room or players not found');
     }
 
+    // Limpa as tentativas passadas:
+    await this.prisma.playerAnswer.deleteMany({
+      where: { roomId: room.id },
+    });
+
     if (room.currentRound <= room.maxRounds) {
       const words = await this.prisma.word.findMany({
         where: { language: room.language },
@@ -363,6 +368,10 @@ export class GameService {
     if (!room) {
       throw new Error('resetRoom: Room not found');
     }
+
+    await this.prisma.playerAnswer.deleteMany({
+      where: { roomId: room.id },
+    });
 
     const resetRoom = await this.prisma.room.update({
       where: { id: room.id },
