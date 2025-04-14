@@ -12,7 +12,6 @@ import { Language } from '@prisma/client';
 import { GameService } from './game.service';
 import { MusicApi } from '../api-requests/music-api.enum';
 import { Logger } from '@nestjs/common';
-import { subscribe } from 'diagnostics_channel';
 
 interface PlayerDto {
   name: string;
