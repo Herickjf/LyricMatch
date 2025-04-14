@@ -26,7 +26,7 @@ body{
   overflow-y: hidden;
   overflow-x: hidden;
   
-  background-image: url(./assets/bg.svg);
+  background-image: url(/assets/bg.svg);
   background-size: cover;
 }
 
