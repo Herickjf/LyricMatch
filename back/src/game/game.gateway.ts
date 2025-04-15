@@ -12,6 +12,10 @@ import { Language } from '@prisma/client';
 import { GameService } from './game.service';
 import { MusicApi } from '../api-requests/music-api.enum';
 import { Logger } from '@nestjs/common';
+import axios from "axios"; // Biblioteca para fazer requisições HTTP
+
+// Biblioteca para pegar o endereço IPv6 do cliente a partir do socket
+import * as os from 'os';
 
 interface PlayerDto {
   name: string;
@@ -33,6 +37,21 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {}
   @WebSocketServer()
   server: Server; // Instância do servidor WebSocket
+
+  async getLocalIpv6(){
+    const interfaces = os.networkInterfaces();
+    for (const interfaceName in interfaces) {
+      const networkInterface = interfaces[interfaceName];
+      if (networkInterface) {
+        for (const net of networkInterface) {
+          if (net.family === 'IPv6' && !net.internal) {
+            return net.address; // Retorna o endereço IPv6
+          }
+        }
+      }
+    }
+    return null; // Retorna null se não encontrar um endereço IPv6
+  }
 
   handleConnection(client: Socket) {
     console.log(`Cliente conectado: ${client.id}`);
@@ -57,6 +76,30 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket, // Socket do cliente conectado
   ) {
     try {
+      // Obtem o endereco IPv6 do cliente:
+      let clientIp: string | null = client.handshake.address; // Endereço IP do cliente
+
+      // Se for ipv6:
+      if(clientIp.includes(':')) {
+        // Se for o endereço local, pega o ipv6 local:
+        // Se for o ipv6 normal, não faz nada
+        if(clientIp === "::1"){
+          clientIp = await this.getLocalIpv6() || null;
+        }
+
+        // Realiza o fetch para obter as informações do cliente
+        const response = await axios.get(`https://ipinfo.io/${clientIp}/json`);
+        const data = response.data; // Dados retornados pela API
+        if('country' in data){
+          clientIp = data;
+        }else{
+          clientIp = null; // Se não for ipv6, não faz nada
+        }
+      }else{
+        clientIp = null; // Se for ipv4, não faz nada
+      }
+
+
       const r = await this.gameService.createRoom(
         client.id,
         data.host.name,
@@ -65,6 +108,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         data.room.maxPlayers,
         data.room.maxRounds,
         data.room.language,
+        clientIp, // Passa o endereço IPv6 do cliente
       );
       if (!r) {
         client.emit('error', {
@@ -93,12 +137,37 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket, // Socket do cliente conectado
   ) {
     try {
+      // Obtem o endereco IPv6 do cliente:
+      let clientIp: string | null = client.handshake.address; // Endereço IP do cliente
+
+      // Se for ipv6:
+      if(clientIp.includes(':')) {
+        // Se for o endereço local, pega o ipv6 local:
+        // Se for o ipv6 normal, não faz nada
+        if(clientIp === "::1"){
+          clientIp = await this.getLocalIpv6() || null;
+        }
+
+        // Realiza o fetch para obter as informações do cliente
+        const response = await axios.get(`https://ipinfo.io/${clientIp}/json`);
+        const data = response.data; // Dados retornados pela API
+        if('country' in data){    // Confirma se a busca foi bem sucedida
+          clientIp = data;
+        }else{
+          clientIp = null; // Se não for ipv6, não faz nada
+        }
+      }else{
+        clientIp = null; // Se for ipv4, não faz nada
+      }
+    
+
       const r = await this.gameService.joinRoom(
         client.id,
         data.code,
         data.player.name,
         data.player.avatar,
         data.password,
+        clientIp, // Passa o endereço IPv6 do cliente
       );
       if (!r) {
         client.emit('error', {
