@@ -6,6 +6,11 @@ import { useSocket } from "../../../utils/SocketContext";
 import PlayerCard from "../../../utils/PlayerCard";
 import "../../../css/game/desktop/leftBox.css";
 
+import dotenv from "dotenv";
+
+// Pega o BACKEND_URL do .env:
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+
 const LeftBox: React.FC = () => {
   const [current_players, setCurrentPlayers] = useState<number>(0);
   const [max_players, setMaxPlayers] = useState<number>(0);
@@ -78,9 +83,9 @@ const LeftBox: React.FC = () => {
         <button className="copy-code-button" onClick={copyToClipboard}>
           <i className="fa fa-share"></i>
         </button>
-        <button className="copy-code-button" onClick={copyToClipboard}>
+        {/* <button className="copy-code-button" onClick={copyToClipboard}>
           <i className="fa fa-share"></i>
-        </button>
+        </button> */}
       </div>
 
       {showAlert && ( // Renderiza o alerta se showAlert for true

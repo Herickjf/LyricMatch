@@ -3,13 +3,15 @@ import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { useState } from 'react';
 
+import dotenv from 'dotenv';
+
 interface AvatarsProps {
     setAvatarsOpenMenu: (value: boolean) => void;
     avatarOpenMenu: boolean;
     setAvatar: (value: string) => void;
 }
 
-const back_url = `${window.location.origin}/api`
+const back_url = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
 
 const Avatars: React.FC<AvatarsProps> = ({setAvatar, avatarOpenMenu, setAvatarsOpenMenu}) => {
     const [avatars, setAvatars] = useState<any>([]);

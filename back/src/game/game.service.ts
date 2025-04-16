@@ -67,17 +67,16 @@ export class GameService {
 
       
 
-      if (clientIp) {
-        console.log('clientIp', clientIp);
-        // const newLocalization = await this.prisma.localization.create({
-        //   data: {
-        //     ip: clientIp.ip,
-        //     city: clientIp.city,
-        //     longitude: clientIp.loc.split(', ')[0],
-        //     latitude: clientIp.loc.split(', ')[1],
-        //     playerId: host.id,
-        //   }
-        // })
+      if (clientIp != null && clientIp.ip != null) {
+        const newLocalization = await this.prisma.localization.create({
+          data: {
+            ip: clientIp.ip,
+            city: clientIp.city,
+            longitude: clientIp.loc.split(',')[0],
+            latitude: clientIp.loc.split(',')[1], 
+            playerId: host.id,
+          }
+        })
       }
 
       room.players = [host];
@@ -144,16 +143,15 @@ export class GameService {
       });
 
       if (clientIp) {
-        console.log('clientIp', clientIp);
-        // const newLocalization = await this.prisma.localization.create({
-        //   data: {
-        //     ip: clientIp.ip,
-        //     city: clientIp.city,
-        //     longitude: clientIp.loc.split(', ')[0],
-        //     latitude: clientIp.loc.split(', ')[1],
-        //     playerId: player.id,
-        //   }
-        // })
+        const newLocalization = await this.prisma.localization.create({
+          data: {
+            ip: clientIp.ip,
+            city: clientIp.city,
+            longitude: clientIp.loc.split(',')[0],
+            latitude: clientIp.loc.split(',')[1],
+            playerId: player.id,
+          }
+        })
       }
 
       room.players = [...room.players, player];
