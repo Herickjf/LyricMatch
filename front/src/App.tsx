@@ -6,6 +6,7 @@ import About from "./pages/about/About";
 import NotFound from "./pages/notFound/NotFound";
 import Nav from "./pages/nav/nav";
 import GameScreen from "./pages/game/GameScreen";
+import Dashboard from "./pages/dashboard/Dashboard";
 import './css/initialpages/App.css'
 
 import { useRoomContext } from "./utils/RoomContext";
@@ -112,6 +113,7 @@ const App = () => {
             <Route path="/" element={!in_game && <Home/>} />
             <Route path="/about" element={<About />} />
             <Route path="/howtoplay" element={<About />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         }

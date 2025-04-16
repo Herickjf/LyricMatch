@@ -695,4 +695,15 @@ export class GameService {
     }
     return updatedRoom;
   }
+
+  async getUserName(socketId: string){
+    const player = await this.prisma.player.findUnique({
+      where: { socketId },
+    });
+    if (!player) {
+      throw new Error('getUserName: Player not found');
+    }
+
+    return player.name;
+  }
 }
