@@ -45,15 +45,23 @@ services:
       - app-net
 
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:latest
     ports:
       - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
     volumes:
       - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
       - ./grafana/dashboards:/var/lib/grafana/dashboards
     networks:
       - app-net
+    depends_on:
+      - prometheus
+    command: >
+      /bin/sh -c "until curl -s http://prometheus:9090/api/v1/status/buildinfo; do echo 'Waiting for Prometheus...'; sleep 2; done; /run.sh"
+
 
 volumes:
   postgres_data:
