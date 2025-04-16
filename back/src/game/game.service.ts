@@ -38,9 +38,14 @@ export class GameService {
     roundTimer: number = 30,
   ): Promise<{ room: Room; host: Player }> {
     try {
+      const code = Array.from({ length: 6 }, () =>
+        Math.random() < 0.5
+          ? String.fromCharCode(65 + Math.floor(Math.random() * 26)) // Gera uma letra aleatória (A-Z)
+          : Math.floor(Math.random() * 10) // Gera um número aleatório (0-9)
+      ).join('');
       const room = await this.prisma.room.create({
         data: {
-          code: Date.now().toString(),
+          code,
           password,
           maxPlayers,
           maxRounds,
@@ -694,5 +699,16 @@ export class GameService {
       throw new Error('changeHost: Updated room not found');
     }
     return updatedRoom;
+  }
+
+  async getUserName(socketId: string){
+    const player = await this.prisma.player.findUnique({
+      where: { socketId },
+    });
+    if (!player) {
+      throw new Error('getUserName: Player not found');
+    }
+
+    return player.name;
   }
 }

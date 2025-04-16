@@ -1,0 +1,49 @@
+#requests_box{
+    width: 90%;
+    height: 80%;
+    background-color: #A4AC86;
+
+    border-left: 8px solid rgba(101, 109, 74);
+    border-bottom: 8px solid rgba(101, 109, 74);
+    border-radius: 20px;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#requests_messages_box{
+    width: 80%;
+    height: 80%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.request_message_box{
+    width: 98%;
+    overflow-x: hidden;
+    display: flex;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
+.request_type{
+    font-weight: 800;
+    color: #22291C;
+    font-size: 25px;
+}
+
+.request_message{
+    font-size: 20px;
+    color: #2E3725;
+
+    /* Quebra as palavras se necessario: */
+    word-break: break-word;
+    word-wrap: break-all;
+    overflow-wrap: break-word;
+
+    display: flex;
+    align-items: center;
+}

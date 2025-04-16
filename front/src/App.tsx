@@ -6,6 +6,7 @@ import About from "./pages/about/About";
 import NotFound from "./pages/notFound/NotFound";
 import Nav from "./pages/nav/nav";
 import GameScreen from "./pages/game/GameScreen";
+import Dashboard from "./pages/dashboard/Dashboard";
 import './css/initialpages/App.css'
 
 import { useRoomContext } from "./utils/RoomContext";
@@ -48,6 +49,23 @@ const App = () => {
       setTimeout(() => {
         setAlert(false);
       }, 3000);
+    });
+
+    socket.on("disconnected", () => {
+      setInGame(false);
+      setRoom(null);
+      setPlayers([]);
+      setPlayer(null);
+      setGuesses([]);
+      setSongSelected(null);
+      setCount(null);
+      navigate("/"); // 🔁 redireciona para a tela inicial
+
+      setAlertMessage("You were disconnected from the server.");
+      setAlert(true);
+      setTimeout(() => {
+        setAlert(false);
+      }, 5000);
     });
 
     return () => {
@@ -112,6 +130,7 @@ const App = () => {
             <Route path="/" element={!in_game && <Home/>} />
             <Route path="/about" element={<About />} />
             <Route path="/howtoplay" element={<About />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         }
