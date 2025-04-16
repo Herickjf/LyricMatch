@@ -8,7 +8,7 @@ import { useRoomContext } from "../../../../utils/RoomContext"
 import { useSocket } from "../../../../utils/SocketContext"
 
 
-const back_url = "http://localhost:4000"
+const back_url = `${window.location.origin}/api`
 
 
 interface SearchSongProps {
@@ -53,6 +53,7 @@ const SearchSong: React.FC<SearchSongProps> = ({setFrame}) => {
         fetch(`${back_url}/api-requests/search?artist=${artist_name}&track=${song_name}`)
         .then((response) => response.json())
         .then((data) => {
+            
             if(data.length == 0 || data.statusCode == 500){
                 setAlertMessage("No song found with this name or artist");
                 setAlert(true);

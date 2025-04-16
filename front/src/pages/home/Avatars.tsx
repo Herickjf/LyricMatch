@@ -9,7 +9,7 @@ interface AvatarsProps {
     setAvatar: (value: string) => void;
 }
 
-const back_url = "http://localhost:4000";
+const back_url = `${window.location.origin}/api`
 
 const Avatars: React.FC<AvatarsProps> = ({setAvatar, avatarOpenMenu, setAvatarsOpenMenu}) => {
     const [avatars, setAvatars] = useState<any>([]);

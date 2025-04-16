@@ -7,7 +7,7 @@ import "../../../../css/game/desktop/midBox/searchSong.css"
 import { useRoomContext } from "../../../../utils/RoomContext"
 import { useSocket } from "../../../../utils/SocketContext"
 
-const back_url = "http://localhost:4000"
+const back_url = `${window.location.origin}/api` 
 
 const SearchSong: React.FC = () => {
     const [artist_name,     setArtistName]  = useState<string>("");
