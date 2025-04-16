@@ -6,6 +6,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    overflow-x: hidden;
 }
 
 #mobile_chat_box > #chat_messages_box{
@@ -14,6 +15,14 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
+    overflow-x: hidden;
+}
+
+/* Quebra o texto se necessario */
+.chat_message{
+    word-wrap: break-word;
+    word-break: normal;
+    max-width: 98%;
 }
 
 #mobile_chat_box > #chat_input_box{

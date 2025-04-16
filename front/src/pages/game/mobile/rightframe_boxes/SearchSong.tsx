@@ -54,7 +54,7 @@ const SearchSong: React.FC<SearchSongProps> = ({setFrame}) => {
                                 setArtistNameSelected(result.artist);
                                 setIndexSelected(result.id);
                             }}
-                            selected={song_name_selected == result.track_name && artist_name_selected == result.artist}
+                            selected={result.id === index_selected}
                         />
                     ))
                 }

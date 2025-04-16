@@ -47,7 +47,7 @@ const App = () => {
       setAlert(true);
       setTimeout(() => {
         setAlert(false);
-      }, 5000);
+      }, 3000);
     });
 
     return () => {
@@ -65,6 +65,9 @@ const App = () => {
       
       if(room.status == "analyzing" || room.status == "finished"){
         setCount(null);
+      } else if(room.status == "playing"){
+        setGuesses(null);
+        setSongSelected(null);
       }
     });
   

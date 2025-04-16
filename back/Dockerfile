@@ -9,6 +9,4 @@ COPY . .
 
 RUN npm run build
 
-RUN npx ts-node words/importWords.ts
-
 CMD ["node", "dist/main"]

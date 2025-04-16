@@ -34,6 +34,7 @@ export class GameService {
     maxPlayers: number,
     maxRounds: number,
     language: Language,
+    clientIp: any = null,
     roundTimer: number = 30,
   ): Promise<{ room: Room; host: Player }> {
     try {
@@ -58,6 +59,21 @@ export class GameService {
           avatar: hostAvatar,
         },
       });
+
+      
+
+      if (clientIp) {
+        console.log('clientIp', clientIp);
+        // const newLocalization = await this.prisma.localization.create({
+        //   data: {
+        //     ip: clientIp.ip,
+        //     city: clientIp.city,
+        //     longitude: clientIp.loc.split(', ')[0],
+        //     latitude: clientIp.loc.split(', ')[1],
+        //     playerId: host.id,
+        //   }
+        // })
+      }
 
       room.players = [host];
 
@@ -101,6 +117,7 @@ export class GameService {
     name: string,
     avatar: string,
     password: string,
+    clientIp: any = null
   ): Promise<{ room: Room; player: Player }> {
     try {
       const room = await this.prisma.room.findUnique({
@@ -120,6 +137,19 @@ export class GameService {
       const player = await this.prisma.player.create({
         data: { name, roomId: room.id, avatar, socketId: clientId },
       });
+
+      if (clientIp) {
+        console.log('clientIp', clientIp);
+        // const newLocalization = await this.prisma.localization.create({
+        //   data: {
+        //     ip: clientIp.ip,
+        //     city: clientIp.city,
+        //     longitude: clientIp.loc.split(', ')[0],
+        //     latitude: clientIp.loc.split(', ')[1],
+        //     playerId: player.id,
+        //   }
+        // })
+      }
 
       room.players = [...room.players, player];
 
@@ -312,6 +342,11 @@ export class GameService {
       throw new Error('nextRound: Room or players not found');
     }
 
+    // Limpa as tentativas passadas:
+    await this.prisma.playerAnswer.deleteMany({
+      where: { roomId: room.id },
+    });
+
     if (room.currentRound <= room.maxRounds) {
       const words = await this.prisma.word.findMany({
         where: { language: room.language },
@@ -363,6 +398,10 @@ export class GameService {
     if (!room) {
       throw new Error('resetRoom: Room not found');
     }
+
+    await this.prisma.playerAnswer.deleteMany({
+      where: { roomId: room.id },
+    });
 
     const resetRoom = await this.prisma.room.update({
       where: { id: room.id },

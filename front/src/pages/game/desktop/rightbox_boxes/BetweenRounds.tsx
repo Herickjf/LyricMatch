@@ -12,7 +12,7 @@ const BetweenRounds: React.FC = () => {
             
             <div id="between_rounds_guesses_list">
             {
-                guesses.map((guess: any, index: number) => (
+                guesses?.map((guess: any, index: number) => (
                     <GuessCard
                         key={index}
                         song_param={guess}

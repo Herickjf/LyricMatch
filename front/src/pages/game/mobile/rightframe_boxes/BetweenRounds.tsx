@@ -21,7 +21,7 @@ const BetweenRounds: React.FC<BetweenRoundsProps> = ({setFrame}) => {
             
             <div id="mobile_between_rounds_guesses_list">
             {
-                guesses.map((guess: any, index: number) => (
+                guesses?.map((guess: any, index: number) => (
                     <GuessCard
                         key={index}
                         song_param={guess}
