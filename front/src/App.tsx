@@ -51,6 +51,23 @@ const App = () => {
       }, 3000);
     });
 
+    socket.on("disconnected", () => {
+      setInGame(false);
+      setRoom(null);
+      setPlayers([]);
+      setPlayer(null);
+      setGuesses([]);
+      setSongSelected(null);
+      setCount(null);
+      navigate("/"); // 🔁 redireciona para a tela inicial
+
+      setAlertMessage("You were disconnected from the server.");
+      setAlert(true);
+      setTimeout(() => {
+        setAlert(false);
+      }, 5000);
+    });
+
     return () => {
       socket.off("error");
     };

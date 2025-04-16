@@ -1,5 +1,6 @@
 import React from 'react'
 
+import "../../css/initialpages/dashboard/requests.css"
 import { useSocket } from '../../utils/SocketContext';
 
 
@@ -27,6 +28,7 @@ const Requests: React.FC = () => {
 
     return (
         <div id="requests_box">
+            <div id="requests_messages_box">
             {   
                 requests &&
                 requests?.map((request: any, index: number) => {
@@ -43,6 +45,7 @@ const Requests: React.FC = () => {
                     )
                 }) 
             }
+            </div>
         </div>
     )
 }

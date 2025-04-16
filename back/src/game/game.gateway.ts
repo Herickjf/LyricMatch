@@ -60,11 +60,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleDisconnect(client: Socket) {
     try {
       const room = await this.gameService.exitRoom(client.id);
+      this.requestNotification('SOCKET', client.id + " disconnected"); // Envia uma notificação de desconexão para todos os clientes conectados
+      client.emit('disconnected');
       if (!room) {
         return; // Se o cliente não estava em uma sala, não faz nada
       }
       if (room) this.server.to(room.code).emit('roomUpdate', room);
-      this.requestNotification('SOCKET', client.id + " disconnected"); // Envia uma notificação de desconexão para todos os clientes conectados
     } catch (error) {
       console.error('Erro na desconexão de client:', client.id, error);
     }
@@ -194,6 +195,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         });
         return;
       }
+      this.requestNotification('SOCKET', "started the game in the room " + room.code, client.id);
       this.server.to(room.code).emit('roomUpdate', room);
       this.recursiveTimer(room.code, room.roundTimer, client.id);
     } catch (error) {
@@ -343,6 +345,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         });
         return;
       }
+      this.requestNotification('SOCKET', "a new round started in the room " + room.code);
       this.server.to(room.code).emit('roomUpdate', room);
       this.recursiveTimer(room.code, room.roundTimer, client.id);
     } catch (error) {

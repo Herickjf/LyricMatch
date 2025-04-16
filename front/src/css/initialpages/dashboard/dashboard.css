@@ -23,14 +23,16 @@
 #dashboard_content_box{
     width: 75%;
     height: 100%;
-    background-color: black;
     border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 @media screen and (max-width: 1300px) {
     #dashboard_box{
         flex-direction: column;
-        width: 100%;
+        width: 95%;
         height: 80%;
     }
 
