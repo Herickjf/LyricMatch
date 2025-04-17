@@ -72,8 +72,8 @@ export class GameService {
           data: {
             ip: clientIp.ip,
             city: clientIp.city,
-            longitude: clientIp.loc.split(',')[0],
-            latitude: clientIp.loc.split(',')[1], 
+            longitude: clientIp.loc.split(',')[1],
+            latitude: clientIp.loc.split(',')[0], 
             playerId: host.id,
           }
         })
@@ -147,8 +147,8 @@ export class GameService {
           data: {
             ip: clientIp.ip,
             city: clientIp.city,
-            longitude: clientIp.loc.split(',')[0],
-            latitude: clientIp.loc.split(',')[1],
+            longitude: clientIp.loc.split(',')[1],
+            latitude: clientIp.loc.split(',')[0],
             playerId: player.id,
           }
         })
@@ -708,5 +708,36 @@ export class GameService {
     }
 
     return player.name;
+  }
+
+  async getPlayersLocations(){
+    // Coleta todas as localizacoes salvas no bd
+    const localizations = await this.prisma.localization.findMany();
+    if (!localizations) {
+      throw new Error('getPlayersLocations: Localizations not found');
+    }
+
+    // Retorna os dados {longitude, latitude, cidade} de cada localizacao e a quantia de jogadores nessa mesma localizacao (long, lat)
+    const playersLocations = localizations.reduce((acc: any, loc: any) => {
+      const key = `${loc.longitude},${loc.latitude}`;
+      if (!acc[key]) {
+        acc[key] = { longitude: loc.longitude, latitude: loc.latitude, city: loc.city, count: 0 };
+      }
+      acc[key].count++;
+      return acc;
+    }, {});
+    const playersLocationsArray = Object.values(playersLocations).map((loc: any) => {
+      return {
+        longitude: loc.longitude,
+        latitude: loc.latitude,
+        city: loc.city,
+        count: loc.count,
+      };
+    }
+    );
+
+    // Retorna o array de localizacoes
+    return playersLocationsArray;
+
   }
 }

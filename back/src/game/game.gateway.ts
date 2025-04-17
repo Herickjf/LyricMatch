@@ -481,4 +481,19 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return;
     }
   }
+
+  @SubscribeMessage('get_players_locations')
+  async getPlayersLocations(@ConnectedSocket() client: Socket) {
+    try {
+      const locations = await this.gameService.getPlayersLocations();
+      if (!locations) {
+        client.emit('error', { message: 'Error getting players locations' });
+        return;
+      }
+      client.emit('players_locations', locations); // Envia as localizações dos jogadores para o cliente
+    } catch (error) {
+      console.error('Erro ao obter localizações dos jogadores:', error);
+      client.emit('error', { message: 'Error getting players locations' });
+    }
+  }
 }

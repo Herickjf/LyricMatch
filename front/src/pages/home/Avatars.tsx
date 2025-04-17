@@ -3,8 +3,6 @@ import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { useState } from 'react';
 
-import dotenv from 'dotenv';
-
 interface AvatarsProps {
     setAvatarsOpenMenu: (value: boolean) => void;
     avatarOpenMenu: boolean;
