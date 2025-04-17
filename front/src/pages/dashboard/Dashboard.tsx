@@ -8,13 +8,16 @@ import Requests from "./Requests";
 import PlayersMap from "./PlayersMap";
 import ServerData from "./ServerData";
 
+interface DashboardProps {
+    closeMenu: () => void;
+}
 
-const Dashboard: React.FC = () => {
+const Dashboard: React.FC<DashboardProps> = ({closeMenu}) => {
     const [content, setContent] = React.useState("requests");
     const { width } = useWindowSize();
 
     return(
-        <div id="dashboard_box">
+        <div id="dashboard_box" onClick={closeMenu}>
             {width > 1300 ? (
                 <div id="dashboard_options_box">
                     <DashboardOption title="Users Distribution" func={() => setContent("users_map")} selected={content === "users_map"} />

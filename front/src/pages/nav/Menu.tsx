@@ -6,7 +6,7 @@ interface MenuProps {
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom';
-import '../../css/initialpages/nav.css';
+// import '../../css/initialpages/nav.css';
 import '../../css/utils/menu.css'; // Import the CSS file for the menu
 
 

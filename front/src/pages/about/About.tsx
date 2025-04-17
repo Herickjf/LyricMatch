@@ -1,9 +1,13 @@
 import '../../css/initialpages/about.css'
 // import CreatorBox from '../../utils/CreatorBox'
 
-const About = () => {
+interface AboutProps {
+    closeMenu: () => void;
+}
+
+const About: React.FC<AboutProps> = ({closeMenu}) => {
     return(
-        <div id="about">
+        <div id="about" onClick={closeMenu}>
             <div id="creators_box">
                 {/*
                     Aqui devera ser feito uma consulta a API, pegando as imagens e as informacoes dos criadores
