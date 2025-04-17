@@ -26,6 +26,7 @@ const App = () => {
   const [alert, setAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     if(in_game && room && (room?.status != "finished")){
@@ -88,17 +89,22 @@ const App = () => {
     };
   }, [socket, navigate, player?.id]);
 
+  const closeMenu = () => {
+    setMenuOpen(false);
+  }
+
   return (
       <div className="App" id="App_Screen">
 
-        { !in_game && <Nav /> }
+        { !in_game && <Nav menuOpen={menuOpen} setMenuOpen={setMenuOpen}/> }
 
         { !in_game && 
           <Routes>
-            <Route path="/" element={!in_game && <Home/>} />
-            <Route path="/about" element={<About />} />
-            <Route path="/howtoplay" element={<About />} />
-            <Route path="*" element={<NotFound />} />
+            <Route path="/" element={!in_game && <Home closeMenu={closeMenu}/>} />
+            <Route path="/about" element={<About />} /> {/*  Adicionar  onClick={closeMenu} depois */}
+            <Route path="/howtoplay" element={<About />} /> {/*  Adicionar  onClick={closeMenu} depois */}
+            <Route path="/dashboard" element={<About />} /> {/*  Adicionar o <Dashboard /> */} {/*  Adicionar  onClick={closeMenu} depois */}
+            <Route path="*" element={<NotFound />} /> {/*  Adicionar  onClick={closeMenu} depois */}
           </Routes>
         }
 

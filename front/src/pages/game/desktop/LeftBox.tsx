@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRoomContext } from "../../../utils/RoomContext";
+import { useSocket } from "../../../utils/SocketContext";
 // import { usePlayerEntryContext } from "../../../utils/PlayerEntryContext";
 // import { useRef } from "react";
 
@@ -73,9 +74,9 @@ const LeftBox: React.FC = () => {
                 <button className="copy-code-button" onClick={copyToClipboard}>
                     <i className="fa fa-share"></i> 
                 </button>
-                <button className="copy-code-button" onClick={copyToClipboard}>
+                {/* <button className="copy-code-button" onClick={copyToClipboard}>
                     <i className="fa fa-share"></i> 
-                </button>
+                </button> */}
             </div>
 
             {showAlert && ( // Renderiza o alerta se showAlert for true
