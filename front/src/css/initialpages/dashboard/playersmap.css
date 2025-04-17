@@ -13,6 +13,12 @@
     
 }
 
+@media screen and (max-width: 1300px) {
+    #dashboard_players_map{
+        height: 95%;
+    }
+}
+
 #dashboard_map{
     border-radius: 20px;
 }

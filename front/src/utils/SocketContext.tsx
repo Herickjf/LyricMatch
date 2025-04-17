@@ -10,7 +10,6 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
 
 export function SocketProvider({ children }: { children: React.ReactNode }) {
   // Criando a conexão com o servidor (MANTENDO UMA ÚNICA INSTÂNCIA
-  console.log(BACKEND_URL)
   const socket = useMemo(() => io(`${BACKEND_URL}`), []);
   return (
     <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
