@@ -1,0 +1,44 @@
+#dashboard_players_map{
+    width: 90%;
+    height: 80%;
+    background-color: #A4AC86;
+
+    border-left: 8px solid rgba(101, 109, 74);
+    border-bottom: 8px solid rgba(101, 109, 74);
+    border-radius: 20px;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+#dashboard_map{
+    border-radius: 20px;
+}
+
+.leaflet-popup-content {
+    color: #F5F7E4 !important;
+}
+
+.leaflet-popup-content-wrapper {
+    background-color: rgba(101, 109, 74, 0.8) !important;
+    border-radius: 10px !important;
+}
+
+.leaflet-popup-close-button::before {
+    content: "✖"; /* ou usa um ícone do FontAwesome, etc */
+    color: #A4AC86; /* Cor do ícone */
+    font-size: 20px; /* Tamanho do ícone */
+}
+
+.leaflet-popup-close-button {
+    content: none !important; /* remove o "×" padrão */
+    font-size: 0 !important;  /* esconde o texto original */
+  }
+
+  .leaflet-control-zoom a {
+    background-color: rgba(101, 109, 74, 0.8) !important; /* fundo */
+    color: #F5F7E4 !important; /* cor do texto */
+    border: none !important;
+  }

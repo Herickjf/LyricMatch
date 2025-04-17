@@ -6,6 +6,7 @@ import { PrismaModule } from './prisma-client/prisma-client.module';
 import { GameModule } from './game/game.module';
 import { ImageModule } from './image/image.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { LocalizationModule } from './localization/localization.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
     GameModule,
     ImageModule,
     DashboardModule,
+    LocalizationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

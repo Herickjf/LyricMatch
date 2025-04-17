@@ -1,6 +1,6 @@
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -61,6 +61,7 @@ model Player {
   room         Room?          @relation(fields: [roomId], references: [id])
   PlayerAnswer PlayerAnswer[]
   messages     Message[]
+  localization Localization?
 }
 
 model PlayerAnswer {
@@ -81,4 +82,13 @@ model Word {
   id       String   @id @default(uuid())
   word     String
   language Language
+}
+
+model Localization{
+  ip        String  
+  city      String
+  longitude String
+  latitude  String
+  playerId    String    @unique
+  player  Player  @relation(fields: [playerId], references: [id], onDelete: Cascade)
 }

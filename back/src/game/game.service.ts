@@ -1,22 +1,29 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ApiRequestsService } from 'src/api-requests/api-requests.service';
 import { PrismaService } from 'src/prisma-client/prisma-client.service';
-import {
-  Language,
-  Player,
-  PlayerAnswer,
-  Room,
-  RoomStatus,
-} from '@prisma/client';
+import { Language, Player, Room, RoomStatus } from '@prisma/client';
 import { MusicApi } from '../api-requests/music-api.enum';
-import { Logger } from '@nestjs/common';
+import { Counter, Histogram } from 'prom-client';
+import { Inject } from '@nestjs/common';
 
 @Injectable()
 export class GameService {
   constructor(
-    private prisma: PrismaService,
-    private apiRequestsService: ApiRequestsService,
+    private readonly prisma: PrismaService,
+    private readonly apiRequestsService: ApiRequestsService,
     private readonly logger: Logger,
+    @Inject('PROM_METRIC_ROOMS_CREATED_TOTAL')
+    private roomsCreatedCounter: Counter<string>,
+    @Inject('PROM_METRIC_PLAYERS_JOINED_TOTAL')
+    private playersJoinedCounter: Counter<string>,
+    @Inject('PROM_METRIC_MESSAGES_SENT_TOTAL')
+    private messagesSentCounter: Counter<string>,
+    @Inject('PROM_METRIC_ROUNDS_STARTED_TOTAL')
+    private roundsStartedCounter: Counter<string>,
+    @Inject('PROM_METRIC_ROUNDS_ENDED_TOTAL')
+    private roundsEndedCounter: Counter<string>,
+    @Inject('PROM_METRIC_GAME_DURATION_SECONDS')
+    private gameDurationHistogram: Histogram<string>,
   ) {}
 
   async createRoom(
@@ -27,12 +34,18 @@ export class GameService {
     maxPlayers: number,
     maxRounds: number,
     language: Language,
+    clientIp: any = null,
     roundTimer: number = 30,
   ): Promise<{ room: Room; host: Player }> {
     try {
+      const code = Array.from({ length: 6 }, () =>
+        Math.random() < 0.5
+          ? String.fromCharCode(65 + Math.floor(Math.random() * 26)) // Gera uma letra aleatória (A-Z)
+          : Math.floor(Math.random() * 10) // Gera um número aleatório (0-9)
+      ).join('');
       const room = await this.prisma.room.create({
         data: {
-          code: Date.now().toString(),
+          code,
           password,
           maxPlayers,
           maxRounds,
@@ -52,11 +65,29 @@ export class GameService {
         },
       });
 
+      
+
+      if (clientIp != null && clientIp.ip != null) {
+        const newLocalization = await this.prisma.localization.create({
+          data: {
+            ip: clientIp.ip,
+            city: clientIp.city,
+            longitude: clientIp.loc.split(',')[1],
+            latitude: clientIp.loc.split(',')[0], 
+            playerId: host.id,
+          }
+        })
+      }
+
       room.players = [host];
+
+      // Incrementa a métrica de salas criadas
+      this.roomsCreatedCounter.inc();
 
       return { room, host };
     } catch (error) {
-      throw new Error('createRoom: Error creating room:', error);
+      this.logger.error('createRoom: Error creating room:', error);
+      throw new Error('createRoom: Error creating room');
     }
   }
 
@@ -90,6 +121,7 @@ export class GameService {
     name: string,
     avatar: string,
     password: string,
+    clientIp: any = null
   ): Promise<{ room: Room; player: Player }> {
     try {
       const room = await this.prisma.room.findUnique({
@@ -110,11 +142,27 @@ export class GameService {
         data: { name, roomId: room.id, avatar, socketId: clientId },
       });
 
+      if (clientIp) {
+        const newLocalization = await this.prisma.localization.create({
+          data: {
+            ip: clientIp.ip,
+            city: clientIp.city,
+            longitude: clientIp.loc.split(',')[1],
+            latitude: clientIp.loc.split(',')[0],
+            playerId: player.id,
+          }
+        })
+      }
+
       room.players = [...room.players, player];
+
+      // Incrementa a métrica de jogadores que se juntaram à sala
+      this.playersJoinedCounter.inc();
 
       return { room, player };
     } catch (error) {
-      throw new Error('joinRoom: Error joining room:', error);
+      this.logger.error('joinRoom: Error joining room:', error);
+      throw new Error('joinRoom: Error joining room');
     }
   }
 
@@ -136,6 +184,9 @@ export class GameService {
     if (!newMessage) {
       throw new Error('sendMessage: Error sending message');
     }
+
+    // Incrementa a métrica de mensagens enviadas
+    this.messagesSentCounter.inc();
 
     const room = await this.prisma.room.findUnique({
       where: { id: player.roomId },
@@ -171,9 +222,6 @@ export class GameService {
       throw new Error(
         'startGame: Player not found, not the Host, or not associated with a room',
       );
-    }
-    if (!player) {
-      throw new Error('startGame: Player not found or not the Host');
     }
 
     let room = await this.prisma.room.findUnique({
@@ -211,16 +259,18 @@ export class GameService {
       include: { players: true, messages: true },
     });
 
+    // Incrementa a métrica de rodadas iniciadas
+    this.roundsStartedCounter.inc();
+
+    // Opcional: marque a duração da partida (exemplo, se você medir o tempo total do jogo)
+    // this.gameDurationHistogram.observe(durationEmSegundos);
+
     this.logger.log('Round started');
 
     return room;
   }
 
-  async endRound(hostId: string): Promise<{
-    room: Room;
-    answers: PlayerAnswer[];
-  }> {
-    // verifica se o player tem permissão de host
+  async endRound(hostId: string): Promise<{ room: Room; answers: any[] }> {
     const player = await this.prisma.player.findUnique({
       where: { socketId: hostId, isHost: true },
       include: { room: true },
@@ -231,7 +281,7 @@ export class GameService {
       );
     }
 
-    const room = await this.prisma.room.update({
+    let room = await this.prisma.room.update({
       where: { id: player.room.id },
       include: {
         players: true,
@@ -250,15 +300,29 @@ export class GameService {
       where: { roomId: room.id, round: room.currentRound },
     });
 
-    const answers = playerAnswers;
-    for (const answer of answers) {
+    // Incrementa a métrica de rodadas encerradas
+    this.roundsEndedCounter.inc();
+
+    // Atualiza os scores dos jogadores
+    for (const answer of playerAnswers) {
       await this.prisma.player.update({
         where: { id: answer.playerId },
-        data: { score: { increment: answer.isCorrect ? 10 : -2 } },
+        data: { score: { increment: answer.isCorrect ? 10 : 0 } },
       });
     }
 
-    return { room, answers };
+    let updatedRoom = await this.prisma.room.findUnique({
+      where: { id: room.id },
+      include: {
+        players: true,
+        messages: true,
+      },
+    });
+
+    if (updatedRoom) {
+      room = updatedRoom;
+    }
+    return { room, answers: playerAnswers };
   }
 
   async nextRound(hostId: string) {
@@ -280,6 +344,11 @@ export class GameService {
     if (!room || !room.players) {
       throw new Error('nextRound: Room or players not found');
     }
+
+    // Limpa as tentativas passadas:
+    await this.prisma.playerAnswer.deleteMany({
+      where: { roomId: room.id },
+    });
 
     if (room.currentRound <= room.maxRounds) {
       const words = await this.prisma.word.findMany({
@@ -332,6 +401,10 @@ export class GameService {
     if (!room) {
       throw new Error('resetRoom: Room not found');
     }
+
+    await this.prisma.playerAnswer.deleteMany({
+      where: { roomId: room.id },
+    });
 
     const resetRoom = await this.prisma.room.update({
       where: { id: room.id },
@@ -624,5 +697,47 @@ export class GameService {
       throw new Error('changeHost: Updated room not found');
     }
     return updatedRoom;
+  }
+
+  async getUserName(socketId: string){
+    const player = await this.prisma.player.findUnique({
+      where: { socketId },
+    });
+    if (!player) {
+      throw new Error('getUserName: Player not found');
+    }
+
+    return player.name;
+  }
+
+  async getPlayersLocations(){
+    // Coleta todas as localizacoes salvas no bd
+    const localizations = await this.prisma.localization.findMany();
+    if (!localizations) {
+      throw new Error('getPlayersLocations: Localizations not found');
+    }
+
+    // Retorna os dados {longitude, latitude, cidade} de cada localizacao e a quantia de jogadores nessa mesma localizacao (long, lat)
+    const playersLocations = localizations.reduce((acc: any, loc: any) => {
+      const key = `${loc.longitude},${loc.latitude}`;
+      if (!acc[key]) {
+        acc[key] = { longitude: loc.longitude, latitude: loc.latitude, city: loc.city, count: 0 };
+      }
+      acc[key].count++;
+      return acc;
+    }, {});
+    const playersLocationsArray = Object.values(playersLocations).map((loc: any) => {
+      return {
+        longitude: loc.longitude,
+        latitude: loc.latitude,
+        city: loc.city,
+        count: loc.count,
+      };
+    }
+    );
+
+    // Retorna o array de localizacoes
+    return playersLocationsArray;
+
   }
 }

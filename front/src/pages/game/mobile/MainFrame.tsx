@@ -3,6 +3,7 @@ import React from "react";
 import MobileLeftFrame from "./MobileLeftFrame";
 import MobileMiddleFrame from "./MobileMiddleFrame";
 import MobileRightFrame from "./MobileRightFrame";
+import MobileChatFrame from "./MobileChatFrame";
 
 import "../../../css/game/mobile/mainframe.css"
 import { useSocket } from "../../../utils/SocketContext";
@@ -28,18 +29,26 @@ const MainFrame: React.FC = () => {
                             setFrame(lastFrame);
                         }
                         else{
-                            setLastFrame(frame);
+                            if (frame != "chat_frame")
+                                setLastFrame(frame);
                             setFrame("left_frame");
                         }
                     }}
                 />
                 <button className="fa fa-comments" onClick={() => {
-                    console.log("indo pro chat")
+                    if (frame != "chat_frame"){
+                        setLastFrame(frame);
+                        setFrame("chat_frame");
+                    }
+                    else{
+                        setFrame(lastFrame);
+                    }
                 }}/>
             </div>
             {frame === "left_frame"   && <MobileLeftFrame setFrame={setFrame} />}
             {frame === "middle_frame" && <MobileMiddleFrame setFrame={setFrame} />}
             {frame === "right_frame"  && <MobileRightFrame setFrame={setFrame} />}
+            {frame === "chat_frame"   && <MobileChatFrame/>}
         </div>
     );
 }

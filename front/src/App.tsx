@@ -6,6 +6,7 @@ import About from "./pages/about/About";
 import NotFound from "./pages/notFound/NotFound";
 import Nav from "./pages/nav/nav";
 import GameScreen from "./pages/game/GameScreen";
+import Dashboard from "./pages/dashboard/Dashboard";
 import './css/initialpages/App.css'
 
 import { useRoomContext } from "./utils/RoomContext";
@@ -26,7 +27,6 @@ const App = () => {
   const [alert, setAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const navigate = useNavigate();
-  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     if(in_game && room && (room?.status != "finished")){
@@ -42,13 +42,50 @@ const App = () => {
 
   useEffect(() => {
     if (!socket) return;
+
+    socket.on("error", (data) => {
+      setAlertMessage(data.message);
+      setAlert(true);
+      setTimeout(() => {
+        setAlert(false);
+      }, 3000);
+    });
+
+    socket.on("disconnected", () => {
+      setInGame(false);
+      setRoom(null);
+      setPlayers([]);
+      setPlayer(null);
+      setGuesses([]);
+      setSongSelected(null);
+      setCount(null);
+      navigate("/"); // 🔁 redireciona para a tela inicial
+
+      setAlertMessage("You were disconnected from the server.");
+      setAlert(true);
+      setTimeout(() => {
+        setAlert(false);
+      }, 5000);
+    });
+
+    return () => {
+      socket.off("error");
+    };
+  }, [socket]);
+
+  useEffect(() => {
+    if (!socket) return;
   
     socket.on("roomUpdate", (room: any) => {
       setPlayers(room.players);
       setRoom(room);
-      setPlayer(room.players.find((p: any) => p.socketId == socket.id));
+      setPlayer(room.players.find((p: any) => p.socketId == socket.id) || null);
+      
       if(room.status == "analyzing" || room.status == "finished"){
         setCount(null);
+      } else if(room.status == "playing"){
+        setGuesses(null);
+        setSongSelected(null);
       }
     });
   
@@ -65,20 +102,12 @@ const App = () => {
       setGuesses([]);
       setSongSelected(null);
       navigate("/"); // 🔁 redireciona para a tela inicial
-      setAlert(true);
       setAlertMessage("You were expelled from the room.");
+      setAlert(true);
       setTimeout(() => {
         setAlert(false);
       }, 5000);
     });
-
-    socket.on("errorOnSearch", () => {
-      setAlert(true);
-      setAlertMessage("Error on search song, please try other source/site.");
-      setTimeout(() => {
-        setAlert(false);
-      }, 5000);
-    })
   
     // limpeza dos eventos para evitar múltiplas chamadas
     return () => {
@@ -89,22 +118,20 @@ const App = () => {
     };
   }, [socket, navigate, player?.id]);
 
-  const closeMenu = () => {
-    setMenuOpen(false);
-  }
+
 
   return (
       <div className="App" id="App_Screen">
 
-        { !in_game && <Nav menuOpen={menuOpen} setMenuOpen={setMenuOpen}/> }
+        { !in_game && <Nav /> }
 
         { !in_game && 
           <Routes>
-            <Route path="/" element={!in_game && <Home closeMenu={closeMenu}/>} />
-            <Route path="/about" element={<About />} /> {/*  Adicionar  onClick={closeMenu} depois */}
-            <Route path="/howtoplay" element={<About />} /> {/*  Adicionar  onClick={closeMenu} depois */}
-            <Route path="/dashboard" element={<About />} /> {/*  Adicionar o <Dashboard /> */} {/*  Adicionar  onClick={closeMenu} depois */}
-            <Route path="*" element={<NotFound />} /> {/*  Adicionar  onClick={closeMenu} depois */}
+            <Route path="/" element={!in_game && <Home/>} />
+            <Route path="/about" element={<About />} />
+            <Route path="/howtoplay" element={<About />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         }
 

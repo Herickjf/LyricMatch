@@ -31,7 +31,7 @@ const MobileLeftFrame: React.FC<MobileLeftFrameProps> = ({ setFrame }) => {
     , [players, room])
 
     const copyToClipboard = () => {
-        navigator.clipboard.writeText(`http://localhost:5173?code=${room_code}`).then(() => {
+        navigator.clipboard.writeText(`http://localhost:3000?code=${room_code}`).then(() => {
             setShowAlert(true); // Exibe o alerta
             setTimeout(() => setShowAlert(false), 3000); // Oculta o alerta após 3 segundos
         }).catch((err) => {
