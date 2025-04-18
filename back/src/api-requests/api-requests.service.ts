@@ -51,7 +51,7 @@ export class ApiRequestsService {
   private async getLyrics_letrasmus(
     songName: string,
     artistName: string,
-  ): Promise<string> {
+  ): Promise<any> {
     const url = `https://www.letras.mus.br/${artistName}/${songName}/`
       .replace(/ /g, '-')
       .toLowerCase();
@@ -77,23 +77,22 @@ export class ApiRequestsService {
             .get()
             .join('\n\n'); // Adiciona uma linha em branco entre os parágrafos
 
-          return lyrics || 'Letra não encontrada na página.';
+          return lyrics || null;
         } else {
-          throw new Error('Letra não encontrada na página.');
-          return 'Letra não encontrada na página.';
+          return null;
         }
       } else {
         return 'Erro ao acessar a página da música.';
       }
     } catch (error) {
-      throw new Error(`Erro ao buscar a letra: ${error.message}`);
+      return null;
     }
   }
 
   private async getLyrics_musixmatch(
     songName: string,
     artistName: string,
-  ): Promise<string> {
+  ): Promise<string | null> {
     // Formatações
     const formattedSong = songName.replace(/ /g, '-');
     const formattedArtist = artistName.replace(/ /g, '-');
@@ -119,11 +118,11 @@ export class ApiRequestsService {
         .get()
         .join('\n');
 
-      if (!lyrics) throw new Error('Letra não encontrada na página.');
+      if (!lyrics) return null;
 
       return lyrics;
     } catch (error) {
-      throw new Error(`Erro ao buscar a letra: ${error.message}`);
+      return null;
     }
   }
 
@@ -137,6 +136,9 @@ export class ApiRequestsService {
 
     try {
       const response = await axios.get(url);
+      if (response.status != 200) {
+        throw new NotFoundException('Letra não encontrada');
+      }
       const $ = cheerio.load(response.data);
 
       // Seleciona o elemento com id "lyrics" e processa os <br> como quebras de linha
@@ -153,11 +155,12 @@ export class ApiRequestsService {
   }
 
   async getLyrics(track: string, artist: string): Promise<string> {
-    let result = await this.getLyrics_letrasmus(track, artist);
+    let result = await this.getLyrics_musixmatch(track, artist);
     if (result) return result;
 
-    result = await this.getLyrics_musixmatch(track, artist);
+    result = await this.getLyrics_letrasmus(track, artist);
     if (result) return result;
+
 
     result = await this.getLyrics_vagalume(track, artist);
     if (result) return result;
