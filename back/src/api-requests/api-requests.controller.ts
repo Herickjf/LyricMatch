@@ -1,7 +1,6 @@
 import { BadRequestException, Controller, Get, Query } from '@nestjs/common';
 import { ApiRequestsService } from './api-requests.service';
 import { ApiQuery } from '@nestjs/swagger';
-import { MusicApi } from 'src/api-requests/music-api.enum';
 
 @Controller('api-requests')
 export class ApiRequestsController {
@@ -21,22 +20,12 @@ export class ApiRequestsController {
   }
 
   @Get('lyrics')
-  @ApiQuery({
-    name: 'api_option',
-    description:
-      'Escolha a API para buscar as letras: LETRAS, MUSIXMATCH ou VAGALUME',
-    required: true,
-    enum: MusicApi,
-  })
+  @ApiQuery({ name: 'track', required: true })
+  @ApiQuery({ name: 'artist', required: true })
   async getLyrics(
     @Query('track') track: string,
     @Query('artist') artist: string,
-    @Query('api_option') api_option: MusicApi,
   ): Promise<any> {
-    if (!Object.values(MusicApi).includes(api_option)) {
-      throw new BadRequestException('Invalid API option');
-    }
-
-    return this.apiRequestsService.getLyrics(track, artist, api_option);
+    return this.apiRequestsService.getLyrics(track, artist);
   }
 }

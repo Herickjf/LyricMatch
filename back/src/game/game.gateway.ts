@@ -10,7 +10,6 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Language } from '@prisma/client';
 import { GameService } from './game.service';
-import { MusicApi } from '../api-requests/music-api.enum';
 import { Logger } from '@nestjs/common';
 import axios from 'axios'; // Biblioteca para fazer requisições HTTP
 
@@ -268,7 +267,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     data: {
       track: string;
       artist: string;
-      musicApi: MusicApi;
       music_id: string;
     },
     @ConnectedSocket() client: Socket,
@@ -278,7 +276,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client.id,
         data.track,
         data.artist,
-        data.musicApi,
         data.music_id,
       );
       this.requestNotification(

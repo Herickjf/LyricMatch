@@ -1,8 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import axios from 'axios';
 import * as dotenv from 'dotenv';
 import * as cheerio from 'cheerio';
-import { MusicApi } from './music-api.enum';
 
 dotenv.config();
 
@@ -131,7 +130,7 @@ export class ApiRequestsService {
   private async getLyrics_vagalume(
     track: string,
     artist: string,
-  ): Promise<string | null> {
+  ): Promise<string> {
     track = track.toLowerCase().replace(/ /g, '-');
     artist = artist.toLowerCase().replace(/ /g, '-');
     const url = `https://www.vagalume.com.br/${artist}/${track}.html`;
@@ -153,16 +152,16 @@ export class ApiRequestsService {
     }
   }
 
-  async getLyrics(track: string, artist: string, api_option: MusicApi) {
-    switch (api_option) {
-      case MusicApi.LETRAS:
-        return this.getLyrics_letrasmus(track, artist);
-      case MusicApi.MUSIXMATCH:
-        return this.getLyrics_musixmatch(track, artist);
-      case MusicApi.VAGALUME:
-        return this.getLyrics_vagalume(track, artist);
-      default:
-        return { error_code: 400, message: 'Invalid API option' };
-    }
+  async getLyrics(track: string, artist: string): Promise<string> {
+    let result = await this.getLyrics_letrasmus(track, artist);
+    if (result) return result;
+
+    result = await this.getLyrics_musixmatch(track, artist);
+    if (result) return result;
+
+    result = await this.getLyrics_vagalume(track, artist);
+    if (result) return result;
+
+    throw new NotFoundException('Letra não encontrada');
   }
 }

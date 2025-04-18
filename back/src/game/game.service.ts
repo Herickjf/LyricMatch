@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ApiRequestsService } from 'src/api-requests/api-requests.service';
 import { PrismaService } from 'src/prisma-client/prisma-client.service';
 import { Language, Player, Room, RoomStatus } from '@prisma/client';
-import { MusicApi } from '../api-requests/music-api.enum';
 import { Counter, Histogram } from 'prom-client';
 import { Inject } from '@nestjs/common';
 
@@ -499,7 +498,6 @@ export class GameService {
     playerId: string,
     track: string,
     artist: string,
-    musicApi: MusicApi,
     index: string,
   ) {
     const playerExists = await this.prisma.player.findUnique({
@@ -530,11 +528,7 @@ export class GameService {
       throw new Error('processAnswer: Current word not found');
     }
 
-    const lyrics = await this.apiRequestsService.getLyrics(
-      track,
-      artist,
-      musicApi,
-    );
+    const lyrics = await this.apiRequestsService.getLyrics(track, artist);
 
     if (!lyrics || typeof lyrics !== 'string') {
       throw new Error('processAnswer: Lyrics not found');
