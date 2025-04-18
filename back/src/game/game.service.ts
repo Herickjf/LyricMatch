@@ -4,6 +4,7 @@ import { PrismaService } from 'src/prisma-client/prisma-client.service';
 import { Language, Player, Room, RoomStatus } from '@prisma/client';
 import { Counter, Histogram } from 'prom-client';
 import { Inject } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class GameService {
@@ -44,10 +45,12 @@ export class GameService {
             ? String.fromCharCode(65 + Math.floor(Math.random() * 26)) // Gera uma letra aleatória (A-Z)
             : Math.floor(Math.random() * 10), // Gera um número aleatório (0-9)
       ).join('');
+      const hashedPassword = await bcrypt.hash(password, 10); // O número 10 é o salt rounds
+
       const room = await this.prisma.room.create({
         data: {
           code,
-          password,
+          password: hashedPassword,
           maxPlayers,
           maxRounds,
           language,
@@ -129,7 +132,9 @@ export class GameService {
       });
 
       if (!room) throw new Error('Room not found');
-      if (room.password && room.password !== password) {
+
+      const isPasswordValid = await bcrypt.compare(password, room.password);
+      if (!isPasswordValid) {
         throw new Error('joinRoom: Incorrect password');
       }
 
