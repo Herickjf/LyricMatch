@@ -11,7 +11,7 @@ interface TextInput_Params{
 }
 
 const TextInput : React.FC<TextInput_Params> = ({label, placeholder, setText, value, enterFunc, isPassword}) =>{
-    const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [showPassword, setShowPassword] = useState<boolean>(isPassword ? true : false);
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {

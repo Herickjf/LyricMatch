@@ -29,7 +29,7 @@ const Home: React.FC<HomeProps> = ({closeMenu}) => {
             <div id="form_box">
 
                 <div id="fixed_box">
-                    <h1 id="game_title">Song Guesser</h1>
+                    <h1 id="game_title">Lyric Match</h1>
 
                     <div id="options_entry_box">
                         <button 

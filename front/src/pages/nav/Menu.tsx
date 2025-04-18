@@ -19,8 +19,8 @@ const Menu : React.FC<MenuProps> = ({openMenu, setOpenMenu}) => {
             <div id="menu_items_box">
                 <div id="menu_close_button" className='nav_items' onClick={() => setOpenMenu(!openMenu)}></div>
                 <Link className="menu_item" to="/"          onClick={() => setOpenMenu(!openMenu)} >Home</Link>
-                <Link className="menu_item" to="/about"     onClick={() => setOpenMenu(!openMenu)} >About</Link>
-                <Link className="menu_item" to="/howtoplay" onClick={() => setOpenMenu(!openMenu)} >How to Play</Link>
+                <Link className="menu_item" to="/about"     onClick={() => setOpenMenu(!openMenu)} >About us</Link>
+                <Link className="menu_item" to="/aboutgame" onClick={() => setOpenMenu(!openMenu)} >About Game</Link>
             </div>  
 
             <div id="menu_return_button" onClick={() => setOpenMenu(!openMenu)}/>

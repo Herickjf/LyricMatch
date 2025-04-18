@@ -25,7 +25,9 @@ export class DashboardService {
         activeRoomCount,
         activePlayerCount,
         connectedWebSocketClientCount,
-        averageClients: activePlayerCount / activeRoomCount,
+        averageClients: activeRoomCount > 0 
+        ? parseFloat((activePlayerCount / activeRoomCount).toFixed(2)) 
+        : "0"
       };
     } catch (error) {
       throw new InternalServerErrorException(

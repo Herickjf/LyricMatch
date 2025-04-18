@@ -14,40 +14,30 @@ const About: React.FC<AboutProps> = ({closeMenu}) => {
                 <CreatorBox name='João Marcos' image='avatar26.png' instagram='j4marcosdev' github='j4marcos' linkedin='https://www.linkedin.com/in/j4marcos/'/>
                 <CreatorBox name='Luis Reis' image='avatar38.png' instagram='luisgustavo824' github='LuisReis09' linkedin='https://www.linkedin.com/in/luis-reis-7b22a6330/'/>
                 <CreatorBox name='Rafael França' image='avatar33.png' instagram='rafaelfrncs' github='rafaelfranca1' linkedin='https://www.linkedin.com/in/rafael-franca-ofc/'/>
+                
             </div>
 
             <div id="about_text_box">
                 <div id="about_text">
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <div id="about_text_title" className='highlight'>Welcome to Find-a-Song!</div>
-                    <br />
+                    <div id="about_text_title" className='highlight'>Welcome to LyricMatch!</div>
+                    
                     <div id="about_text_body">
-                        Special note: We have no commercial interest in this site, and we do not charge for any of our services.
+                        <span className="highlight">Special note</span>: We have no commercial interest in this site, and we do not charge for any of our services.
                         <br />
                         <br />
-                        We’re thrilled to have you here! Find-a-Song was born from our love for music and the incredible way it connects people. Whether it’s an unforgettable melody or deeply resonating lyrics, music has the unique power to bring individuals and groups together. Our goal was to capture this feeling and turn it into a fun, interactive game.
+                        We’re thrilled to have you here! LyricMatch was born from our love for music and the incredible way it connects people. Whether it’s an unforgettable melody or deeply resonating lyrics, music has the unique power to bring individuals and groups together. Our goal was to capture this feeling and turn it into a fun, interactive game.
                         <br />
                         <br />
                         We deeply believe in the importance of music in our lives—how often only a song can express what we feel, and how unique moments are marked and remembered by melodies that bring tears to our eyes, evoking the emotion only music can convey.
                         <br />
                         <br />
-                        Our goal with Find-a-Song is simple: to challenge your musical knowledge by giving you the opportunity to discover new songs and test your memory with old favorites. Whether you’re a casual listener or a die-hard fan, we’re confident you’ll love the thrill of recognizing songs from lyrics, melodies, and much more.
+                        Our goal with LyricMatch is simple: to challenge your musical knowledge by giving you the opportunity to discover new songs and test your memory with old favorites. Whether you’re a casual listener or a die-hard fan, we’re confident you’ll love the thrill of recognizing songs from lyrics, melodies, and much more.
                         <br />
                         <br />
                         We’re a team of four Computer Science students from the Federal University of Paraíba (UFPB), and we created this project as part of our Computer Networks course, as well as a personal passion project.
                         <br />
                         <br />
-                        As a team, we’re not just developers—we’re also gamers and music lovers who believe in the power of collaboration and creativity. Many of the friendships within our group have been built through online gaming and shared experiences, and this project is our way of giving back to those communities. We hope that, through playing, you’ll experience the same joy and connection that inspired us to create Find-a-Song.
+                        As a team, we’re not just developers—we’re also gamers and music lovers who believe in the power of collaboration and creativity. Many of the friendships within our group have been built through online gaming and shared experiences, and this project is our way of giving back to those communities. We hope that, through playing, you’ll experience the same joy and connection that inspired us to create LyricMatch.
                         <br />
                         <br />
                         We’re grateful to have you with us on this journey and hope you enjoy the game as much as we enjoyed creating it!
@@ -55,8 +45,8 @@ const About: React.FC<AboutProps> = ({closeMenu}) => {
                         <br />
                     </div>
                     <div id="about_text_ending">
-                        <p>Sincerely, </p>
-                        <b>The Song Guesser Team!</b>
+                        <p className="highlight">Sincerely, </p>
+                        <b>The LyricMatch Team!</b>
                     </div>
                 </div>
             </div>
