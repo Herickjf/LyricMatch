@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "../css/utils/input.css"
 
 interface TextInput_Params{
@@ -6,9 +7,11 @@ interface TextInput_Params{
     value?: string,
     setText?: (text: string) => void
     enterFunc?: () => void
+    isPassword?: boolean
 }
 
-const TextInput : React.FC<TextInput_Params> = ({label, placeholder, setText, value, enterFunc}) =>{
+const TextInput : React.FC<TextInput_Params> = ({label, placeholder, setText, value, enterFunc, isPassword}) =>{
+    const [showPassword, setShowPassword] = useState<boolean>(false);
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
@@ -18,13 +21,18 @@ const TextInput : React.FC<TextInput_Params> = ({label, placeholder, setText, va
         }
     }
 
+    const handleShowPassword = (newVal: boolean) => {
+        setShowPassword(newVal);
+    }
+
     return(
         <div className="input_box" id="text_input_box">
             {
                 label &&
                 <label className="text_input_label">{label}</label>
             }
-            <input  type="text" 
+            <input
+                    {...(showPassword ? {type: "password"} : {type: "text"})}
                     className="text_input"
                     onChange={(e) => setText && setText(e.target.value)} 
                     placeholder = {placeholder}
@@ -32,6 +40,23 @@ const TextInput : React.FC<TextInput_Params> = ({label, placeholder, setText, va
                     // autoComplete="off"
                     value={value}
             />
+
+            {isPassword && 
+                (
+                    showPassword ? 
+                    <div className="password_show">
+                        <button className="show_password" onClick={() => handleShowPassword(false)}>
+                            <i className="fa fa-eye"></i>
+                        </button>
+                    </div>
+                    :
+                    <div className="password_show">
+                        <button className="show_password" onClick={() => handleShowPassword(true)}>
+                            <i className="fa fa-eye-slash"></i>
+                        </button>
+                    </div>
+                )
+            }
         </div>
     )
 }

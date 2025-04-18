@@ -13,7 +13,7 @@ interface HomeProps {
 const Home: React.FC<HomeProps> = ({closeMenu}) => {
     const [mode, setMode] = useState<"enter" | "create">("enter");
     const [username, setUsername] = useState<string>("");
-    const [avatar, setAvatar] = useState<string>("http://localhost:4000/images/avatar1.png");
+    const [avatar, setAvatar] = useState<string>("/avatars/avatar1.png");
     const [openAvatarMenu, setOpenAvatarMenu] = useState<boolean>(false);
 
     function toggleToEnter() {

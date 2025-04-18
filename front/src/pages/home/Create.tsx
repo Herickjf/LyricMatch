@@ -84,7 +84,7 @@ const Create: React.FC<CreateProps> = ({username, avatar}) => {
 
     return(
         <div className="form_box create_room_box">
-            <TextInput label="Password:" placeholder="Create the room password" setText={setPassword} enterFunc={handleCreateRoom}/>
+            <TextInput label="Password:" isPassword={true} placeholder="Create the room password" setText={setPassword} enterFunc={handleCreateRoom}/>
 
             <div className="number_inputs">
                 <NumberInput label="Max Players:" placeholder="1 - 100" setNumber={setMaxPlayers} enterFunc={handleCreateRoom}/>
