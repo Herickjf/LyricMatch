@@ -12,7 +12,7 @@ import { Language } from '@prisma/client';
 import { GameService } from './game.service';
 import { MusicApi } from '../api-requests/music-api.enum';
 import { Logger } from '@nestjs/common';
-import axios from "axios"; // Biblioteca para fazer requisições HTTP
+import axios from 'axios'; // Biblioteca para fazer requisições HTTP
 
 // Biblioteca para pegar o endereço IPv6 do cliente a partir do socket
 import * as os from 'os';
@@ -38,7 +38,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server; // Instância do servidor WebSocket
 
-  async getLocalIpv6(){
+  async getLocalIpv6() {
     const interfaces = os.networkInterfaces();
     for (const interfaceName in interfaces) {
       const networkInterface = interfaces[interfaceName];
@@ -54,13 +54,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   handleConnection(client: Socket) {
-    this.requestNotification('SOCKET', client.id + " connected"); // Envia uma notificação de conexão para todos os clientes conectados
+    this.requestNotification('SOCKET', client.id + ' connected'); // Envia uma notificação de conexão para todos os clientes conectados
   }
 
   async handleDisconnect(client: Socket) {
     try {
       const room = await this.gameService.exitRoom(client.id);
-      this.requestNotification('SOCKET', client.id + " disconnected"); // Envia uma notificação de desconexão para todos os clientes conectados
+      this.requestNotification('SOCKET', client.id + ' disconnected'); // Envia uma notificação de desconexão para todos os clientes conectados
       client.emit('disconnected');
       if (!room) {
         return; // Se o cliente não estava em uma sala, não faz nada
@@ -82,25 +82,24 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       let clientIp: string | null = client.handshake.address; // Endereço IP do cliente
 
       // Se for ipv6:
-      if(clientIp.includes(':')) {
+      if (clientIp.includes(':')) {
         // Se for o endereço local, pega o ipv6 local:
         // Se for o ipv6 normal, não faz nada
-        if(clientIp === "::1"){
-          clientIp = await this.getLocalIpv6() || null;
+        if (clientIp === '::1') {
+          clientIp = (await this.getLocalIpv6()) || null;
         }
 
         // Realiza o fetch para obter as informações do cliente
         const response = await axios.get(`https://ipinfo.io/${clientIp}/json`);
         const data = response.data; // Dados retornados pela API
-        if('country' in data){
+        if ('country' in data) {
           clientIp = data;
-        }else{
+        } else {
           clientIp = null; // Se não for ipv6, não faz nada
         }
-      }else{
+      } else {
         clientIp = null; // Se for ipv4, não faz nada
       }
-
 
       const r = await this.gameService.createRoom(
         client.id,
@@ -120,7 +119,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }
       await client.join(r.room.code); // Adiciona o cliente à sala
       this.server.to(r.room.code).emit('roomUpdate', r.room); // Emite um evento 'roomUpdate' para todos os clientes na sala com os dados da sala
-      this.requestNotification('SOCKET', "created the room " + r.room.code, client.id);
+      this.requestNotification(
+        'SOCKET',
+        'created the room ' + r.room.code,
+        client.id,
+      );
     } catch (error) {
       console.error('Erro ao criar sala:', error);
       client.emit('error', {
@@ -140,25 +143,25 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       let clientIp: string | null = client.handshake.address; // Endereço IP do cliente
 
       // Se for ipv6:
-      if(clientIp.includes(':')) {
+      if (clientIp.includes(':')) {
         // Se for o endereço local, pega o ipv6 local:
         // Se for o ipv6 normal, não faz nada
-        if(clientIp === "::1"){
-          clientIp = await this.getLocalIpv6() || null;
+        if (clientIp === '::1') {
+          clientIp = (await this.getLocalIpv6()) || null;
         }
 
         // Realiza o fetch para obter as informações do cliente
         const response = await axios.get(`https://ipinfo.io/${clientIp}/json`);
         const data = response.data; // Dados retornados pela API
-        if('country' in data){    // Confirma se a busca foi bem sucedida
+        if ('country' in data) {
+          // Confirma se a busca foi bem sucedida
           clientIp = data;
-        }else{
+        } else {
           clientIp = null; // Se não for ipv6, não faz nada
         }
-      }else{
+      } else {
         clientIp = null; // Se for ipv4, não faz nada
       }
-    
 
       const r = await this.gameService.joinRoom(
         client.id,
@@ -176,7 +179,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }
       client.join(r.room.code); // Adiciona o cliente à sala
       this.server.to(r.room.code).emit('roomUpdate', r.room); // Emite um evento 'userJoined' para todos os clientes na sala com o nome do jogador
-      this.requestNotification('SOCKET', "joined the room " + r.room.code, client.id);
+      this.requestNotification(
+        'SOCKET',
+        'joined the room ' + r.room.code,
+        client.id,
+      );
     } catch (error) {
       console.error('Erro ao entrar na sala:', error);
       client.emit('error', {
@@ -195,7 +202,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         });
         return;
       }
-      this.requestNotification('SOCKET', "started the game in the room " + room.code, client.id);
+      this.requestNotification(
+        'SOCKET',
+        'started the game in the room ' + room.code,
+        client.id,
+      );
       this.server.to(room.code).emit('roomUpdate', room);
       this.recursiveTimer(room.code, room.roundTimer, client.id);
     } catch (error) {
@@ -240,7 +251,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         return;
       }
       this.server.to(room.code).emit('roomUpdate', room);
-      this.requestNotification('SOCKET', "sent a message in the room " + room.code, client.id);
+      this.requestNotification(
+        'SOCKET',
+        'sent a message in the room ' + room.code,
+        client.id,
+      );
     } catch (error) {
       console.error('Erro ao enviar mensagem:', error);
       client.emit('error', { message: 'error sending message' });
@@ -266,10 +281,16 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         data.musicApi,
         data.music_id,
       );
-      this.requestNotification('SOCKET', "made an attempt in a round", client.id);
+      this.requestNotification(
+        'SOCKET',
+        'made an attempt in a round',
+        client.id,
+      );
     } catch (error) {
       console.error('Erro ao enviar resposta de busca de musica');
-      client.emit('error', { message: "This song was not found in this source, try another one"});
+      client.emit('error', {
+        message: 'This song was not found in this source, try another one',
+      });
     }
   }
 
@@ -277,9 +298,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleExitRoom(@ConnectedSocket() client: Socket) {
     try {
       const room = await this.gameService.exitRoom(client.id);
-      if (room){
+      if (room) {
         this.server.to(room.code).emit('roomUpdate', room);
-        this.requestNotification('SOCKET', "left the room " + room?.code, client.id);
+        this.requestNotification(
+          'SOCKET',
+          'left the room ' + room?.code,
+          client.id,
+        );
       }
     } catch (error) {
       console.error('Erro ao sair da sala:', error);
@@ -302,8 +327,16 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }
       this.server.to(data.socketId).emit('expelled');
       this.server.to(room.code).emit('roomUpdate', room);
-      this.requestNotification('SOCKET', "expelled a player from the room " + room.code, client.id);
-      this.requestNotification('SOCKET', "was expelled from the room " + room.code, data.playerId);
+      this.requestNotification(
+        'SOCKET',
+        'expelled a player from the room ' + room.code,
+        client.id,
+      );
+      this.requestNotification(
+        'SOCKET',
+        'was expelled from the room ' + room.code,
+        data.playerId,
+      );
     } catch (error) {
       console.error('Erro ao expulsar jogador:', error);
       client.emit('error', {
@@ -326,7 +359,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         return;
       }
       this.server.to(room.code).emit('roomUpdate', room);
-      this.requestNotification('SOCKET', "changed the host of the room " + room.code, client.id);
+      this.requestNotification(
+        'SOCKET',
+        'changed the host of the room ' + room.code,
+        client.id,
+      );
     } catch (error) {
       console.error('Erro ao mudar o host:', error);
       client.emit('error', {
@@ -345,7 +382,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         });
         return;
       }
-      this.requestNotification('SOCKET', "a new round started in the room " + room.code);
+      this.requestNotification(
+        'SOCKET',
+        'a new round started in the room ' + room.code,
+      );
       this.server.to(room.code).emit('roomUpdate', room);
       this.recursiveTimer(room.code, room.roundTimer, client.id);
     } catch (error) {
@@ -379,7 +419,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
       client.emit('roomUpdate', room);
       client.emit('roomAnswers', playersguesses);
-      this.requestNotification('SOCKET', "requested information from room " + room.code, client.id);
+      this.requestNotification(
+        'SOCKET',
+        'requested information from room ' + room.code,
+        client.id,
+      );
     } catch (error) {
       console.error('Erro ao obter informações da sala:', error);
       client.emit('error', {
@@ -400,8 +444,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         return;
       }
       client.emit('roomUpdate', room);
-      this.requestNotification('SOCKET', "requested rankings from room " + room.code, client.id);
-      this.requestNotification('SOCKET', "a match ended in room " + room.code);
+      this.requestNotification(
+        'SOCKET',
+        'requested rankings from room ' + room.code,
+        client.id,
+      );
+      this.requestNotification('SOCKET', 'a match ended in room ' + room.code);
     } catch (error) {
       console.error('Erro ao obter informações da sala:', error);
       client.emit('error', {
@@ -421,7 +469,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         return;
       }
       client.emit('roomUpdate', room);
-      this.requestNotification('SOCKET', "reseted the room " + room.code, client.id);
+      this.requestNotification(
+        'SOCKET',
+        'reseted the room ' + room.code,
+        client.id,
+      );
     } catch (error) {
       console.error('Erro ao obter informações da sala:', error);
       client.emit('error', {
@@ -434,41 +486,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     return this.server.sockets.sockets.size; // Retorna o número de clientes conectados
   }
 
-  private connectedClients: number[] = []; // Array para armazenar o número de clientes conectados em cada segundo
-  private intervalId: NodeJS.Timeout;
-
-  startTrackingClients() {
-    this.intervalId = setInterval(() => {
-      const count = this.server.sockets.sockets.size;
-      this.connectedClients.push(count);
-
-      // Limita o tamanho do array para evitar crescimento infinito
-      if (this.connectedClients.length > 60) {
-        this.connectedClients.shift(); // Remove o valor mais antigo
-      }
-    }, 1000); // Executa a cada segundo
-  }
-
-  stopTrackingClients() {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-    }
-  }
-
-  getAverageClients(): number {
-    if (this.connectedClients.length === 0) {
-      return 0; // Evita divisão por zero
-    }
-    const sum = this.connectedClients.reduce((a, b) => a + b, 0);
-    return sum / this.connectedClients.length;
-  }
-
   async requestNotification(type: string, text: string, user?: string) {
-    try{
+    try {
       let user_name: string = ''; // Se o usuario não for passado, não faz nada
-      
-      if(user){
-        user_name = await this.gameService.getUserName(user) + ' '; // Pega o nome do usuario
+
+      if (user) {
+        user_name = (await this.gameService.getUserName(user)) + ' '; // Pega o nome do usuario
       }
 
       const notification = {
@@ -476,8 +499,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         text: user_name + text,
       };
       this.server.emit('requests', notification); // Envia a notificação para todos os clientes conectados, que estejam ouvindo o evento 'requests'
-
-    }catch (error){
+    } catch (error) {
       return;
     }
   }

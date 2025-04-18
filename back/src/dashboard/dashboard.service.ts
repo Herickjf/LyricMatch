@@ -15,19 +15,17 @@ export class DashboardService {
         activeRoomCount,
         activePlayerCount,
         connectedWebSocketClientCount,
-        averageClients,
       ] = await Promise.all([
         this.countActiveRooms(),
         this.countActivePlayers(),
         this.gameGateway.getConnectedClientsCount(),
-        this.gameGateway.getAverageClients(),
       ]);
 
       return {
         activeRoomCount,
         activePlayerCount,
         connectedWebSocketClientCount,
-        averageClients,
+        averageClients: activePlayerCount / activeRoomCount,
       };
     } catch (error) {
       throw new InternalServerErrorException(

@@ -38,10 +38,12 @@ export class GameService {
     roundTimer: number = 30,
   ): Promise<{ room: Room; host: Player }> {
     try {
-      const code = Array.from({ length: 6 }, () =>
-        Math.random() < 0.5
-          ? String.fromCharCode(65 + Math.floor(Math.random() * 26)) // Gera uma letra aleatória (A-Z)
-          : Math.floor(Math.random() * 10) // Gera um número aleatório (0-9)
+      const code = Array.from(
+        { length: 6 },
+        () =>
+          Math.random() < 0.5
+            ? String.fromCharCode(65 + Math.floor(Math.random() * 26)) // Gera uma letra aleatória (A-Z)
+            : Math.floor(Math.random() * 10), // Gera um número aleatório (0-9)
       ).join('');
       const room = await this.prisma.room.create({
         data: {
@@ -65,18 +67,16 @@ export class GameService {
         },
       });
 
-      
-
       if (clientIp != null && clientIp.ip != null) {
         const newLocalization = await this.prisma.localization.create({
           data: {
             ip: clientIp.ip,
             city: clientIp.city,
             longitude: clientIp.loc.split(',')[1],
-            latitude: clientIp.loc.split(',')[0], 
+            latitude: clientIp.loc.split(',')[0],
             playerId: host.id,
-          }
-        })
+          },
+        });
       }
 
       room.players = [host];
@@ -121,7 +121,7 @@ export class GameService {
     name: string,
     avatar: string,
     password: string,
-    clientIp: any = null
+    clientIp: any = null,
   ): Promise<{ room: Room; player: Player }> {
     try {
       const room = await this.prisma.room.findUnique({
@@ -150,8 +150,8 @@ export class GameService {
             longitude: clientIp.loc.split(',')[1],
             latitude: clientIp.loc.split(',')[0],
             playerId: player.id,
-          }
-        })
+          },
+        });
       }
 
       room.players = [...room.players, player];
@@ -699,7 +699,7 @@ export class GameService {
     return updatedRoom;
   }
 
-  async getUserName(socketId: string){
+  async getUserName(socketId: string) {
     const player = await this.prisma.player.findUnique({
       where: { socketId },
     });
@@ -710,7 +710,7 @@ export class GameService {
     return player.name;
   }
 
-  async getPlayersLocations(){
+  async getPlayersLocations() {
     // Coleta todas as localizacoes salvas no bd
     const localizations = await this.prisma.localization.findMany();
     if (!localizations) {
@@ -721,23 +721,28 @@ export class GameService {
     const playersLocations = localizations.reduce((acc: any, loc: any) => {
       const key = `${loc.longitude},${loc.latitude}`;
       if (!acc[key]) {
-        acc[key] = { longitude: loc.longitude, latitude: loc.latitude, city: loc.city, count: 0 };
+        acc[key] = {
+          longitude: loc.longitude,
+          latitude: loc.latitude,
+          city: loc.city,
+          count: 0,
+        };
       }
       acc[key].count++;
       return acc;
     }, {});
-    const playersLocationsArray = Object.values(playersLocations).map((loc: any) => {
-      return {
-        longitude: loc.longitude,
-        latitude: loc.latitude,
-        city: loc.city,
-        count: loc.count,
-      };
-    }
+    const playersLocationsArray = Object.values(playersLocations).map(
+      (loc: any) => {
+        return {
+          longitude: loc.longitude,
+          latitude: loc.latitude,
+          city: loc.city,
+          count: loc.count,
+        };
+      },
     );
 
     // Retorna o array de localizacoes
     return playersLocationsArray;
-
   }
 }
