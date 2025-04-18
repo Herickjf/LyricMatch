@@ -5,6 +5,7 @@ import { Language, Player, Room, RoomStatus } from '@prisma/client';
 import { MusicApi } from '../api-requests/music-api.enum';
 import { Counter, Histogram } from 'prom-client';
 import { Inject } from '@nestjs/common';
+import { InjectMetric } from '@willsoto/nestjs-prometheus';
 
 @Injectable()
 export class GameService {
@@ -22,8 +23,6 @@ export class GameService {
     private roundsStartedCounter: Counter<string>,
     @Inject('PROM_METRIC_ROUNDS_ENDED_TOTAL')
     private roundsEndedCounter: Counter<string>,
-    @Inject('PROM_METRIC_GAME_DURATION_SECONDS')
-    private gameDurationHistogram: Histogram<string>,
   ) {}
 
   async createRoom(

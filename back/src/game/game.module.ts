@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 import { GameService } from './game.service';
 import { GameGateway } from './game.gateway';
 import { PrismaService } from 'src/prisma-client/prisma-client.service';
@@ -13,14 +12,10 @@ import {
   RoundsEndedCounterProvider,
   GameDurationHistogramProvider,
 } from './metrics.providers';
+import { MonitoringService } from 'src/monitoring/monitoring.module';
 
 @Module({
-  imports: [
-    PrometheusModule.register({
-      path: '/metrics',
-      defaultMetrics: { enabled: true },
-    }),
-  ],
+  imports: [MonitoringService],
   providers: [
     GameService,
     GameGateway,

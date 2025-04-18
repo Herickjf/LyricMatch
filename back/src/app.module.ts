@@ -6,6 +6,9 @@ import { PrismaModule } from './prisma-client/prisma-client.module';
 import { GameModule } from './game/game.module';
 import { ImageModule } from './image/image.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { MonitoringModule } from './monitoring/monitoring.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { HttpMetricsInterceptor } from './common/interceptors/http-metrics.interceptor';
 
 @Module({
   imports: [
@@ -14,8 +17,15 @@ import { DashboardModule } from './dashboard/dashboard.module';
     GameModule,
     ImageModule,
     DashboardModule,
+    MonitoringModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: HttpMetricsInterceptor,
+    },
+  ],
 })
 export class AppModule {}

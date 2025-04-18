@@ -39,3 +39,4 @@ export const GameDurationHistogramProvider = {
       buckets: [5, 10, 20, 30, 60],
     }),
 };
+
