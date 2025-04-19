@@ -307,7 +307,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     } catch (error) {
       console.error('Erro ao enviar resposta de busca de musica');
       client.emit('error', {
-        message: 'This song was not found in this source, try another one',
+        message: 'This song was not found, please try another one',
       });
     }
   }

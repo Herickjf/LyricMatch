@@ -57,3 +57,9 @@ body{
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   /* animation: fadeInOut 3s ease-in-out; */
 }
+
+body.noscroll {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
