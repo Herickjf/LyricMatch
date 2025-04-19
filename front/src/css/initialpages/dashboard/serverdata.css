@@ -1,0 +1,58 @@
+.server_data_box{
+    width: 90%;
+    height: 80%;
+    background-color: #A4AC86;
+    
+    border-left: 8px solid rgba(101, 109, 74);
+    border-bottom: 8px solid rgba(101, 109, 74);
+    border-radius: 20px;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
+    justify-content: center;
+    align-items: center;
+}
+
+.box_item{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    & > *{
+        color: #22291c;
+    }
+}
+
+.info_number{
+    font-size: 70px;
+    font-weight: 600;
+}
+
+.info_text{
+    font-size: 25px;
+    font-weight: 500;
+    color: #414833;
+}
+
+@media screen and (max-width: 1300px) {
+    .server_data_box{
+        height: 95%;
+        max-height: 95%;
+        overflow-y: auto;
+        
+        padding: 20px 0 20px 0;
+        grid-template-columns: repeat(1, 1fr);
+        gap: 40px;
+    }
+
+    .info_number{
+        font-size: 50px;
+        font-weight: 600;
+    }
+    
+    .info_text{
+        font-size: 20px;
+        font-weight: 500;
+        color: #414833;
+    }
+}

@@ -1,6 +1,10 @@
-const NotFound = () => {
+interface NotFoundProps {
+    closeMenu: () => void;
+}
+
+const NotFound: React.FC<NotFoundProps> = ({closeMenu}) => {
     return(
-        <div>
+        <div onClick={closeMenu}>
             Not Found
         </div>
     )

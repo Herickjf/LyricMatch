@@ -1,8 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import axios from 'axios';
 import * as dotenv from 'dotenv';
 import * as cheerio from 'cheerio';
-import { MusicApi } from './music-api.enum';
 
 dotenv.config();
 
@@ -52,7 +51,7 @@ export class ApiRequestsService {
   private async getLyrics_letrasmus(
     songName: string,
     artistName: string,
-  ): Promise<string> {
+  ): Promise<any> {
     const url = `https://www.letras.mus.br/${artistName}/${songName}/`
       .replace(/ /g, '-')
       .toLowerCase();
@@ -78,23 +77,22 @@ export class ApiRequestsService {
             .get()
             .join('\n\n'); // Adiciona uma linha em branco entre os parágrafos
 
-          return lyrics || 'Letra não encontrada na página.';
+          return lyrics || null;
         } else {
-          throw new Error('Letra não encontrada na página.');
-          return 'Letra não encontrada na página.';
+          return null;
         }
       } else {
         return 'Erro ao acessar a página da música.';
       }
     } catch (error) {
-      throw new Error(`Erro ao buscar a letra: ${error.message}`);
+      return null;
     }
   }
 
   private async getLyrics_musixmatch(
     songName: string,
     artistName: string,
-  ): Promise<string> {
+  ): Promise<string | null> {
     // Formatações
     const formattedSong = songName.replace(/ /g, '-');
     const formattedArtist = artistName.replace(/ /g, '-');
@@ -120,24 +118,27 @@ export class ApiRequestsService {
         .get()
         .join('\n');
 
-      if (!lyrics) throw new Error('Letra não encontrada na página.');
+      if (!lyrics) return null;
 
       return lyrics;
     } catch (error) {
-      throw new Error(`Erro ao buscar a letra: ${error.message}`);
+      return null;
     }
   }
 
   private async getLyrics_vagalume(
     track: string,
     artist: string,
-  ): Promise<string | null> {
+  ): Promise<string> {
     track = track.toLowerCase().replace(/ /g, '-');
     artist = artist.toLowerCase().replace(/ /g, '-');
     const url = `https://www.vagalume.com.br/${artist}/${track}.html`;
 
     try {
       const response = await axios.get(url);
+      if (response.status != 200) {
+        throw new NotFoundException('Letra não encontrada');
+      }
       const $ = cheerio.load(response.data);
 
       // Seleciona o elemento com id "lyrics" e processa os <br> como quebras de linha
@@ -153,16 +154,17 @@ export class ApiRequestsService {
     }
   }
 
-  async getLyrics(track: string, artist: string, api_option: MusicApi) {
-    switch (api_option) {
-      case MusicApi.LETRAS:
-        return this.getLyrics_letrasmus(track, artist);
-      case MusicApi.MUSIXMATCH:
-        return this.getLyrics_musixmatch(track, artist);
-      case MusicApi.VAGALUME:
-        return this.getLyrics_vagalume(track, artist);
-      default:
-        return { error_code: 400, message: 'Invalid API option' };
-    }
+  async getLyrics(track: string, artist: string): Promise<string> {
+    let result = await this.getLyrics_musixmatch(track, artist);
+    if (result) return result;
+
+    result = await this.getLyrics_letrasmus(track, artist);
+    if (result) return result;
+
+
+    result = await this.getLyrics_vagalume(track, artist);
+    if (result) return result;
+
+    throw new NotFoundException('Letra não encontrada');
   }
 }

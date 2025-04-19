@@ -12,6 +12,13 @@
     align-items: center;
 }
 
+@media screen and (max-width: 1300px) {
+    #requests_box{
+        height: 95%;
+    }
+}
+
+
 #requests_messages_box{
     width: 80%;
     height: 80%;

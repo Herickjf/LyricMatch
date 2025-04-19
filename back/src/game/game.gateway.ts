@@ -10,7 +10,6 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Language } from '@prisma/client';
 import { GameService } from './game.service';
-import { MusicApi } from '../api-requests/music-api.enum';
 import { Logger } from '@nestjs/common';
 import axios from 'axios'; // Biblioteca para fazer requisições HTTP
 
@@ -289,7 +288,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     data: {
       track: string;
       artist: string;
-      musicApi: MusicApi;
       music_id: string;
     },
     @ConnectedSocket() client: Socket,
@@ -299,7 +297,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client.id,
         data.track,
         data.artist,
-        data.musicApi,
         data.music_id,
       );
       this.requestNotification(
@@ -507,35 +504,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     return this.server.sockets.sockets.size; // Retorna o número de clientes conectados
   }
 
-  private connectedClients: number[] = []; // Array para armazenar o número de clientes conectados em cada segundo
-  private intervalId: NodeJS.Timeout;
-
-  startTrackingClients() {
-    this.intervalId = setInterval(() => {
-      const count = this.server.sockets.sockets.size;
-      this.connectedClients.push(count);
-
-      // Limita o tamanho do array para evitar crescimento infinito
-      if (this.connectedClients.length > 60) {
-        this.connectedClients.shift(); // Remove o valor mais antigo
-      }
-    }, 1000); // Executa a cada segundo
-  }
-
-  stopTrackingClients() {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-    }
-  }
-
-  getAverageClients(): number {
-    if (this.connectedClients.length === 0) {
-      return 0; // Evita divisão por zero
-    }
-    const sum = this.connectedClients.reduce((a, b) => a + b, 0);
-    return sum / this.connectedClients.length;
-  }
-
   async requestNotification(type: string, text: string, user?: string) {
     try {
       let user_name: string = ''; // Se o usuario não for passado, não faz nada
@@ -551,6 +519,21 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.server.emit('requests', notification); // Envia a notificação para todos os clientes conectados, que estejam ouvindo o evento 'requests'
     } catch (error) {
       return;
+    }
+  }
+
+  @SubscribeMessage('get_players_locations')
+  async getPlayersLocations(@ConnectedSocket() client: Socket) {
+    try {
+      const locations = await this.gameService.getPlayersLocations();
+      if (!locations) {
+        client.emit('error', { message: 'Error getting players locations' });
+        return;
+      }
+      client.emit('players_locations', locations); // Envia as localizações dos jogadores para o cliente
+    } catch (error) {
+      console.error('Erro ao obter localizações dos jogadores:', error);
+      client.emit('error', { message: 'Error getting players locations' });
     }
   }
 }

@@ -9,6 +9,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { MonitoringModule } from './monitoring/monitoring.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpMetricsInterceptor } from './common/interceptors/http-metrics.interceptor';
+import { LocalizationModule } from './localization/localization.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { HttpMetricsInterceptor } from './common/interceptors/http-metrics.inter
     ImageModule,
     DashboardModule,
     MonitoringModule,
+    LocalizationModule,
   ],
   controllers: [AppController],
   providers: [

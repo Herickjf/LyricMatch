@@ -62,20 +62,20 @@ services:
     command: >
       /bin/sh -c "until curl -s http://prometheus:9090/api/v1/status/buildinfo; do echo 'Waiting for Prometheus...'; sleep 2; done; /run.sh"
 
-  nginx:
-    image: nginx:latest
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-    ports:
-      - "80:80"
-    depends_on:
-      - frontend
-      - backend
-      - prometheus
-      - grafana
-      - database
-    networks:
-      - app-net
+  # nginx:
+  #   image: nginx:latest
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf
+  #   ports:
+  #     - "80:80"
+  #   depends_on:
+  #     - frontend
+  #     - backend
+  #     - prometheus
+  #     - grafana
+  #     - database
+  #   networks:
+  #     - app-net
 
 volumes:
   postgres_data:

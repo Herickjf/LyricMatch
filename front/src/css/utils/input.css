@@ -1,4 +1,5 @@
 .input_box{
+    position: relative;
     width: 100%;
 
     display: flex;
@@ -33,14 +34,40 @@
 
 input[type="number"] {
     -moz-appearance: textfield; /* Firefox */
-  }
+}
   
-  input[type="number"]::-webkit-inner-spin-button,
-  input[type="number"]::-webkit-outer-spin-button {
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;  /* Chrome, Safari */
     margin: 0;
-  }
-  
+}
+
+.password_show{
+    position: absolute;
+    width: 20px;
+    height: auto;
+    top: 70%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.password_show > button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+.password_show > button > i{
+    color: #e4eebddf;
+    transition: all 0.1s ease-out;
+}
+.password_show > button > i:hover {
+    transform: scale(1.1);
+    color: #ffffff;
+}
 
 @media screen and (max-width: 768px){
     .input_box label{        

@@ -85,7 +85,7 @@ model Word {
 }
 
 model Localization{
-  ip        String  @id
+  ip        String  
   city      String
   longitude String
   latitude  String

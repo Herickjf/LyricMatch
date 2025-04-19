@@ -1,4 +1,5 @@
 nav{
+    position: relative;
     width: 100%;
     height: auto;
 }
@@ -21,18 +22,30 @@ nav{
     transition: .3s ease-in-out;
 }
 
-#menu_icon{
+#menu_icon,
+#menu_close_button{
     width: 2.5rem;
     height: 2.5rem;
-    background-image: url(./assets/icons/menu-btn.svg);
     background-repeat: no-repeat;
+    background-size: cover;
     background-position: center;
 }
+#menu_icon{
+    background-image: url(./assets/icons/menu-btn.svg);
+}
+#menu_close_button{
+    width: 2.1rem;
+    height: 2.1rem;
+    background-image: url(./assets/icons/close-btn.svg);
+    margin-bottom: 30px;
+}
 #menu_icon:active,
+#menu_close_button:active,
+#menu_close_button:hover,
 #menu_icon:hover{
     transform: scale(1.13);
-    rotate: 360deg;
-    transition: .5s ease-in-out;
+    /* rotate: 360deg; */
+    transition: .2s ease-in-out;
 }
 
 #logo_icon{
@@ -48,6 +61,13 @@ nav{
 #logo_icon:hover{
     rotate: 360deg;
     transition: .5s ease-in-out;
+}
+
+
+
+p{
+    font-size: 0.8rem;
+    color: #f9d7bd;
 }
 
 

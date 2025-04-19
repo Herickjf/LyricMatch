@@ -6,6 +6,9 @@ import { useSocket } from "../../../utils/SocketContext";
 import PlayerCard from "../../../utils/PlayerCard";
 import "../../../css/game/desktop/leftBox.css";
 
+// Pega o BACKEND_URL do .env:
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+
 const LeftBox: React.FC = () => {
   const [current_players, setCurrentPlayers] = useState<number>(0);
   const [max_players, setMaxPlayers] = useState<number>(0);
@@ -27,16 +30,45 @@ const LeftBox: React.FC = () => {
   }, [players, room]);
 
   const copyToClipboard = () => {
-    const baseUrl = window.location.origin; // Obtém a URL base do domínio atual
-    navigator.clipboard
-      .writeText(`${baseUrl}?code=${room_code}`)
-      .then(() => {
-        setShowAlert(true); // Exibe o alerta
-        setTimeout(() => setShowAlert(false), 3000); // Oculta o alerta após 3 segundos
-      })
-      .catch((err) => {
-        console.error("Erro ao copiar o código:", err);
-      });
+    const baseUrl = window.location.origin;
+    const textToCopy = `${baseUrl}?code=${room_code}`;
+    
+    // Método moderno (recomendado)
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(textToCopy)
+        .then(() => showFeedback())
+        .catch(() => useFallbackCopy(textToCopy));
+    } else {
+      // Método fallback para navegadores mais antigos
+      useFallbackCopy(textToCopy);
+    }
+  };
+  
+  const useFallbackCopy = (text: string) => {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';  // Evita scroll para o elemento
+    document.body.appendChild(textarea);
+    textarea.select();
+    
+    try {
+      const successful = document.execCommand('copy');
+      if (successful) {
+        showFeedback();
+      } else {
+        console.error('Fallback copy method failed');
+        // Pode adicionar um feedback visual alternativo aqui
+      }
+    } catch (err) {
+      console.error('Error in fallback copy:', err);
+    }
+    
+    document.body.removeChild(textarea);
+  };
+  
+  const showFeedback = () => {
+    setShowAlert(true);
+    setTimeout(() => setShowAlert(false), 3000);
   };
 
   return (
@@ -78,9 +110,9 @@ const LeftBox: React.FC = () => {
         <button className="copy-code-button" onClick={copyToClipboard}>
           <i className="fa fa-share"></i>
         </button>
-        <button className="copy-code-button" onClick={copyToClipboard}>
+        {/* <button className="copy-code-button" onClick={copyToClipboard}>
           <i className="fa fa-share"></i>
-        </button>
+        </button> */}
       </div>
 
       {showAlert && ( // Renderiza o alerta se showAlert for true

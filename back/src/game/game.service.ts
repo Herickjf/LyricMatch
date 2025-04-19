@@ -2,10 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ApiRequestsService } from 'src/api-requests/api-requests.service';
 import { PrismaService } from 'src/prisma-client/prisma-client.service';
 import { Language, Player, Room, RoomStatus } from '@prisma/client';
-import { MusicApi } from '../api-requests/music-api.enum';
 import { Counter, Histogram } from 'prom-client';
 import { Inject } from '@nestjs/common';
 import { InjectMetric } from '@willsoto/nestjs-prometheus';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class GameService {
@@ -37,15 +37,19 @@ export class GameService {
     roundTimer: number = 30,
   ): Promise<{ room: Room; host: Player }> {
     try {
-      const code = Array.from({ length: 6 }, () =>
-        Math.random() < 0.5
-          ? String.fromCharCode(65 + Math.floor(Math.random() * 26)) // Gera uma letra aleatória (A-Z)
-          : Math.floor(Math.random() * 10) // Gera um número aleatório (0-9)
+      const code = Array.from(
+        { length: 6 },
+        () =>
+          Math.random() < 0.5
+            ? String.fromCharCode(65 + Math.floor(Math.random() * 26)) // Gera uma letra aleatória (A-Z)
+            : Math.floor(Math.random() * 10), // Gera um número aleatório (0-9)
       ).join('');
+      const hashedPassword = await bcrypt.hash(password, 10); // O número 10 é o salt rounds
+
       const room = await this.prisma.room.create({
         data: {
           code,
-          password,
+          password: hashedPassword,
           maxPlayers,
           maxRounds,
           language,
@@ -64,19 +68,16 @@ export class GameService {
         },
       });
 
-      
-
-      if (clientIp) {
-        console.log('clientIp', clientIp);
-        // const newLocalization = await this.prisma.localization.create({
-        //   data: {
-        //     ip: clientIp.ip,
-        //     city: clientIp.city,
-        //     longitude: clientIp.loc.split(', ')[0],
-        //     latitude: clientIp.loc.split(', ')[1],
-        //     playerId: host.id,
-        //   }
-        // })
+      if (clientIp != null && clientIp.ip != null) {
+        const newLocalization = await this.prisma.localization.create({
+          data: {
+            ip: clientIp.ip,
+            city: clientIp.city,
+            longitude: clientIp.loc.split(',')[1],
+            latitude: clientIp.loc.split(',')[0],
+            playerId: host.id,
+          },
+        });
       }
 
       room.players = [host];
@@ -121,7 +122,7 @@ export class GameService {
     name: string,
     avatar: string,
     password: string,
-    clientIp: any = null
+    clientIp: any = null,
   ): Promise<{ room: Room; player: Player }> {
     try {
       const room = await this.prisma.room.findUnique({
@@ -130,7 +131,9 @@ export class GameService {
       });
 
       if (!room) throw new Error('Room not found');
-      if (room.password && room.password !== password) {
+
+      const isPasswordValid = await bcrypt.compare(password, room.password);
+      if (!isPasswordValid) {
         throw new Error('joinRoom: Incorrect password');
       }
 
@@ -143,16 +146,15 @@ export class GameService {
       });
 
       if (clientIp) {
-        console.log('clientIp', clientIp);
-        // const newLocalization = await this.prisma.localization.create({
-        //   data: {
-        //     ip: clientIp.ip,
-        //     city: clientIp.city,
-        //     longitude: clientIp.loc.split(', ')[0],
-        //     latitude: clientIp.loc.split(', ')[1],
-        //     playerId: player.id,
-        //   }
-        // })
+        const newLocalization = await this.prisma.localization.create({
+          data: {
+            ip: clientIp.ip,
+            city: clientIp.city,
+            longitude: clientIp.loc.split(',')[1],
+            latitude: clientIp.loc.split(',')[0],
+            playerId: player.id,
+          },
+        });
       }
 
       room.players = [...room.players, player];
@@ -500,7 +502,6 @@ export class GameService {
     playerId: string,
     track: string,
     artist: string,
-    musicApi: MusicApi,
     index: string,
   ) {
     const playerExists = await this.prisma.player.findUnique({
@@ -531,11 +532,7 @@ export class GameService {
       throw new Error('processAnswer: Current word not found');
     }
 
-    const lyrics = await this.apiRequestsService.getLyrics(
-      track,
-      artist,
-      musicApi,
-    );
+    const lyrics = await this.apiRequestsService.getLyrics(track, artist);
 
     if (!lyrics || typeof lyrics !== 'string') {
       throw new Error('processAnswer: Lyrics not found');
@@ -700,7 +697,7 @@ export class GameService {
     return updatedRoom;
   }
 
-  async getUserName(socketId: string){
+  async getUserName(socketId: string) {
     const player = await this.prisma.player.findUnique({
       where: { socketId },
     });
@@ -709,5 +706,41 @@ export class GameService {
     }
 
     return player.name;
+  }
+
+  async getPlayersLocations() {
+    // Coleta todas as localizacoes salvas no bd
+    const localizations = await this.prisma.localization.findMany();
+    if (!localizations) {
+      throw new Error('getPlayersLocations: Localizations not found');
+    }
+
+    // Retorna os dados {longitude, latitude, cidade} de cada localizacao e a quantia de jogadores nessa mesma localizacao (long, lat)
+    const playersLocations = localizations.reduce((acc: any, loc: any) => {
+      const key = `${loc.longitude},${loc.latitude}`;
+      if (!acc[key]) {
+        acc[key] = {
+          longitude: loc.longitude,
+          latitude: loc.latitude,
+          city: loc.city,
+          count: 0,
+        };
+      }
+      acc[key].count++;
+      return acc;
+    }, {});
+    const playersLocationsArray = Object.values(playersLocations).map(
+      (loc: any) => {
+        return {
+          longitude: loc.longitude,
+          latitude: loc.latitude,
+          city: loc.city,
+          count: loc.count,
+        };
+      },
+    );
+
+    // Retorna o array de localizacoes
+    return playersLocationsArray;
   }
 }

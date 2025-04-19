@@ -6,10 +6,14 @@ import Avatars from './Avatars';
 import TextInput from '../../utils/TextInput';
 import '../../css/initialpages/home.css';
 
-const Home: React.FC = () => {
+interface HomeProps {
+    closeMenu: () => void;
+}
+
+const Home: React.FC<HomeProps> = ({closeMenu}) => {
     const [mode, setMode] = useState<"enter" | "create">("enter");
     const [username, setUsername] = useState<string>("");
-    const [avatar, setAvatar] = useState<string>("http://localhost:4000/images/avatar1.png");
+    const [avatar, setAvatar] = useState<string>("/avatars/avatar1.png");
     const [openAvatarMenu, setOpenAvatarMenu] = useState<boolean>(false);
 
     function toggleToEnter() {
@@ -21,11 +25,11 @@ const Home: React.FC = () => {
     }
 
     return(
-        <div id='home'>
+        <div id='home'  onClick={closeMenu}>
             <div id="form_box">
 
                 <div id="fixed_box">
-                    <h1 id="game_title">Song Guesser</h1>
+                    <h1 id="game_title">Lyric Match</h1>
 
                     <div id="options_entry_box">
                         <button 

@@ -9,9 +9,12 @@ import Menu from './Menu'
 import { useState } from 'react'
 
 
-const Nav: React.FC = () => {
-    const [menuOpen, setMenuOpen] = useState(false);
+interface menuProps {
+    menuOpen: boolean,
+    setMenuOpen: (open: boolean) => void
+}
 
+const Nav: React.FC<menuProps> = ({menuOpen, setMenuOpen}) => {
     return (
         <nav >
             <div id = "nav_bar">
@@ -23,7 +26,7 @@ const Nav: React.FC = () => {
                 <div className="nav_items" id="logo_icon"></div>
             </div>
 
-            {menuOpen && <Menu openMenu={menuOpen} setOpenMenu={setMenuOpen}/> }
+            <Menu openMenu={menuOpen} setOpenMenu={setMenuOpen}/>
         </nav>
     )
 }

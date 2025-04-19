@@ -7,6 +7,7 @@ import NotFound from "./pages/notFound/NotFound";
 import Nav from "./pages/nav/nav";
 import GameScreen from "./pages/game/GameScreen";
 import Dashboard from "./pages/dashboard/Dashboard";
+import AboutGame from "./pages/AboutGame/AboutGame";
 import './css/initialpages/App.css'
 
 import { useRoomContext } from "./utils/RoomContext";
@@ -27,6 +28,7 @@ const App = () => {
   const [alert, setAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     if(in_game && room && (room?.status != "finished")){
@@ -118,20 +120,22 @@ const App = () => {
     };
   }, [socket, navigate, player?.id]);
 
-
+  const closeMenu = () => {
+    setMenuOpen(false);
+  } 
 
   return (
       <div className="App" id="App_Screen">
 
-        { !in_game && <Nav /> }
+        { !in_game && <Nav menuOpen={menuOpen} setMenuOpen={setMenuOpen}/> }
 
         { !in_game && 
           <Routes>
-            <Route path="/" element={!in_game && <Home/>} />
-            <Route path="/about" element={<About />} />
-            <Route path="/howtoplay" element={<About />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="*" element={<NotFound />} />
+            <Route path="/"           element={<Home              closeMenu={closeMenu}/>} />
+            <Route path="/about"      element={<About             closeMenu={closeMenu}/>} />
+            <Route path="/aboutgame"  element={<AboutGame         closeMenu={closeMenu}/>} />
+            <Route path="/dashboard"  element={<Dashboard         closeMenu={closeMenu}/>} />
+            <Route path="*"           element={<NotFound          closeMenu={closeMenu}/>} />
           </Routes>
         }
 

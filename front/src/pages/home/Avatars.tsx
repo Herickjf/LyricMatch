@@ -9,18 +9,9 @@ interface AvatarsProps {
     setAvatar: (value: string) => void;
 }
 
-const back_url = `${window.location.origin}/api`
+const avatars = Array.from({length: 50}, (_, i) => `/avatars/avatar${i + 1}.png`);
 
 const Avatars: React.FC<AvatarsProps> = ({setAvatar, avatarOpenMenu, setAvatarsOpenMenu}) => {
-    const [avatars, setAvatars] = useState<any>([]);
-
-    useEffect(() => {
-        fetch(`${back_url}/images`)
-            .then(response => response.json())
-            .then(data => {
-                setAvatars(data);
-            });
-    }, []);
 
     const selectAvatar = (avatar: string) => {
         setAvatar(avatar);
