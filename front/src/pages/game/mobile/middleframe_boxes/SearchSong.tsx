@@ -8,7 +8,7 @@ import { useRoomContext } from "../../../../utils/RoomContext"
 import { useSocket } from "../../../../utils/SocketContext"
 
 
-const back_url = `${window.location.origin}/api`
+const back_url = import.meta.env.VITE_BACKEND_URL;
 
 
 interface SearchSongProps {
