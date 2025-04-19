@@ -13,16 +13,23 @@ export class GameService {
     private readonly prisma: PrismaService,
     private readonly apiRequestsService: ApiRequestsService,
     private readonly logger: Logger,
-    @Inject('PROM_METRIC_ROOMS_CREATED_TOTAL')
-    private roomsCreatedCounter: Counter<string>,
-    @Inject('PROM_METRIC_PLAYERS_JOINED_TOTAL')
-    private playersJoinedCounter: Counter<string>,
-    @Inject('PROM_METRIC_MESSAGES_SENT_TOTAL')
-    private messagesSentCounter: Counter<string>,
-    @Inject('PROM_METRIC_ROUNDS_STARTED_TOTAL')
-    private roundsStartedCounter: Counter<string>,
-    @Inject('PROM_METRIC_ROUNDS_ENDED_TOTAL')
-    private roundsEndedCounter: Counter<string>,
+    @InjectMetric('rooms_created_total')
+    private roomsCreated: Counter<string>,
+
+    @InjectMetric('players_joined_total')
+    private playersJoined: Counter<string>,
+
+    @InjectMetric('messages_sent_total')
+    private messagesSent: Counter<string>,
+
+    @InjectMetric('rounds_started_total')
+    private roundsStarted: Counter<string>,
+
+    @InjectMetric('rounds_ended_total')
+    private roundsEnded: Counter<string>,
+
+    @InjectMetric('game_duration_seconds')
+    private gameDuration: Histogram<string>,
   ) {}
 
   async createRoom(
@@ -83,7 +90,7 @@ export class GameService {
       room.players = [host];
 
       // Incrementa a métrica de salas criadas
-      this.roomsCreatedCounter.inc();
+      this.roomsCreated.inc();
 
       return { room, host };
     } catch (error) {
@@ -160,7 +167,7 @@ export class GameService {
       room.players = [...room.players, player];
 
       // Incrementa a métrica de jogadores que se juntaram à sala
-      this.playersJoinedCounter.inc();
+      this.playersJoined.inc();
 
       return { room, player };
     } catch (error) {
@@ -189,7 +196,7 @@ export class GameService {
     }
 
     // Incrementa a métrica de mensagens enviadas
-    this.messagesSentCounter.inc();
+    this.messagesSent.inc();
 
     const room = await this.prisma.room.findUnique({
       where: { id: player.roomId },
@@ -263,7 +270,7 @@ export class GameService {
     });
 
     // Incrementa a métrica de rodadas iniciadas
-    this.roundsStartedCounter.inc();
+    this.roundsStarted.inc();
 
     // Opcional: marque a duração da partida (exemplo, se você medir o tempo total do jogo)
     // this.gameDurationHistogram.observe(durationEmSegundos);
@@ -304,7 +311,7 @@ export class GameService {
     });
 
     // Incrementa a métrica de rodadas encerradas
-    this.roundsEndedCounter.inc();
+    this.roundsEnded.inc();
 
     // Atualiza os scores dos jogadores
     for (const answer of playerAnswers) {

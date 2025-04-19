@@ -12,7 +12,7 @@ import "../../css/initialpages/dashboard/playersmap.css"
 import { useEffect, useState } from 'react'
 import { useSocket } from '../../utils/SocketContext'
 
-delete L.Icon.Default.prototype._getIconUrl
+// Removed unnecessary line as _getIconUrl is not a valid property
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x,
   iconUrl: markerIcon,

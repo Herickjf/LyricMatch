@@ -1,35 +1,24 @@
-import { Module } from '@nestjs/common';
+// src/game/game.module.ts
+import { Module, Logger } from '@nestjs/common';
+import { MonitoringModule } from 'src/monitoring/monitoring.module';
 import { GameService } from './game.service';
 import { GameGateway } from './game.gateway';
 import { PrismaService } from 'src/prisma-client/prisma-client.service';
 import { ApiRequestsService } from 'src/api-requests/api-requests.service';
-import { Logger } from '@nestjs/common';
-import {
-  RoomsCreatedCounterProvider,
-  PlayersJoinedCounterProvider,
-  MessagesSentCounterProvider,
-  RoundsStartedCounterProvider,
-  RoundsEndedCounterProvider,
-  GameDurationHistogramProvider,
-} from './metrics.providers';
-import { MonitoringService } from 'src/monitoring/monitoring.module';
 
 @Module({
-  imports: [MonitoringService],
+  imports: [MonitoringModule],
   providers: [
     GameService,
     GameGateway,
     PrismaService,
     ApiRequestsService,
     Logger,
-    // Adicione os providers customizados:
-    RoomsCreatedCounterProvider,
-    PlayersJoinedCounterProvider,
-    MessagesSentCounterProvider,
-    RoundsStartedCounterProvider,
-    RoundsEndedCounterProvider,
-    GameDurationHistogramProvider,
   ],
-  exports: [GameGateway],
+  exports: [
+    // aqui você exporta o que quer disponibilizar pra fora
+    GameGateway,
+    GameService,
+  ],
 })
 export class GameModule {}

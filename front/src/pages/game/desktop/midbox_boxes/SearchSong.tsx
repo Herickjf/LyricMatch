@@ -7,8 +7,6 @@ import "../../../../css/game/desktop/midBox/searchSong.css"
 import { useRoomContext } from "../../../../utils/RoomContext"
 import { useSocket } from "../../../../utils/SocketContext"
 
-import dotenv from "dotenv"
-
 const back_url = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000"
 
 const SearchSong: React.FC = () => {

@@ -7,8 +7,8 @@ services:
       dockerfile: Dockerfile
     networks:
       - app-net
-    expose:
-      - "3000"
+    ports:
+      - "3000:3000"
 
   backend:
     build:
@@ -20,8 +20,8 @@ services:
       - database
     networks:
       - app-net
-    expose:
-      - "4000"
+    ports:
+      - "4000:4000"
     command: sh -c "npx prisma migrate deploy && npm run start:prod"
 
   database:
@@ -34,20 +34,22 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - app-net
+    ports:
+      - "5435:5432"
 
   prometheus:
     image: prom/prometheus
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    expose:
-      - "9090"
     networks:
       - app-net
+    ports:
+      - "9090:9090"
 
   grafana:
     image: grafana/grafana:latest
-    expose:
-      - "3000"
+    ports:
+      - "3001:3000"
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
@@ -61,21 +63,6 @@ services:
       - prometheus
     command: >
       /bin/sh -c "until curl -s http://prometheus:9090/api/v1/status/buildinfo; do echo 'Waiting for Prometheus...'; sleep 2; done; /run.sh"
-
-  # nginx:
-  #   image: nginx:latest
-  #   volumes:
-  #     - ./nginx.conf:/etc/nginx/nginx.conf
-  #   ports:
-  #     - "80:80"
-  #   depends_on:
-  #     - frontend
-  #     - backend
-  #     - prometheus
-  #     - grafana
-  #     - database
-  #   networks:
-  #     - app-net
 
 volumes:
   postgres_data:
