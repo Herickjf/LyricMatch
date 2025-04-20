@@ -13,10 +13,12 @@ const BetweenRounds: React.FC<BetweenRoundsProps> = ({setFrame}) => {
 
     return (
         <div id="mobile_between_rounds_box">
-            <div className="fa fa-arrow-left" id="mobile_between_return_button" onClick={()=>{setFrame("middle_frame")}}></div>
-            <div>
+            <div id="mobile_between_rounds_header">
+                <div className="fa fa-arrow-left" id="mobile_between_return_button" onClick={()=>{setFrame("middle_frame")}}></div>
+                <div id="mobile_between_text">
                 <div id="mobile_between_rounds_title">Players tried:</div>
                 <div id="mobile_between_rounds_subtitle">Click on the song to listen!</div>
+                </div>
             </div>
             
             <div id="mobile_between_rounds_guesses_list">

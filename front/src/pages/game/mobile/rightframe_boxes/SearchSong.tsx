@@ -33,14 +33,12 @@ const SearchSong: React.FC<SearchSongProps> = ({setFrame}) => {
 
     return (
         <div id="MOBILE_search_song_box">
-            <div className="fa fa-arrow-left" id="mobile_search_song_button_return" onClick={() => setFrame("middle_frame")}/>
-            <div id="search_song_title">Which song?</div>
             
-            {/* <select id="search_song_select" value={api_selected} onChange={(e) => setApiSelected(e.target.value)}>
-                <option value={"MUSIXMATCH"}>MusixMatch</option>
-                <option value={"LETRAS"}>LetrasMus</option>
-                <option value={"VAGALUME"}>Vagalume</option>
-            </select> */}
+            <div id="mobile_search_song_header">
+                <div className="fa fa-arrow-left" id="mobile_search_song_button_return" onClick={() => setFrame("middle_frame")}/>
+                <div id="search_song_title">Which song?</div>
+            </div>
+            
 
             <div id="search_results_box">
                 {
