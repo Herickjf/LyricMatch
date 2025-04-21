@@ -10,16 +10,16 @@ import { useSocket } from "../../../../utils/SocketContext"
 const back_url = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000"
 
 const SearchSong: React.FC = () => {
+    const { setCount, timerInit } = useSearchContext();
+    const { room } = useRoomContext();
+
     const [artist_name,     setArtistName]  = useState<string>("");
     const [song_name,       setSongName]    = useState<string>("");
     const [word_to_guess,   setWord]        = useState<string>("WORD");
-    const [timer,           setTimer]       = useState<number>(30);
-    const [alert, setAlert] = useState<boolean>(false);
-    const [alertMessage, setAlertMessage] = useState<string>("");
+    const [timer,           setTimer]       = useState<number>(30 - ((Date.now() / 1000) - timerInit));
+    const [alert,           setAlert]       = useState<boolean>(false);
+    const [alertMessage, setAlertMessage]   = useState<string>("");
 
-    const { setCount } = useSearchContext();
-    const { room } = useRoomContext();
-    const socket = useSocket();
     
     useEffect(() => {
         if(room) {

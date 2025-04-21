@@ -45,6 +45,7 @@ const MainFrame: React.FC = () => {
                     }
                 }}/>
             </div>
+            
             {frame === "left_frame"   && <MobileLeftFrame setFrame={setFrame} />}
             {frame === "middle_frame" && <MobileMiddleFrame setFrame={setFrame} />}
             {frame === "right_frame"  && <MobileRightFrame setFrame={setFrame} />}

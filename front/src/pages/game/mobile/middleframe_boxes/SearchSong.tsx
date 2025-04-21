@@ -17,16 +17,17 @@ interface SearchSongProps {
 
 
 const SearchSong: React.FC<SearchSongProps> = ({setFrame}) => {
-    const [artist_name,     setArtistName]  = useState<string>("");
-    const [song_name,       setSongName]    = useState<string>("");
-    const [word_to_guess,   setWord]        = useState<string>("WORD");
-    const [timer,           setTimer]       = useState<number>(30);
-    const [alert, setAlert] = useState<boolean>(false);
-    const [alertMessage, setAlertMessage] = useState<string>("");
-
-    const { setCount } = useSearchContext();
+    const { setCount, timerInit } = useSearchContext();
     const { room } = useRoomContext();
     const socket = useSocket();
+
+    const [artist_name,     setArtistName]   = useState<string>("");
+    const [song_name,       setSongName]     = useState<string>("");
+    const [word_to_guess,   setWord]         = useState<string>("WORD");
+    const [timer,           setTimer]        = useState<number>(30 - ((Date.now() / 1000) - timerInit)); // não deve iniciar com 30s sempre
+    const [alert,           setAlert]        = useState<boolean>(false);
+    const [alertMessage,    setAlertMessage] = useState<string>("");
+
     
     useEffect(() => {
         if(room) {

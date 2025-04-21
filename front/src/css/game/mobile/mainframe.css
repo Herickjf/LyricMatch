@@ -1,7 +1,7 @@
 #mobile_main_frame{
     display: flex;
     flex-direction: column;
-    height: 95%;
+    height: 90%;
     position: relative;
 }
 
@@ -9,7 +9,7 @@
     position: absolute;
     display: flex;
     gap: 15px;
-    top: -20px;
+    top: -30px;
 }
 
 #mobile_main_frame_option_buttons > button{

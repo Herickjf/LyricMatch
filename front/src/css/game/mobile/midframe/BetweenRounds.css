@@ -8,6 +8,7 @@
     justify-content: space-between;
     align-items: center;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .goto_other_songs{

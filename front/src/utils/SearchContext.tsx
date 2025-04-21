@@ -4,6 +4,8 @@ import { createContext, useContext, useState, ReactNode } from "react";
 interface SearchContextType {
     count: any;  // Se count for um array de números
     setCount: (value: any) => void;
+    timerInit: any;
+    setTimerInit: (value: any) => void;
 }
 
 // Criando o contexto
@@ -12,9 +14,10 @@ const SearchContext = createContext<SearchContextType | undefined>(undefined);
 // Criando o Provider
 export const SearchProvider = ({ children }: { children: ReactNode }) => {
     const [count, setCount] = useState<any>(); // Estado global
+    const [timerInit, setTimerInit] = useState<any>();
 
     return (
-        <SearchContext.Provider value={{ count, setCount }}>
+        <SearchContext.Provider value={{ count, setCount, timerInit, setTimerInit }}>
             {children}
         </SearchContext.Provider>
     );
