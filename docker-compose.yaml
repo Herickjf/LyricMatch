@@ -22,7 +22,7 @@ services:
       - app-net
     ports:
       - "4000:4000"
-    command: sh -c "npx prisma migrate deploy && npm run import-words && npm run start:prod"
+    command: sh -c "npx prisma migrate reset --force && npx prisma migrate generate && npx prisma migrate deploy && npm run import-words && npm run start:prod"
 
   database:
     image: postgres:15
