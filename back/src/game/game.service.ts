@@ -477,10 +477,14 @@ export class GameService {
 
     // Se não sobrou ninguém, deleta a sala
     if (remainingPlayers.length === 0) {
-      const deletedRoom = await this.prisma.room.delete({
-        where: { id: roomId },
+      const deletedRooms = await this.prisma.room.deleteMany({
+        where: {
+          players: {
+            none: {}, // Matches rooms with no players
+          },
+        },
       });
-      return deletedRoom;
+      return null; // Return null since multiple rooms might be deleted
     }
 
     // Se o player era host, transfere para outro
@@ -716,6 +720,14 @@ export class GameService {
   }
 
   async getPlayersLocations() {
+    // limpa as localizacoes que nao tem mais jogadores
+    await this.prisma.room.deleteMany({
+      where: {
+        players: {
+          none: {}, // Matches rooms with no players
+        },
+      },
+    });
     // Coleta todas as localizacoes salvas no bd
     const localizations = await this.prisma.localization.findMany();
     if (!localizations) {

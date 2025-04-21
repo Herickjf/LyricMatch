@@ -19,7 +19,8 @@
     width: 30%;
     height: 90%;
     
-    min-width: max-content;
+    /* min-width: max-content; */
+
     
     display: flex;
     flex-direction: column;
@@ -109,6 +110,7 @@
     
     background-color: #656d4a1e;
     border-radius: 20px;
+    overflow-wrap: break-word;
 }
 
 #about_text{

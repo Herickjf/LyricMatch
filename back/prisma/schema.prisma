@@ -58,7 +58,7 @@ model Player {
   isHost       Boolean        @default(false)
   avatar       String?
   roomId       String?
-  room         Room?          @relation(fields: [roomId], references: [id])
+  room         Room?          @relation(fields: [roomId], references: [id], onDelete: Cascade)
   PlayerAnswer PlayerAnswer[]
   messages     Message[]
   localization Localization?
@@ -84,11 +84,11 @@ model Word {
   language Language
 }
 
-model Localization{
-  ip        String  
+model Localization {
+  ip        String
   city      String
   longitude String
   latitude  String
-  playerId    String    @unique
-  player  Player  @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  playerId  String   @unique
+  player    Player   @relation(fields: [playerId], references: [id], onDelete: Cascade)
 }
