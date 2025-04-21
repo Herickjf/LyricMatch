@@ -16,7 +16,7 @@ import axios from 'axios'; // Biblioteca para fazer requisições HTTP
 // Biblioteca para pegar o endereço IPv6 do cliente a partir do socket
 import * as os from 'os';
 import { InjectMetric } from '@willsoto/nestjs-prometheus';
-import { Counter } from 'prom-client';
+import { Counter, Gauge } from 'prom-client';
 
 interface PlayerDto {
   name: string;
@@ -37,7 +37,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly logger: Logger,
 
     @InjectMetric('ws_connections_total')
-    private readonly wsConn: Counter<string>,
+    private readonly wsConn: Gauge<string>,
     @InjectMetric('ws_messages_total')
     private readonly wsMsgs: Counter<string>,
   ) {}
@@ -60,7 +60,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   handleConnection(client: Socket) {
-    this.wsConn.inc(1); // Incrementa o contador de conexões WebSocket
+    this.wsConn.inc(); // Incrementa o contador de conexões WebSocket
     this.requestNotification('SOCKET', client.id + ' connected'); // Envia uma notificação de conexão para todos os clientes conectados
   }
 
@@ -69,7 +69,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const room = await this.gameService.exitRoom(client.id);
       this.requestNotification('SOCKET', client.id + ' disconnected'); // Envia uma notificação de desconexão para todos os clientes conectados
       client.emit('disconnected');
-      this.wsConn.inc(-1); // Incrementa o contador de conexões WebSocket
+      this.wsConn.dec(); // Incrementa o contador de conexões WebSocket
       if (!room) {
         return; // Se o cliente não estava em uma sala, não faz nada
       }
