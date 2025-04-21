@@ -12,6 +12,7 @@
     width: 200px;
     height: 200px;
     background-image: url('/assets/logo.svg');
+    /* background-image: url('/assets/logo.png'); */
     background-size: cover;
     background-position: center;
     animation: spin 5s linear infinite;
