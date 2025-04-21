@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     host: true, // permite usar 0.0.0.0
     port: 3000
-  }
+  },
   preview: {
     allowedHosts: ['lyricmatch.com.br']
   }
