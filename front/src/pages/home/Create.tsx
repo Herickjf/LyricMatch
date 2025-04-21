@@ -18,7 +18,7 @@ const Create: React.FC<CreateProps> = ({username, avatar}) => {
     const [password, setPassword] = useState<string>("");
     const [max_players, setMaxPlayers] = useState<number>(3);
     const [max_rounds, setMaxRounds] = useState<number>(1);
-    const [language, setLanguage] = useState<"PT" | "EN" | "SP">("EN");
+    const [language, setLanguage] = useState<"PT" | "EN" | "ES">("EN");
     const [alert_active, setAlertActive] = useState<boolean>(false);
     const [alert_message, setAlertMessage] = useState<string>("");
     const socket = useSocket();
@@ -72,7 +72,7 @@ const Create: React.FC<CreateProps> = ({username, avatar}) => {
         
         socket?.emit("createRoom", { 
             host: { name: username, avatar }, 
-            room: { password, maxPlayers: max_players, maxRounds: max_rounds, language },
+            room: { password, maxPlayers: max_players, maxRounds: max_rounds, language: language },
             IP: data
         });
        
@@ -113,8 +113,8 @@ const Create: React.FC<CreateProps> = ({username, avatar}) => {
                          className={`language_icon ${language === "EN" ? "flag-selected" : ""}`} 
                          onClick={() => setLanguage("EN")}/>
                     <div id="SP-flag" 
-                         className={`language_icon ${language === "SP" ? "flag-selected" : ""}`} 
-                         onClick={() => setLanguage("SP")}/>
+                         className={`language_icon ${language === "ES" ? "flag-selected" : ""}`} 
+                         onClick={() => setLanguage("ES")}/>
                 </div>
             </div> 
 
