@@ -60,6 +60,6 @@
 
 @media screen and (min-height: 750px){
     #menu{
-        height: 80vh;
+        /* height: 80vh; */
     }
 }
