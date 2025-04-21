@@ -47,16 +47,22 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async getLocalIpv6() {
     const interfaces = os.networkInterfaces();
     for (const interfaceName in interfaces) {
-      const networkInterface = interfaces[interfaceName];
-      if (networkInterface) {
-        for (const net of networkInterface) {
-          if (net.family === 'IPv6' && !net.internal) {
-            return net.address; // Retorna o endereço IPv6
-          }
+        // Skip loopback and non-active interfaces
+        if (interfaceName.startsWith('lo') || interfaceName.includes('docker') || interfaceName.includes('virtual')) {
+            continue;
         }
-      }
+        
+        const networkInterface = interfaces[interfaceName];
+        if (networkInterface) {
+            for (const net of networkInterface) {
+                // Check for IPv6 and skip link-local addresses
+                if (net.family === 'IPv6' && !net.address.startsWith('fe80::')) {
+                    return net.address;
+                }
+            }
+        }
     }
-    return null; // Retorna null se não encontrar um endereço IPv6
+    return null;
   }
 
   handleConnection(client: Socket) {
@@ -69,7 +75,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const room = await this.gameService.exitRoom(client.id);
       this.requestNotification('SOCKET', client.id + ' disconnected'); // Envia uma notificação de desconexão para todos os clientes conectados
       client.emit('disconnected');
-      this.wsConn.dec(); // Incrementa o contador de conexões WebSocket
       if (!room) {
         return; // Se o cliente não estava em uma sala, não faz nada
       }
