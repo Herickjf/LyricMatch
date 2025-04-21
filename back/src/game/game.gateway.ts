@@ -400,9 +400,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       );
     } catch (error) {
       console.error('Erro ao obter informações da sala:', error);
-      client.emit('error', {
-        message: 'Error getting room information',
-      });
+      client.emit('disconnected');
     }
   }
 
