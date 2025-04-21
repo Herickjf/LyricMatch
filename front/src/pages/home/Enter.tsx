@@ -27,7 +27,7 @@ const Enter: React.FC<EnterProps> = ({ username, avatar}) => {
         setRoomCode(code);
     }, []);
 
-    function handleEnterRoom() {
+    async function handleEnterRoom() {
         if(username.length < 1) {
             setAlertMessage("Input Error: Please, set a username first.");
             setAlertActive(true);
@@ -55,20 +55,39 @@ const Enter: React.FC<EnterProps> = ({ username, avatar}) => {
             return;
         }
 
+        let data = null;
+        try{
+            const response = await fetch("https://ipinfo.io/json")
+            data = await response.json();
+        }catch (error) {
+            ;
+        }
+        
         socket?.emit("joinRoom", {
             code: roomCode,
             player: {
                 name: username,
                 avatar: avatar
             },
-            password: roomPassword
+            password: roomPassword,
+            IP: data
         })
-
-        socket?.on("roomUpdate", () => {
-            if(in_game) return;
-            setInGame(true);
-        });
     }
+
+    // só adiciona 1 vez
+    useEffect(() => {
+        if (!socket) return;
+    
+        const handleRoomUpdate = () => {
+        if (!in_game) setInGame(true);
+        };
+    
+        socket.on("roomUpdate", handleRoomUpdate);
+    
+        return () => {
+        socket.off("roomUpdate", handleRoomUpdate);
+        };
+    }, [socket, in_game, setInGame]);
 
     return(
         <div className="form_box">
