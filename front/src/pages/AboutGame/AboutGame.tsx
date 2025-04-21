@@ -22,9 +22,21 @@ const AboutGame: React.FC<AboutGameProps> = ({closeMenu}) => {
                     <div id="about_text_title" className='highlight'>Welcome to LyricMatch!</div>
                     
                     <div id="about_text_body">
-                        <span className="highlight">Special note</span>:<br/>&emsp; We have no commercial interest in this site, and we do not charge for any of our services.
+                        
+                        <hr/>
                         <br/>
+                        <span className="highlight">CONTACT: </span>If you're a company interested in partnering with us or purchasing the game, please get in touch.  
+                        Also, if you have any questions, suggestions, or would like to support the project to help keep the game online, feel free to reach out at <span className="highlight">lyricmatch.contact@gmail.com</span>.
+                        <br />
+                        <br />
+                        <span className="highlight">Special note</span>: We have no commercial interest in this site, and we do not charge for any of our services.
+                        <br />
+                        <br />
+                        <span className="highlight">Disclaimer</span>: All images, lyrics, and music used in this game are the property of their respective owners. We do not claim ownership of any of these materials. The game is intended for educational and entertainment purposes only. If you have any concerns about copyright infringement, please contact us.
+                        <br />
                         <br/>
+                        <hr/>
+                        <br />
                         <span className="highlight">Important! </span> <br/>
                         &emsp;We use a free <a className="highlight" href="https://www.deezer.com/" target="_blank">DEEZER</a> API plan to search for songs (including image, title, artist, audio preview, etc.). You can check these information on their website. We are grateful for their support and encourage users to visit their website.
 
