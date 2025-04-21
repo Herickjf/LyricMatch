@@ -101,26 +101,30 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       // Obtem o endereco IPv6 do cliente:
       let clientIp: string | null = client.handshake.address; // Endereço IP do cliente
 
-      // Se for ipv6:
       if (clientIp.includes(':')) {
-        // Se for o endereço local, pega o ipv6 local:
-        // Se for o ipv6 normal, não faz nada
+        // Se for "::1" (localhost IPv6), tenta pegar o IPv6 local da máquina
         if (clientIp === '::1') {
-          clientIp = (await this.getLocalIpv6()) || null;
+          const localIpv6 = await this.getLocalIpv6();
+          if (!localIpv6) {
+            clientIp = null;
+            return;
+          }
+          clientIp = localIpv6;
         }
-
-        // Realiza o fetch para obter as informações do cliente
-        const response = await axios.get(`https://ipinfo.io/${clientIp}/json`);
-        const data = response.data; // Dados retornados pela API
-        if ('country' in data) {
-          clientIp = data;
-        } else {
-          clientIp = null; // Se não for ipv6, não faz nada
+      
+        try {
+          const response = await axios.get(`https://ipinfo.io/${clientIp}/json`);
+          const data = response.data;
+      
+          // Verifica se o dado retornado contém o país
+          clientIp = data?.country ? data : null;
+        } catch (error) {
+          clientIp = null; // erro no fetch
         }
       } else {
-        clientIp = null; // Se for ipv4, não faz nada
+        clientIp = null; // Ignora IPv4
       }
-
+      console.log('clientIp', clientIp); // Loga o endereço IPv6 do cliente
       const r = await this.gameService.createRoom(
         client.id,
         data.host.name,
@@ -162,25 +166,28 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       // Obtem o endereco IPv6 do cliente:
       let clientIp: string | null = client.handshake.address; // Endereço IP do cliente
 
-      // Se for ipv6:
       if (clientIp.includes(':')) {
-        // Se for o endereço local, pega o ipv6 local:
-        // Se for o ipv6 normal, não faz nada
+        // Se for "::1" (localhost IPv6), tenta pegar o IPv6 local da máquina
         if (clientIp === '::1') {
-          clientIp = (await this.getLocalIpv6()) || null;
+          const localIpv6 = await this.getLocalIpv6();
+          if (!localIpv6) {
+            clientIp = null;
+            return;
+          }
+          clientIp = localIpv6;
         }
-
-        // Realiza o fetch para obter as informações do cliente
-        const response = await axios.get(`https://ipinfo.io/${clientIp}/json`);
-        const data = response.data; // Dados retornados pela API
-        if ('country' in data) {
-          // Confirma se a busca foi bem sucedida
-          clientIp = data;
-        } else {
-          clientIp = null; // Se não for ipv6, não faz nada
+      
+        try {
+          const response = await axios.get(`https://ipinfo.io/${clientIp}/json`);
+          const data = response.data;
+      
+          // Verifica se o dado retornado contém o país
+          clientIp = data?.country ? data : null;
+        } catch (error) {
+          clientIp = null; // erro no fetch
         }
       } else {
-        clientIp = null; // Se for ipv4, não faz nada
+        clientIp = null; // Ignora IPv4
       }
 
       const r = await this.gameService.joinRoom(
