@@ -1,13 +1,13 @@
 #mobile_between_rounds_mid_box{
     width: 80%;
-    height: 90%;
+    height: 100%;
     position: relative;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    
+    overflow-y: auto;
 }
 
 .goto_other_songs{

@@ -21,12 +21,10 @@ const Menu : React.FC<MenuProps> = ({openMenu, setOpenMenu}) => {
                 <Link className="menu_item" to="/"          onClick={() => setOpenMenu(!openMenu)} >Home</Link>
                 <Link className="menu_item" to="/about"     onClick={() => setOpenMenu(!openMenu)} >About us</Link>
                 <Link className="menu_item" to="/aboutgame" onClick={() => setOpenMenu(!openMenu)} >About Game</Link>
+                <Link className='menu_item' to="/dashboard" onClick={() => setOpenMenu(!openMenu)} >Dashboard</Link>
             </div>  
 
-            <div id="menu_return_button" onClick={() => setOpenMenu(!openMenu)}/>
-
             <div id="bottom_items">
-                <Link className='menu_item' to="/dashboard" onClick={() => setOpenMenu(!openMenu)} >Dashboard</Link>
                 <p>Version 3.0</p>
             </div>
         </div>

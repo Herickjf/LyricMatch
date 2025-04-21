@@ -22,8 +22,19 @@ const About: React.FC<AboutProps> = ({closeMenu}) => {
                     <div id="about_text_title" className='highlight'>Welcome to LyricMatch!</div>
                     
                     <div id="about_text_body">
+                        <hr/>
+                        <br/>
+                            <span className="highlight">CONTACT: </span>If you're a company interested in partnering with us or purchasing the game, please get in touch.  
+                            Also, if you have any questions, suggestions, or would like to support the project to help keep the game online, feel free to reach out at <span className="highlight">lyricmatch.contact@gmail.com</span>.
+                        <br />
+                        <br />
                         <span className="highlight">Special note</span>: We have no commercial interest in this site, and we do not charge for any of our services.
                         <br />
+                        <br />
+                        <span className="highlight">Disclaimer</span>: All images, lyrics, and music used in this game are the property of their respective owners. We do not claim ownership of any of these materials. The game is intended for educational and entertainment purposes only. If you have any concerns about copyright infringement, please contact us.
+                        <br />
+                        <br/>
+                        <hr/>
                         <br />
                         We’re thrilled to have you here! LyricMatch was born from our love for music and the incredible way it connects people. Whether it’s an unforgettable melody or deeply resonating lyrics, music has the unique power to bring individuals and groups together. Our goal was to capture this feeling and turn it into a fun, interactive game.
                         <br />

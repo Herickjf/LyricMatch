@@ -71,7 +71,7 @@ const SongPlayer: React.FC = () => {
       return (
         <div id="songPlayer_box">
           <div id="song_info">
-            <div id="song_cover" style={{ backgroundImage: `url(${cover})` }}></div>
+            <div id="song_cover" className="mobile_song_cover" style={{ backgroundImage: `url(${cover})` }}></div>
             {/* <div id="song_cover" style={{ backgroundImage: `url(https://cdn-images.dzcdn.net/images/cover/6630083f454d48eadb6a9b53f035d734/1000x1000-000000-80-0-0.jpg)` }}></div> */}
             <div id="bottom_image_info">
               <div id="song_text">

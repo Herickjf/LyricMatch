@@ -129,7 +129,7 @@ h1{
     width: 25px;
     height: 25px;
 
-    background-image: url(/public/assets/icons/pencil-btn.svg);
+    background-image: url(/assets/icons/pencil-btn.svg);
     background-size: cover;
     background-position: center;
 }

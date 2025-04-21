@@ -19,7 +19,8 @@
     width: 30%;
     height: 90%;
     
-    min-width: max-content;
+    /* min-width: max-content; */
+
     
     display: flex;
     flex-direction: column;
@@ -106,10 +107,10 @@
     height: 90%;
     padding: 20px;
     display: flex;
-    text-align: justify;
     
     background-color: #656d4a1e;
     border-radius: 20px;
+    overflow-wrap: break-word;
 }
 
 #about_text{
@@ -118,6 +119,10 @@
     
     overflow-y: auto;
     font-weight: 300;
+}
+
+#about_text_body{
+    text-align: justify;
 }
 
 #about_text_title{

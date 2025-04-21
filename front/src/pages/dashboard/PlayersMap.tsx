@@ -13,12 +13,15 @@ import { useEffect, useState } from 'react'
 import { useSocket } from '../../utils/SocketContext'
 
 // Removed unnecessary line as _getIconUrl is not a valid property
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: markerIcon2x,
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow,
-  
-})
+const customIcon = new L.Icon({
+    iconUrl: markerIcon,
+    iconRetinaUrl: markerIcon2x,
+    shadowUrl: markerShadow,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  })
 
 const PlayersMap: React.FC = () => {
     const [locations, setLocations] = useState<any>(null)
@@ -62,6 +65,7 @@ const PlayersMap: React.FC = () => {
                 <Marker 
                     key={`${local.latitude}-${local.longitude}-${i}`}
                     position={[local.latitude, local.longitude]}
+                    icon={customIcon}
                 >
                     <Popup>{local.city} ({local.count} players)</Popup>
                 </Marker>
