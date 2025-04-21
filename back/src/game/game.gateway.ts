@@ -47,22 +47,16 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async getLocalIpv6() {
     const interfaces = os.networkInterfaces();
     for (const interfaceName in interfaces) {
-        // Skip loopback and non-active interfaces
-        if (interfaceName.startsWith('lo') || interfaceName.includes('docker') || interfaceName.includes('virtual')) {
-            continue;
+      const networkInterface = interfaces[interfaceName];
+      if (networkInterface) {
+        for (const net of networkInterface) {
+          if (net.family === 'IPv6' && !net.internal) {
+            return net.address; // Retorna o endereço IPv6
+          }
         }
-        
-        const networkInterface = interfaces[interfaceName];
-        if (networkInterface) {
-            for (const net of networkInterface) {
-                // Check for IPv6 and skip link-local addresses
-                if (net.family === 'IPv6' && !net.address.startsWith('fe80::')) {
-                    return net.address;
-                }
-            }
-        }
+      }
     }
-    return null;
+    return null; // Retorna null se não encontrar um endereço IPv6
   }
 
   handleConnection(client: Socket) {
@@ -99,37 +93,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   // Lida com a mensagem 'createRoom' enviada pelo cliente
   @SubscribeMessage('createRoom')
   async handleCreateRoom(
-    @MessageBody() data: { host: PlayerDto; room: RoomDto },
+    @MessageBody() data: { host: PlayerDto; room: RoomDto, IP: any },
     @ConnectedSocket() client: Socket, // Socket do cliente conectado
   ) {
     try {
-      // Obtem o endereco IPv6 do cliente:
-      let clientIp: string | null = client.handshake.address; // Endereço IP do cliente
+      if(!data.IP?.country) data.IP = null;
 
-      if (clientIp.includes(':')) {
-        // Se for "::1" (localhost IPv6), tenta pegar o IPv6 local da máquina
-        if (clientIp === '::1') {
-          const localIpv6 = await this.getLocalIpv6();
-          if (!localIpv6) {
-            clientIp = null;
-            return;
-          }
-          clientIp = localIpv6;
-        }
-      
-        try {
-          const response = await axios.get(`https://ipinfo.io/${clientIp}/json`);
-          const data = response.data;
-      
-          // Verifica se o dado retornado contém o país
-          clientIp = data?.country ? data : null;
-        } catch (error) {
-          clientIp = null; // erro no fetch
-        }
-      } else {
-        clientIp = null; // Ignora IPv4
-      }
-      console.log('clientIp', clientIp); // Loga o endereço IPv6 do cliente
       const r = await this.gameService.createRoom(
         client.id,
         data.host.name,
@@ -138,7 +107,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         data.room.maxPlayers,
         data.room.maxRounds,
         data.room.language,
-        clientIp, // Passa o endereço IPv6 do cliente
+        data.IP, // Passa o endereço IPv6 do cliente
       );
       if (!r) {
         client.emit('error', {
@@ -164,36 +133,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   // Lida com a mensagem 'joinRoom' enviada pelo cliente
   @SubscribeMessage('joinRoom')
   async handleJoinRoom(
-    @MessageBody() data: { code: string; player: PlayerDto; password: string },
+    @MessageBody() data: { code: string; player: PlayerDto; password: string, IP: any },
     @ConnectedSocket() client: Socket, // Socket do cliente conectado
   ) {
     try {
-      // Obtem o endereco IPv6 do cliente:
-      let clientIp: string | null = client.handshake.address; // Endereço IP do cliente
-
-      if (clientIp.includes(':')) {
-        // Se for "::1" (localhost IPv6), tenta pegar o IPv6 local da máquina
-        if (clientIp === '::1') {
-          const localIpv6 = await this.getLocalIpv6();
-          if (!localIpv6) {
-            clientIp = null;
-            return;
-          }
-          clientIp = localIpv6;
-        }
-      
-        try {
-          const response = await axios.get(`https://ipinfo.io/${clientIp}/json`);
-          const data = response.data;
-      
-          // Verifica se o dado retornado contém o país
-          clientIp = data?.country ? data : null;
-        } catch (error) {
-          clientIp = null; // erro no fetch
-        }
-      } else {
-        clientIp = null; // Ignora IPv4
-      }
+      if(!data.IP?.country) data.IP = null;
 
       const r = await this.gameService.joinRoom(
         client.id,
@@ -201,7 +145,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         data.player.name,
         data.player.avatar,
         data.password,
-        clientIp, // Passa o endereço IPv6 do cliente
+        data.IP, // Passa o endereço IPv6 do cliente
       );
       if (!r) {
         client.emit('error', {
