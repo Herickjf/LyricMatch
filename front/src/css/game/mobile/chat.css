@@ -23,11 +23,43 @@
     word-wrap: break-word;
     word-break: normal;
     max-width: 98%;
+    text-align: justify;
+    overflow-wrap: break-word;
 }
 
 #mobile_chat_box > #chat_input_box{
+    width: 100%;
     height: 10%;
+    
+    border: none;
+    outline: none;
+    
+    background-color: #c3e59e99;
+    color: #ffffff;
+    border-radius: 15px;
 }
+
+#mobile_chat_box > #chat_input_box > #mobile_chat_input_text_input{
+    width: calc(100% - 45px);
+    height: 100%;
+
+    text-indent: 10px;
+    font-size: 15px;
+    font-weight: 600;
+
+    background-color: transparent;
+    color: #ffffff;
+    border-radius: 15px;
+
+    border: none;
+    outline: none;
+}
+
+#mobile_chat_input_text_input::placeholder{
+    color: #ffffff74;
+    opacity: 1;
+}
+
 
 #mobile_chat_box > #chat_input_box > button{
     height: 35px;

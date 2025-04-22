@@ -35,7 +35,7 @@ const Chat: React.FC = () => {
             </div>
             <div id="chat_input_box">
                 <input 
-                    id="chat_input_text_input" 
+                    id="mobile_chat_input_text_input" 
                     type="text" placeholder="type your message..."
                     value={message}
                     onChange={(el) => setMessage(el.target.value)} 
