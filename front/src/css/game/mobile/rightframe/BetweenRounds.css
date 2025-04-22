@@ -25,12 +25,15 @@
 #mobile_between_rounds_guesses_list{
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
     gap: 40px;
+    overflow-y: auto;
 }
 
 #mobile_between_rounds_header{
     width: 100%;
     height: max-content;
+    min-height: max-content;
     display: flex;
     justify-content: space-between;
     align-items: center;

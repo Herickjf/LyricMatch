@@ -17,17 +17,12 @@ const Rankings: React.FC = () => {
                 {
                     player?.isHost &&
                     <Button 
-                        text="New Game"
+                        text="Restart"
                         func={() => {
                             socket?.emit("resetRoom");
                         }}
                     />
                 }
-                {/* <Button text="Exit" func={() => {
-                    socket?.emit("exitRoom");
-                    setInGame(false);
-                }}
-                /> */}
 
             </div>
             

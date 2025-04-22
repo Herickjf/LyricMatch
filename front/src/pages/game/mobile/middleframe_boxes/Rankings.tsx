@@ -7,7 +7,7 @@ import RankingCard from "../../../../utils/RankingCard";
 import "../../../../css/game/mobile/midframe/Rankings.css"
 
 const Rankings: React.FC = () => {
-    const { room } = useRoomContext();
+    const { room, player } = useRoomContext();
     const socket = useSocket();
     const [players, setPlayers] = useState<any[]>([]);
 
@@ -45,7 +45,10 @@ const Rankings: React.FC = () => {
             </div>
 
             <div id="ranking_box_footer">Congratulations!</div>
-            <button id="mobile_restart_button" onClick={() => socket?.emit("resetRoom")}>Restart</button>
+            {
+                player?.isHost &&
+                <button id="mobile_restart_button" onClick={() => socket?.emit("resetRoom")}>Restart</button>
+            }
         </div>
     )
 }

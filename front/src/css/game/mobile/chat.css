@@ -11,7 +11,7 @@
 
 #mobile_chat_box > #chat_messages_box{
     height: 80%;
-    font-size: 25px;
+    font-size: 22px;
     display: flex;
     flex-direction: column;
     gap: 5px;
