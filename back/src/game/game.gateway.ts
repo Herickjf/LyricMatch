@@ -45,15 +45,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   server: Server; // Instância do servidor WebSocket
 
   handleConnection(client: Socket) {
-    this.wsConn.inc(); // Incrementa o contador de conexões WebSocket
     this.requestNotification('SOCKET', client.id + ' connected'); // Envia uma notificação de conexão para todos os clientes conectados
   }
 
   async handleDisconnect(client: Socket) {
     try {
+      client.emit('disconnected');
       const room = await this.gameService.exitRoom(client.id);
       this.requestNotification('SOCKET', client.id + ' disconnected'); // Envia uma notificação de desconexão para todos os clientes conectados
-      client.emit('disconnected');
       if (!room) {
         return; // Se o cliente não estava em uma sala, não faz nada
       }
@@ -255,6 +254,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('exitRoom')
   async handleExitRoom(@ConnectedSocket() client: Socket) {
     try {
+      client.emit('disconnected');
       const room = await this.gameService.exitRoom(client.id);
       if (room) {
         this.server.to(room.code).emit('roomUpdate', room);

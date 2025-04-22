@@ -14,6 +14,7 @@ const LeftBox: React.FC = () => {
   const [max_players, setMaxPlayers] = useState<number>(0);
   const [current_round, setCurrentRound] = useState<number>(0);
   const [max_rounds, setMaxRounds] = useState<number>(0);
+  const [player_list, setPlayerList] = useState<any>(null);
 
   const [room_code, setRoomCode] = useState<string>("");
   const [showAlert, setShowAlert] = useState<boolean>(false);
@@ -27,6 +28,12 @@ const LeftBox: React.FC = () => {
     setCurrentPlayers(players?.length);
     setMaxRounds(room?.maxRounds);
     setCurrentRound(room?.currentRound);
+
+    setPlayerList(players?.sort((a: any, b: any) => {
+      if (a.score > b.score) return -1;
+      if (a.score < b.score) return 1;
+      return 0;
+  }));
   }, [players, room]);
 
   const copyToClipboard = () => {
@@ -83,7 +90,7 @@ const LeftBox: React.FC = () => {
       </div>
 
       <div id="desktop_players_list">
-        {players.map((p: any) => (
+        {player_list?.map((p: any) => (
           <PlayerCard
             name={p.name}
             avatar={p.avatar}
