@@ -90,6 +90,7 @@ const LeftBox: React.FC = () => {
       </div>
 
       <div id="desktop_players_list">
+
         {player_list?.map((p: any) => (
           <PlayerCard
             name={p.name}
@@ -102,6 +103,7 @@ const LeftBox: React.FC = () => {
             key={p.name}
           />
         ))}
+        
       </div>
 
       <div id="actions">

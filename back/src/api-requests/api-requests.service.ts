@@ -77,12 +77,12 @@ export class ApiRequestsService {
             .get()
             .join('\n\n'); // Adiciona uma linha em branco entre os parágrafos
 
-          return lyrics || null;
+          return lyrics;
         } else {
           return null;
         }
       } else {
-        return 'Erro ao acessar a página da música.';
+        return null;
       }
     } catch (error) {
       return null;
@@ -94,10 +94,11 @@ export class ApiRequestsService {
     artistName: string,
   ): Promise<string | null> {
     // Formatações
-    const formattedSong = songName.replace(/ /g, '-');
-    const formattedArtist = artistName.replace(/ /g, '-');
+    const formattedSong = songName.replace(/ |'/g, '-');
+    const formattedArtist = artistName.replace(/ |'/g, '-');
 
     const url = `https://www.musixmatch.com/lyrics/${formattedArtist}/${formattedSong}`;
+    console.log(url);
     const headers = {
       'User-Agent':
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
@@ -107,7 +108,7 @@ export class ApiRequestsService {
       const response = await axios.get(url, { headers });
 
       if (response.status !== 200) {
-        return 'Erro ao acessar a página da música.';
+        return null;
       }
 
       const $ = cheerio.load(response.data);
@@ -130,14 +131,14 @@ export class ApiRequestsService {
     track: string,
     artist: string,
   ): Promise<string> {
-    track = track.toLowerCase().replace(/ /g, '-');
-    artist = artist.toLowerCase().replace(/ /g, '-');
+    track = track.toLowerCase().replace(/ |'/g, '-');
+    artist = artist.toLowerCase().replace(/ |'/g, '-');
     const url = `https://www.vagalume.com.br/${artist}/${track}.html`;
 
     try {
       const response = await axios.get(url);
       if (response.status != 200) {
-        throw new NotFoundException('Letra não encontrada');
+        throw new NotFoundException('Letra não encontrada'); 
       }
       const $ = cheerio.load(response.data);
 
