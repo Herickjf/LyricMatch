@@ -544,7 +544,6 @@ export class GameService {
     }
 
     const lyrics = await this.apiRequestsService.getLyrics(track, artist);
-    console.log('Lyrics:', lyrics);
 
     if (!lyrics || typeof lyrics !== 'string') {
       throw new Error('processAnswer: Lyrics not found');
