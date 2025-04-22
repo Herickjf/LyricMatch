@@ -6,7 +6,6 @@ import "../../../../css/game/desktop/rightbox_boxes/searchsong.css"
 import { useSocket } from "../../../../utils/SocketContext";
 
 const SearchSong: React.FC = () => {
-    // const [api_selected, setApiSelected] = useState<string>("MUSIXMATCH");
     const [song_name_selected, setSongNameSelected] = useState<string>("");
     const [artist_name_selected, setArtistNameSelected] = useState<string>("");
     const [index_selected, setIndexSelected] = useState<number>(0);
@@ -28,11 +27,6 @@ const SearchSong: React.FC = () => {
         <div id="search_song_box">
             <div id="search_song_title">Which song?</div>
             
-            {/* <select id="search_song_select" value={api_selected} onChange={(e) => setApiSelected(e.target.value)}>
-                <option value={"MUSIXMATCH"}>MusixMatch</option>
-                <option value={"LETRAS"}>LetrasMus</option>
-                <option value={"VAGALUME"}>Vagalume</option>
-            </select> */}
 
             <div id="search_results_box">
                 {

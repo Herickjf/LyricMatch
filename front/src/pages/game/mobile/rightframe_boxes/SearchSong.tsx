@@ -11,7 +11,6 @@ interface SearchSongProps {
 }
 
 const SearchSong: React.FC<SearchSongProps> = ({setFrame}) => {
-    // const [api_selected, setApiSelected] = useState<string>("MUSIXMATCH");
     const [song_name_selected, setSongNameSelected] = useState<string>("");
     const [artist_name_selected, setArtistNameSelected] = useState<string>("");
     const [index_selected, setIndexSelected] = useState<number>(0);
