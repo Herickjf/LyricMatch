@@ -1,83 +1,78 @@
+# 🎵 LyricMatch
 
+**http://lyricmatch.com.br**  
+Desafie seu conhecimento musical com um jogo divertido e interativo!
 
-# SongGuesser 2.0
+---
 
-**Team Members**: Luis Reis, Herick José, João Marcos,and Rafael de França.
+## 📖 Sobre o Projeto
 
-## Description
+**LyricMatch** é um jogo multiplayer inspirado no famoso *"Song Association Game"*, onde você recebe uma palavra e precisa lembrar rapidamente de uma música que a contenha na letra. Criado com carinho por quatro estudantes de Ciência da Computação da UFPB:
 
-SongGuesser is an online game that challenges players to recall and cite songs containing a specific word. Inspired by the Elle channel segment, the game provides a fun and competitive environment where players test their musical memory and creativity in quick rounds.
+- Luis Reis  
+- Rafael de França  
+- João Marcos  
+- Herick José de Freitas  
 
-## Access
+O projeto foi desenvolvido como parte da disciplina de Redes de Computadores, mas também nasceu da nossa paixão por música e jogos online.
 
-## Requirements
+---
 
-> If you are using different PostgreSQL credentials, update them in the configuration file (`config/dev.exs`).
+## 🎮 Como Jogar
 
-## Installation
+1. **Escolha um avatar e nickname.**  
+2. **Entre ou crie uma sala.**
 
-To set up and run the project locally, execute the following commands in the terminal:
+### Configurações da Sala:
 
-1. Clone the repository:
-   ```bash
-   git 
-   ```
+- **Número de Jogadores:** defina o limite máximo.  
+- **Número de Rodadas:** escolha quantas serão jogadas.  
+- **Idioma:** selecione entre Português, Inglês ou Espanhol.
 
-2. Install the dependencies:
-   ```bash
-   ```
+### Durante o Jogo:
 
-3. Set up the database:
-   ```bash
-   ```
+- Uma **palavra** é exibida no início da rodada.  
+- Você tem **30 segundos** para digitar o nome do artista e o título da música relacionada.  
+- Após clicar em "Buscar", você verá até **5 sugestões de músicas**.  
+- Escolha a que contém a palavra exibida.
 
-4. Start the server:
-   ```bash
-   ```
+### Resultados:
 
-The server will be available at [http://localhost:4000](http://localhost:4000) if running locally.
+- Veja se sua escolha foi válida.  
+- Escute uma **prévia da música** e veja informações adicionais.  
+- No final, confira a **pontuação e ranking final**.
 
-## Game: How to Play
+---
 
-**Note:** The APIs may sometimes fail in searching, finding, or verifying song lyrics.
+## 💡 Inspiração
 
-### Inspiration
+Inspirado no segmento da **Elle** chamado *"Song Association Game"*, o objetivo do LyricMatch é proporcionar momentos de diversão entre amigos, desafiando sua memória e conhecimento musical com muito bom humor e criatividade.
 
-The game is inspired by a segment where participants are given a word and must quickly recall a song that contains it. Our goal is to create a fun environment that tests players’ musical knowledge and mental agility.
+---
 
-### Step-by-Step Guide
+## 🤝 Contato
 
-1. **Enter Your Name and Join/Create a Room**  
-   Enter your name to be identified in the game. You can:
-   - Join an existing room using the code and password provided by the host.
-   - Create a room and set a password for it.
+Se você é uma empresa interessada em parceria ou deseja adquirir o jogo, ou se apenas quer mandar sugestões ou nos apoiar para manter o projeto online, fale com a gente:
 
-2. **Room Settings**  
-   As the host, you can configure the room by setting:
-   - Number of Players (1 to 20)
-   - Number of Rounds (3 to 15)
-   - Game Language (Portuguese, English, or Spanish)
-   - Choose an avatar.
+📧 **lyricmatch.contact@gmail.com**
 
-3. **In the Waiting Room**  
-   - Players wait until the host starts the game.
-   - The host controls the game start.
+---
 
-4. **Starting the Game**  
-   - Each round begins with a word prompt, and a timer starts.
-   - Within 30 seconds, players must enter the artist and song name containing the word, then click "search."
+## 📢 Avisos Importantes
 
-5. **Song Selection**  
-   After clicking "search," up to five song options will be displayed for each player, who should select their desired song and wait until time's out.
+- **Este projeto não tem fins comerciais.** Não cobramos por nenhum serviço oferecido.  
+- Todas as **imagens, letras e músicas** utilizadas pertencem aos seus respectivos autores. Este é um projeto educacional e de entretenimento. Caso haja qualquer problema relacionado a direitos autorais, entre em contato.  
+- Utilizamos a **API gratuita da Deezer** para buscar músicas (imagens, título, artista, prévia de áudio etc.). Somos gratos ao suporte e recomendamos visitar o site deles!
 
-6. **Round Results**  
-   - At the end of the round, a list of players' attempts is shown, indicating whether their choice was correct.
-   - Each player can listen to a preview of the correct song and view additional information.
+---
 
-7. **Start of New Rounds**  
-   - The host determines when to start each new round.
+## ❤️ Agradecimentos
 
-8. **Final Ranking**  
-   - At the end of all rounds, the top three scores are displayed in an overall ranking.
+A música tem o poder único de nos conectar, expressar sentimentos e criar memórias. Criamos o LyricMatch para homenagear essa força, proporcionando um espaço divertido onde você pode se desafiar, rir e relembrar grandes canções com os amigos.
 
-**Good luck and have fun in the game!**
+Esperamos que aproveite tanto quanto nós curtimos desenvolver!
+
+---
+
+**Com carinho,**  
+**Equipe LyricMatch**
