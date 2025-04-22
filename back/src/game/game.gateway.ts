@@ -44,21 +44,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server; // Instância do servidor WebSocket
 
-  async getLocalIpv6() {
-    const interfaces = os.networkInterfaces();
-    for (const interfaceName in interfaces) {
-      const networkInterface = interfaces[interfaceName];
-      if (networkInterface) {
-        for (const net of networkInterface) {
-          if (net.family === 'IPv6' && !net.internal) {
-            return net.address; // Retorna o endereço IPv6
-          }
-        }
-      }
-    }
-    return null; // Retorna null se não encontrar um endereço IPv6
-  }
-
   handleConnection(client: Socket) {
     this.wsConn.inc(); // Incrementa o contador de conexões WebSocket
     this.requestNotification('SOCKET', client.id + ' connected'); // Envia uma notificação de conexão para todos os clientes conectados
@@ -98,7 +83,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     try {
       if(!data.IP?.country) data.IP = null;
-
       const r = await this.gameService.createRoom(
         client.id,
         data.host.name,
@@ -400,9 +384,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       );
     } catch (error) {
       console.error('Erro ao obter informações da sala:', error);
-      client.emit('error', {
-        message: 'Error getting room information',
-      });
+      client.emit('disconnected');
     }
   }
 

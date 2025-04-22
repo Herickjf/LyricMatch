@@ -24,7 +24,7 @@ const App = () => {
   const { setSongSelected } = useSongContext();
   const { setGuesses } = useSongContext();
   const { player, setPlayer } = useRoomContext();
-  const { setCount } = useSearchContext();
+  const { setCount, setTimerInit } = useSearchContext();
   const [alert, setAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const navigate = useNavigate();
@@ -86,6 +86,7 @@ const App = () => {
       if(room.status == "analyzing" || room.status == "finished"){
         setCount(null);
       } else if(room.status == "playing"){
+        setTimerInit(Date.now() / 1000);
         setGuesses(null);
         setSongSelected(null);
       }
