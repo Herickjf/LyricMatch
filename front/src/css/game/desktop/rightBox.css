@@ -6,6 +6,7 @@
 
     background-color: #22291c;
     border-radius: 10px;
+    
 }
 
 #right_box{
@@ -14,7 +15,8 @@
     flex-direction: column;
     background-color: #22291c;
     gap: 30px;
-    overflow-y: auto;
+    overflow-y: hidden;
     align-items: center;
     justify-items: space-between;
+
 }
