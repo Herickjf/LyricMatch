@@ -31,13 +31,13 @@ const App = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    if(in_game && room && (room?.status != "finished")){
+    if(in_game && room){
       socket?.emit("getRoomInfo");
     }
   }, []);
 
   useEffect(() => {
-    if (in_game && room && room?.status != "finished") {
+    if (in_game && room) {
       socket?.emit("getRoomInfo");
     }
   }, [in_game]);
@@ -72,6 +72,7 @@ const App = () => {
 
     return () => {
       socket.off("error");
+      socket.off("disconnected");
     };
   }, [socket]);
 
