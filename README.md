@@ -18,6 +18,21 @@ O projeto foi desenvolvido como parte da disciplina de Redes de Computadores, ma
 
 ---
 
+## 📄 Declaração de Propriedade Intelectual
+
+Este projeto, **LyricMatch**, é de autoria dos desenvolvedores brasileiros **Luis Gustavo Lacerda Reis**, **Rafael de França Silva**, **João Marcos Cunha Santos** e **Herick José de Freitas**.
+
+O LyricMatch foi oficialmente lançado em **23 de abril de 2025** como projeto final da disciplina **Redes de Computadores** do curso de **Bacharelado em Ciência da Computação** (Centro de Informática - UFPB).
+
+Todo o conteúdo deste repositório (código, ideias, estrutura do jogo, entre outros) está protegido por direitos autorais. O jogo é gratuito, mas **não é permitida a cópia, modificação ou reutilização** do projeto sem autorização expressa da equipe.
+
+Se você tem interesse em utilizar partes do projeto, colaborar ou adquirir direitos de uso, entre em contato conosco para discutir possíveis parcerias.
+
+🔗 Site oficial: [https://lyricmatch.com.br](https://lyricmatch.com.br)  
+🔗 Repositório: [https://github.com/Herickjf/LyricMatch](https://github.com/Herickjf/LyricMatch)
+
+---
+
 ## 🎮 Como Jogar
 
 1. **Escolha um avatar e nickname.**  
