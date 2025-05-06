@@ -13,4 +13,4 @@ Este software é fornecido gratuitamente para fins **pessoais, educacionais e de
 O uso deste projeto implica na aceitação destes termos.
 
 Para parcerias, colaborações ou licenciamento, entre em contato com a equipe pelo site oficial:  
-🔗 [https://lyricmatch.com.br](https://lyricmatch.com.br)
+🔗 [http://lyricmatch.com.br](http://lyricmatch.com.br)
