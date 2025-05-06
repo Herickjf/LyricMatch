@@ -28,7 +28,7 @@ Todo o conteúdo deste repositório (código, ideias, estrutura do jogo, entre o
 
 Se você tem interesse em utilizar partes do projeto, colaborar ou adquirir direitos de uso, entre em contato conosco para discutir possíveis parcerias.
 
-🔗 Site oficial: [https://lyricmatch.com.br](https://lyricmatch.com.br)  
+🔗 Site oficial: [http://lyricmatch.com.br](http://lyricmatch.com.br)  
 🔗 Repositório: [https://github.com/Herickjf/LyricMatch](https://github.com/Herickjf/LyricMatch)
 
 ---
